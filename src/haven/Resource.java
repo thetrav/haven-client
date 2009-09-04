@@ -37,6 +37,7 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 public class Resource implements Comparable<Resource>, Prioritized, Serializable {
+    private static final int MOD_VERSION = 0;
     private static Map<String, Resource> cache = new TreeMap<String, Resource>();
     private static Loader loader;
     private static CacheSource prscache;
@@ -60,8 +61,11 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	    String dir = Config.resdir;
 	    if(dir == null)
 		dir = System.getenv("HAVEN_RESDIR");
+	    final boolean mod = System.getenv("HAVEN_MOD") == null ? false : true;
 	    if(dir != null)
-		chainloader(new Loader(new FileSource(new File(dir))));
+        {
+            chainloader(new Loader(new FileSource(new File(dir)), mod));
+        }
 	} catch(Exception e) {
 	    /* Ignore these. We don't want to be crashing the client
 	     * for users just because of errors in development
@@ -123,10 +127,10 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	    res = cache.get(name);
 	    if(res != null) {
 		if((res.ver != -1) && (ver != -1)) {
-		    if(res.ver < ver) {
+		    if(res.ver < ver && res.ver != MOD_VERSION) {
 			res = null;
 			cache.remove(name);
-		    } else if(res.ver > ver) {
+		    } else if(res.ver > ver && res.ver != MOD_VERSION) {
 			throw(new RuntimeException(String.format("Weird version number on %s (%d > %d), loaded from %s", res.name, res.ver, ver, res.source)));
 		    }
 		} else if(ver == -1) {
@@ -236,10 +240,6 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	}
     }
     
-    public boolean checkversion(final int expected){
-        return expected == ver;
-    }
-    
     public static class CacheSource implements ResSource, Serializable {
 	public transient ResCache cache;
 	
@@ -331,13 +331,19 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
     }
 
     private static class Loader implements Runnable {
-	private ResSource src;
+    private final ResSource src;
+	private final boolean mod;
 	private Loader next = null;
 	private Queue<Resource> queue = new PrioQueue<Resource>();
 	private transient Thread th = null;
 	
 	public Loader(ResSource src) {
+	    this(src, false);
+	}
+	
+	public Loader(ResSource src, boolean mod) {
 	    this.src = src;
+	    this.mod = mod;
 	}
 	
 	public void chain(Loader next) {
@@ -392,6 +398,9 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 		    try {
 			in = src.get(res.name);
 			res.load(in);
+			if(this.mod){
+			    res.ver = MOD_VERSION;
+			}
 			res.loading = false;
 			res.notifyAll();
 			return;
@@ -965,7 +974,7 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	if(this.ver == -1) {
 	    this.ver = ver;
 	} else {
-	    if(ver != this.ver)
+	    if(ver != this.ver && this.ver != MOD_VERSION)
 		throw(new LoadException("Wrong res version (" + ver + " != " + this.ver + ")", this));
 	}
 	outer: while(true) {
