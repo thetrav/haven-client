@@ -66,6 +66,7 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	    /* Ignore these. We don't want to be crashing the client
 	     * for users just because of errors in development
 	     * aids. */
+	    e.printStackTrace();
 	}
     }
 	
@@ -233,6 +234,10 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	public String toString() {
 	    return("forking source backed by " + back);
 	}
+    }
+    
+    public boolean checkversion(final int expected){
+        return expected == ver;
     }
     
     public static class CacheSource implements ResSource, Serializable {
