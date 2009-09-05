@@ -26,10 +26,14 @@
 
 package haven;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Text {
     public static final Foundry std;
@@ -85,53 +89,67 @@ public class Text {
 	    Rectangle2D b = m.getStringBounds(text, tmpl);
 	    return(new Coord((int)b.getWidth(), (int)b.getHeight()));
 	}
-                
-	public Text renderwrap(String text, Color c, int width) {
-	    Text t = new Text(text);
-	    int y = 0;
-	    int[] sl = findspaces(text);
-	    int s = 0, e = 0, i = 0;
-	    java.util.List<String> lines = new LinkedList<String>();
-	    while(s < text.length()) {
-		do {
-		    int te;
-		    if(i < sl.length)
-			te = sl[i];
-		    else
-			te = text.length();
-		    Coord b = strsize(text.substring(s, te));
-		    if(b.x > width) {
-			break;
-		    } else {
-			e = te;
-			i++;
-		    }
-		    if((te < text.length()) && (text.charAt(te) == '\n')) {
-			e = te;
-			break;
-		    }
-		} while(i <= sl.length);
-		String line = text.substring(s, e);
-		lines.add(line);
-		Coord b = strsize(line);
-		y += b.y;
-		s = e + 1;
+    
+    public Text renderwrap(String text, Color c, int width) {
+        final List<String> lines = new ArrayList<String>();
+        final int height = wrap(lines, text, width);
+        Text t = new Text(text);
+        t.img = TexI.mkbuf(new Coord(width, height));
+        Graphics g = t.img.createGraphics();
+        if (aa) Utils.AA(g);
+        g.setFont(font);
+        g.setColor(c);
+        t.m = g.getFontMetrics();
+        int y = 0;
+        for (String line : lines) {
+            g.drawString(line, 0, y + t.m.getAscent());
+            Coord b = strsize(line);
+            y += b.y;
+        }
+        g.dispose();
+        return (t);
+    }
+	
+	private int wrap(final List<String> lines, final String text, final int width) {
+	    final Indir<StringBuffer> buf = new Indir<StringBuffer>(){
+	        private StringBuffer buf;
+	        public StringBuffer get() { return buf; }
+	        public void set(StringBuffer buf) {this.buf = buf; }
+            public int compareTo(Indir<StringBuffer> o) { return 0; }
+	    };
+	    buf.set(new StringBuffer());
+	    int height = 0;
+	    for(final String word : text.split(" ")) {
+            height += process(lines, buf, word, width);
 	    }
-	    t.img = TexI.mkbuf(new Coord(width, y));
-	    Graphics g = t.img.createGraphics();
-	    if(aa)
-		Utils.AA(g);
-	    g.setFont(font);
-	    g.setColor(c);
-	    t.m = g.getFontMetrics();
-	    y = 0;
-	    for(String line : lines) {
-		g.drawString(line, 0, y + t.m.getAscent());
-		Coord b = strsize(line);
-		y += b.y;
+	    if(buf.get().length() > 0)
+	    {
+	        final String line = buf.get().toString();
+            lines.add(line);
+	        height += strsize(line).y;
 	    }
-	    g.dispose();
-	    return(t);
+	    return height;
+	}
+	
+	private int process(final List<String> lines, final Indir<StringBuffer> buf, final String word, final int width) {
+	 if(fits(buf.get() + word, width)) {
+	     buf.get().append(word + " ");
+	     return 0;
+	 } else if (buf.get().length() > 0) {
+	    final String line = buf.get().toString().trim();
+        lines.add(line);
+        buf.set(new StringBuffer());
+	    return strsize(line).y + process(lines, buf, word, width);
+	 } else {
+	     final int half = word.length() / 2;
+	     final int left = process(lines, buf, word.substring(0, half), width);
+	     final int right = process(lines, buf, word.substring(half), width);
+	     return left + right;
+	 }
+	}
+	
+	private boolean fits(final String text, final int width) {
+      return strsize(text).x <= width;
 	}
                 
 	public Text renderwrap(String text, int width) {
