@@ -127,7 +127,7 @@ public class TestClient implements Runnable {
 		do {
 		    connect();
 		    RemoteUI rui = new RemoteUI(sess);
-		    ui = new TestUI(new Coord(800, 600), sess);
+		    ui = new TestUI(new Coord(Config.RES_WIDTH, Config.RES_HEIGHT), sess);
 		    rui.run(ui);
 		} while(loop);
 	    } catch(InterruptedException e) {

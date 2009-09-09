@@ -64,7 +64,7 @@ public class SlenHud extends Widget implements DropTarget {
 		}
 	    });
 	int h = bg.sz().y;
-	sz = new Coord(800, h);
+	sz = new Coord(Config.RES_WIDTH, h);
 	sz.y = (h - fc.y > sz.y)?(h - fc.y):sz.y;
 	sz.y = (h - mc.y > sz.y)?(h - mc.y):sz.y;
     }
@@ -108,19 +108,19 @@ public class SlenHud extends Widget implements DropTarget {
 	    }
 	    if(!w && c) {
 		if(ca < 0.6) {
-		    m.c.y = 600 - (int)(sz.y * (1 - (ca / 0.6)));
+		    m.c.y = Config.RES_HEIGHT - (int)(sz.y * (1 - (ca / 0.6)));
 		} else {
-		    m.c.y = 600;
-		    sb.c.y = 600 - (int)(sb.sz.y * ((ca - 0.6) / 0.4));
+		    m.c.y = Config.RES_HEIGHT;
+		    sb.c.y = Config.RES_HEIGHT - (int)(sb.sz.y * ((ca - 0.6) / 0.4));
 		}
 	    }
 	    if(w && !c) {
 		if(ca < 0.6) {
-		    m.c.y = 600 - (int)(sz.y * (ca / 0.6));
-		    sb.c.y = 600 - (int)(sb.sz.y * (1 - (ca / 0.6)));
+		    m.c.y = Config.RES_HEIGHT - (int)(sz.y * (ca / 0.6));
+		    sb.c.y = Config.RES_HEIGHT - (int)(sb.sz.y * (1 - (ca / 0.6)));
 		} else {
-		    m.c.y = 600 - sz.y;
-		    sb.c.y = 600;
+		    m.c.y = Config.RES_HEIGHT - sz.y;
+		    sb.c.y = Config.RES_HEIGHT;
 		}
 	    }
 	    if(ct >= ms)
@@ -129,7 +129,7 @@ public class SlenHud extends Widget implements DropTarget {
     }
 
     public SlenHud(Coord c, Widget parent) {
-	super(new Coord(800, 600).add(sz.inv()), sz, parent);
+	super(new Coord(Config.RES_WIDTH, Config.RES_HEIGHT).add(sz.inv()), sz, parent);
 	new Img(fc, flarps, this);
 	new Img(mc, mbg, this);
 	new Img(dispc, dispbg, this);
@@ -162,7 +162,7 @@ public class SlenHud extends Widget implements DropTarget {
 		}
 	    };
 	}
-	vc = new VC(this, new IButton(new Coord(380, 600), parent, Resource.loadimg("gfx/hud/slen/sbu"), Resource.loadimg("gfx/hud/slen/sbd")) {
+	vc = new VC(this, new IButton(new Coord(380, Config.RES_HEIGHT), parent, Resource.loadimg("gfx/hud/slen/sbu"), Resource.loadimg("gfx/hud/slen/sbd")) {
 		public void click() {
 		    vc.show();
 		}
@@ -513,7 +513,7 @@ public class SlenHud extends Widget implements DropTarget {
     }
     
     public int foldheight() {
-	return(600 - c.y);
+	return(Config.RES_HEIGHT - c.y);
     }
     
     public boolean dropthing(Coord c, Object thing) {

@@ -33,6 +33,7 @@ import java.io.PrintWriter;
 import java.util.*;
 
 public class MainFrame extends Frame implements Runnable, FSMan {
+    public static MainFrame f;
     HavenPanel p;
     ThreadGroup g;
     DisplayMode fsmode = null, prefs = null;
@@ -195,7 +196,7 @@ public class MainFrame extends Frame implements Runnable, FSMan {
 	ThreadGroup g = Utils.tg();
 	Resource.loadergroup = g;
 	setupres();
-	MainFrame f = new MainFrame(800, 600);
+	f = new MainFrame(Config.RES_WIDTH, Config.RES_HEIGHT);
 	if(Config.fullscreen)
 	    f.setfs();
 	f.g = g;

@@ -108,7 +108,7 @@ public class HavenApplet extends Applet {
     public void startgame() {
 	if(running)
 	    return;
-	h = new HavenPanel(800, 600);
+	h = new HavenPanel(Config.RES_WIDTH, Config.RES_HEIGHT);
 	add(h);
 	h.init();
 	p = new haven.error.ErrorHandler(new ErrorPanel());
@@ -158,7 +158,7 @@ public class HavenApplet extends Applet {
     }
     
     public void init() {
-	resize(800, 600);
+	resize(Config.RES_WIDTH, Config.RES_HEIGHT);
 	startgame();
     }
     
