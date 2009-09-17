@@ -67,7 +67,7 @@ public class MapView extends Widget implements DTarget {
     static {
 	Widget.addtype("mapview", new WidgetFactory() {
 		public Widget create(Coord c, Widget parent, Object[] args) {
-		    Coord sz = (Coord)args[0];
+		    Coord sz = new Coord(Config.RES_WIDTH, Config.RES_HEIGHT);
 		    Coord mc = (Coord)args[1];
 		    int pgob = -1;
 		    if(args.length > 2)

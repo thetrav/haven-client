@@ -41,7 +41,7 @@ public class LoginScreen extends Widget {
     }
 	
     public LoginScreen(Widget parent) {
-	super(Coord.z, new Coord(800, 600), parent);
+	super(Coord.z, new Coord(Config.RES_WIDTH, Config.RES_HEIGHT), parent);
 	setfocustab(true);
 	parent.setfocus(this);
 	new Img(Coord.z, bg, this);

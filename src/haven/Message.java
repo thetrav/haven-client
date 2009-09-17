@@ -186,24 +186,28 @@ public class Message implements java.io.Serializable {
 	return(new Color(uint8(), uint8(), uint8(), uint8()));
     }
 	
+    private final ArrayList<Object> list = new ArrayList<Object>();
+    private boolean listCached = false;
     public Object[] list() {
-	ArrayList<Object> ret = new ArrayList<Object>();
-	while(true) {
-	    if(off >= blob.length)
-		break;
-	    int t = uint8();
-	    if(t == T_END)
-		break;
-	    else if(t == T_INT)
-		ret.add(int32());
-	    else if(t == T_STR)
-		ret.add(string());
-	    else if(t == T_COORD)
-		ret.add(coord());
-	    else if(t == T_COLOR)
-		ret.add(color());
+	if(!listCached)
+	{
+    	while(true) {
+    	    if(off >= blob.length)
+    		break;
+    	    int t = uint8();
+    	    if(t == T_END)
+    		break;
+    	    else if(t == T_INT)
+    		list.add(int32());
+    	    else if(t == T_STR)
+    		list.add(string());
+    	    else if(t == T_COORD)
+    		list.add(coord());
+    	    else if(t == T_COLOR)
+    		list.add(color());
+    	}
 	}
-	return(ret.toArray());
+	return(list.toArray());
     }
 	
     public String toString() {

@@ -26,13 +26,21 @@
 
 package haven;
 
-import java.awt.*;
-import java.net.URL;
-import java.awt.event.*;
+import java.awt.DisplayMode;
+import java.awt.Frame;
+import java.awt.GraphicsDevice;
+import java.awt.Image;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedList;
+
+import org.apache.log4j.Logger;
 
 public class MainFrame extends Frame implements Runnable, FSMan {
+    private static Logger LOG = Logger.getLogger(MainFrame.class);
+    public static MainFrame f;
     HavenPanel p;
     ThreadGroup g;
     DisplayMode fsmode = null, prefs = null;
@@ -130,6 +138,7 @@ public class MainFrame extends Frame implements Runnable, FSMan {
     }
 	
     public void run() {
+    LOG.debug("MainFrame.run");
 	addWindowListener(new WindowAdapter() {
 		public void windowClosing(WindowEvent e) {
 		    g.interrupt();
@@ -174,7 +183,7 @@ public class MainFrame extends Frame implements Runnable, FSMan {
 	WebBrowser.self = JnlpBrowser.create();
     }
 
-    private static void javabughack() throws InterruptedException {
+    protected static void javabughack() throws InterruptedException {
 	/* Work around a stupid deadlock bug in AWT. */
 	try {
 	    javax.swing.SwingUtilities.invokeAndWait(new Runnable() {
@@ -190,12 +199,13 @@ public class MainFrame extends Frame implements Runnable, FSMan {
 	}
     }
 
-    private static void main2(String[] args) {
+    protected static void main2(String[] args) {
+    LOG.debug("mainframe.main2");
 	Config.cmdline(args);
 	ThreadGroup g = Utils.tg();
 	Resource.loadergroup = g;
 	setupres();
-	MainFrame f = new MainFrame(800, 600);
+	f = new MainFrame(Config.RES_WIDTH, Config.RES_HEIGHT);
 	if(Config.fullscreen)
 	    f.setfs();
 	f.g = g;
@@ -256,7 +266,7 @@ public class MainFrame extends Frame implements Runnable, FSMan {
 	System.exit(0);
     }
 	
-    private static void dumplist(Collection<Resource> list, String fn) {
+    protected static void dumplist(Collection<Resource> list, String fn) {
 	try {
 	    if(fn != null)
 		dumplist(list, new PrintWriter(fn));
@@ -265,7 +275,7 @@ public class MainFrame extends Frame implements Runnable, FSMan {
 	}
     }
     
-    private static void dumplist(Collection<Resource> list, PrintWriter out) {
+    protected static void dumplist(Collection<Resource> list, PrintWriter out) {
 	try {
 	    for(Resource res : list) {
 		if(res.loading)

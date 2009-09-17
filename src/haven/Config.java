@@ -31,6 +31,8 @@ import java.io.PrintStream;
 import static haven.Utils.getprop;
 
 public class Config {
+    public static int RES_WIDTH=1100;
+    public static int RES_HEIGHT=700;
     public static byte[] authck;
     public static String authuser;
     public static String authserv;

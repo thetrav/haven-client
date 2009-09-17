@@ -47,33 +47,6 @@ public class MiniMap extends Widget {
     static class Loader implements Runnable {
 	Thread me = null;
 	
-	private InputStream getreal(String nm) throws IOException {
-	    URL url = new URL(Config.mapurl, nm + ".png");
-	    URLConnection c = url.openConnection();
-	    c.addRequestProperty("User-Agent", "Haven/1.0");
-	    InputStream s = c.getInputStream();
-	    /*
-	     * I've commented this out, since it seems that the JNLP
-	     * PersistenceService (or at least Sun's implementation of
-	     * it) is SLOWER THAN SNAILS, so this caused more problems
-	     * than it solved.
-	     *
-	    if(ResCache.global != null) {
-		StreamTee tee = new StreamTee(s);
-		tee.setncwe();
-		tee.attach(ResCache.global.store("mm/" + nm));
-		s = tee;
-	    }
-	    */
-	    return(s);
-	}
-	
-	private InputStream getcached(String nm) throws IOException {
-	    if(ResCache.global == null)
-		throw(new FileNotFoundException("No resource cache installed"));
-	    return(ResCache.global.fetch("mm/" + nm));
-	}
-
 	public void run() {
 	    try {
 		while(true) {
@@ -88,17 +61,14 @@ public class MiniMap extends Widget {
 		    if(grid == null)
 			break;
 		    try {
-			InputStream in;
-			try {
-			    in = getcached(grid);
-			} catch(FileNotFoundException e) {
-			    in = getreal(grid);
-			}
+			URL url = new URL(Config.mapurl, grid + ".png");
+			URLConnection c = url.openConnection();
+			c.addRequestProperty("User-Agent", "Haven/1.0");
+			InputStream in = c.getInputStream();
 			BufferedImage img;
 			try {
 			    img = ImageIO.read(in);
 			} finally {
-                            Utils.readtileof(in);
 			    in.close();
 			}
 			Tex tex = new TexI(img);

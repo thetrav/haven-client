@@ -339,14 +339,6 @@ public class Utils {
 	}
     }
     
-    static void readtileof(InputStream in) throws IOException {
-        byte[] buf = new byte[4096];
-        while(true) {
-            if(in.read(buf, 0, buf.length) < 0)
-                return;
-        }
-    }
-    
     static byte[] readall(InputStream in) throws IOException {
 	byte[] buf = new byte[4096];
 	int off = 0;
