@@ -26,6 +26,8 @@ public class ExtendoFrame extends JFrame
     private static final int TOOLBOX_RES_WIDTH = 150;
     private static final int WINDOW_GAP = 10;
     public final static ExtendoFrame instance = new ExtendoFrame();
+    public static MainFrameWrapper wrapperInstance;
+    public static Session sess;
     public final JPanel content;
     private boolean logMessages = false;
     private static Map<String, NewWidgetListener> newWidgetListeners = new HashMap<String, NewWidgetListener>();
@@ -36,7 +38,6 @@ public class ExtendoFrame extends JFrame
     {
         newWidgetListeners.put(FlowerMenuExtend.NEW_WIDGET_MESSAGE_CODE, new FlowerMenuExtend());
     }
-    
     
     /**
      * @param args
@@ -102,10 +103,10 @@ public class ExtendoFrame extends JFrame
     {
         final String argString = mkString(args);
         if(logMessages) LOG.info("newwidget("+id+", "+type+", "+c+ ", " + parent + ", " + argString + ")");
-        final NewWidgetListener lst = newWidgetListeners.get(type);
-        if(lst != null) 
+        final NewWidgetListener listener = newWidgetListeners.get(type);
+        if(listener != null) 
         {
-            if(lst.newWidget(id, type, c, parent, args))
+            if(!listener.newWidget(id, type, c, parent, args))
             {
                 ui.newwidget(id, type, c, parent, args);
             }
@@ -184,6 +185,7 @@ public class ExtendoFrame extends JFrame
             Resource.loadergroup = g;
             setupres();
             f = new MainFrameWrapper(Config.RES_WIDTH, Config.RES_HEIGHT);
+            wrapperInstance = (MainFrameWrapper) f;
             if(Config.fullscreen)
                 f.setfs();
             f.g = g;
@@ -229,7 +231,7 @@ public class ExtendoFrame extends JFrame
                     bill.setinitcookie(Config.authuser, Config.authck);
                     Config.authck = null;
                 }
-                Session sess = bill.run(p);
+                sess = bill.run(p);
                 RemoteUIWrapper rui = new RemoteUIWrapper(sess);
                 rui.run(p.newui(sess));
                 }

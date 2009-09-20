@@ -1,44 +1,71 @@
 package haven.extend;
 
-import org.apache.log4j.Logger;
-
 import haven.Coord;
-import haven.FlowerMenu;
-import haven.IBox;
+import haven.ExtendoFrame;
+import haven.Message;
 import haven.NewWidgetListener;
-import haven.Widget;
-import haven.WidgetFactory;
+
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
+
+import org.apache.log4j.Logger;
 
 public class FlowerMenuExtend implements NewWidgetListener
 {
-    private boolean first = true;
     private static final Logger LOG = Logger.getLogger(FlowerMenuExtend.class);
     public static final String NEW_WIDGET_MESSAGE_CODE = "sm";
-
+    private static final String WIDGET_CLOSE_MESSAGE = "cl";
+    
+    private JPanel buttonPanel;
+    private int id;
     @Override
     public boolean newWidget(int id, String type, Coord c, int parent, Object... args)
     {
-        //hook into the widget construction factory
-        if(first)
+        this.id = id;
+        buttonPanel = new JPanel();
+        buttonPanel.setLayout(new GridLayout(0,args.length+1));
+        ExtendoFrame.instance.content.add(buttonPanel, BorderLayout.CENTER);
+        for (int i=0; i<args.length; i++)
         {
-            Widget.addtype("sm", new WidgetFactory() {
-                public Widget create(Coord c, Widget parent, Object[] args) {
-                    LOG.debug("creating flower menu");
-                    if((c.x == -1) && (c.y == -1))
-                    c = parent.ui.lcc;
-                    String[] opts = new String[args.length];
-                    for(int i = 0; i < args.length; i++)
-                    {
-                        opts[i] = (String)args[i];
-                        LOG.debug("opt["+i+"]: "+opts[i]);
-                    }
-                    return(new FlowerMenu(c, parent, opts));
-                }
-                });
-            //this should already be set, no need to repeat
-//            FlowerMenu.pbox = new IBox("gfx/hud", "tl", "tr", "bl", "br", "extvl", "extvr", "extht", "exthb");
-            first = false;
+            addButton((String)args[i], i);
         }
-        return false;
+        addButton("Close", -1);
+        ExtendoFrame.instance.repaint();
+        return true;
     }
+    
+    private void addButton(final String name, final int index)
+    {
+        final JButton button = new JButton(name);
+        buttonPanel.add(button);
+        button.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent arg0)
+            {
+                select(index);
+            }
+        });
+    }
+    
+    public void select(int index)
+    {
+        LOG.info("clicked:"+index);
+        rcvmsg(id, WIDGET_CLOSE_MESSAGE, index);
+        ExtendoFrame.instance.content.remove(buttonPanel);
+    }
+    
+    public void rcvmsg(int id, String name, Object... args) {
+        Message msg = new Message(Message.RMSG_WDGMSG);
+        msg.adduint16(id);
+        msg.addstring(name);
+        msg.addlist(args);
+        ExtendoFrame.sess.queuemsg(msg);
+    }
+    
 }
