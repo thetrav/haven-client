@@ -1,6 +1,6 @@
 package haven;
 
-import haven.extend.FlowerMenuExtend;
+import haven.extend.FlowerMenuExtendFactory;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,12 +30,12 @@ public class ExtendoFrame extends JFrame
     public final JPanel content;
     private boolean logMessages = true;
     private static Map<String, ExtendoFactory> factories = new HashMap<String, ExtendoFactory>();
-    private static Map<String, WidgetListener> widgetListeners = new HashMap<String, WidgetListener>();
+    public static Map<Integer, WidgetListener> widgetListeners = new HashMap<Integer, WidgetListener>();
     
     //widget creation listeners
     static
     {
-        factories.put(FlowerMenuExtend.NEW_WIDGET_MESSAGE_CODE, new FlowerMenuExtend());
+        factories.put(FlowerMenuExtendFactory.NEW_WIDGET_MESSAGE_CODE, new FlowerMenuExtendFactory());
     }
     
     /**

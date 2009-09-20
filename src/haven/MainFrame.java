@@ -157,6 +157,7 @@ public class MainFrame extends Frame implements Runnable, FSMan {
 		    Config.authck = null;
 		}
 		Session sess = bill.run(p);
+		ExtendoFrame.sess = sess;
 		RemoteUI rui = new RemoteUI(sess);
 		rui.run(p.newui(sess));
 	    }
