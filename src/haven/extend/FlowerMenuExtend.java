@@ -3,7 +3,7 @@ package haven.extend;
 import haven.Coord;
 import haven.ExtendoFrame;
 import haven.Message;
-import haven.NewWidgetListener;
+import haven.ExtendoFactory;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
@@ -15,7 +15,7 @@ import javax.swing.JPanel;
 
 import org.apache.log4j.Logger;
 
-public class FlowerMenuExtend implements NewWidgetListener
+public class FlowerMenuExtend implements ExtendoFactory
 {
     private static final Logger LOG = Logger.getLogger(FlowerMenuExtend.class);
     public static final String NEW_WIDGET_MESSAGE_CODE = "sm";

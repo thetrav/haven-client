@@ -1,6 +1,6 @@
 package haven;
 
-public interface UiMessageListener
+public interface WidgetListener
 {
     boolean uimsg(int id, String msg, Object... args); 
 }
