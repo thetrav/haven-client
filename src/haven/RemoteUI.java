@@ -69,6 +69,7 @@ public class RemoteUI implements UI.Receiver {
 		    ExtendoFrame.instance.uimsg(ui, id, name, args);
 		} else if(msg.type == Message.RMSG_DSTWDG) {
 		    int id = msg.uint16();
+		    ExtendoFrame.instance.destroy(id);
 		    ui.destroy(id);
 		}
 	    }

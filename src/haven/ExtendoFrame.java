@@ -117,10 +117,20 @@ public class ExtendoFrame extends JFrame
         final WidgetListener listener = widgetListeners.get(id);
         if (listener != null)
         {
-            LOG.info("listener:"+listener);
             if(listener.uimsg(id, name, args))
             {
             }
+        }
+    }
+
+    public void destroy(int id)
+    {
+        LOG.info("destroy " + id);
+        final WidgetListener listener = widgetListeners.get(id);
+        if(listener!= null)
+        {
+            
+            listener.destroy();
         }
     }
 

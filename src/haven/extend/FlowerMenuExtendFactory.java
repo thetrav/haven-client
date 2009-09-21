@@ -1,15 +1,16 @@
 package haven.extend;
 
 import haven.Coord;
-import haven.ExtendoFrame;
-import haven.Message;
 import haven.ExtendoFactory;
+import haven.ExtendoFrame;
 import haven.WidgetListener;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -34,6 +35,7 @@ public class FlowerMenuExtendFactory implements ExtendoFactory
         private int id;
         
         private JPanel buttonPanel;
+        private List<JButton> buttons = new ArrayList<JButton>();
         
         FlowerMenuExtend(int id, String type, Coord c, int parent, Object... args)
         {
@@ -53,6 +55,7 @@ public class FlowerMenuExtendFactory implements ExtendoFactory
         {
             final JButton button = new JButton(name);
             buttonPanel.add(button);
+            buttons.add(button);
             button.addActionListener(new ActionListener()
             {
                 @Override
@@ -67,8 +70,7 @@ public class FlowerMenuExtendFactory implements ExtendoFactory
         {
             LOG.info("clicked:"+index);
             Utils.sendMessageToServer(id, WIDGET_CLOSE_MESSAGE, index);
-            ExtendoFrame.instance.content.remove(buttonPanel);
-            ExtendoFrame.instance.content.revalidate();
+            destroy();
         }
         
         @Override
@@ -79,6 +81,20 @@ public class FlowerMenuExtendFactory implements ExtendoFactory
             content.remove(buttonPanel);
             content.revalidate();
             return false;
+        }
+
+        @Override
+        public void destroy()
+        {
+            for (JButton button : buttons)
+            {
+                for (ActionListener listener : button.getActionListeners())
+                {
+                    button.removeActionListener(listener);
+                }
+            }
+            ExtendoFrame.instance.content.remove(buttonPanel);
+            ExtendoFrame.instance.content.revalidate();
         }
     }
 }

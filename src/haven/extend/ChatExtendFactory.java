@@ -9,8 +9,13 @@ import haven.WidgetListener;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Rectangle;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -32,7 +37,7 @@ public class ChatExtendFactory implements ExtendoFactory
         return false;
     }
     
-    class ChatExtend implements WidgetListener, KeyListener
+    class ChatExtend extends WindowAdapter implements WidgetListener, KeyListener
     {
         private final int id;
         private StringBuffer lines = new StringBuffer();
@@ -62,7 +67,18 @@ public class ChatExtendFactory implements ExtendoFactory
             {
                 frame.setLocation(MainFrame.f.getWidth() + 10, MainFrame.f.getY());
             }
+            frame.addWindowListener(this);
+           
             frame.setVisible(true);
+        }
+        
+        @Override
+        public void windowClosing(WindowEvent e)
+        {
+            super.windowClosing(e);
+            frame.removeWindowListener(this);
+            frame.dispose();
+            Utils.sendMessageToServer(id, "close");
         }
 
         @Override
@@ -92,7 +108,7 @@ public class ChatExtendFactory implements ExtendoFactory
             int x = 0;
             System.out.println("y="+y +" height="+height + " scrollheight="+jScrollPane.getHeight());
             
-            jScrollPane.scrollRectToVisible(new Rectangle(0,50,0,0));
+            jScrollPane.scrollRectToVisible(new Rectangle(0,frame.getHeight(),0,0));
         }
 
         private String determineSource(Object[] args)
@@ -133,6 +149,14 @@ public class ChatExtendFactory implements ExtendoFactory
         public void keyTyped(KeyEvent arg0)
         {
             
+        }
+
+        @Override
+        public void destroy()
+        {
+            input.removeKeyListener(this);
+            frame.setVisible(false);
+            frame.dispose();
         }
         
     }

@@ -2,5 +2,7 @@ package haven;
 
 public interface WidgetListener
 {
-    boolean uimsg(int id, String msg, Object... args); 
+    boolean uimsg(int id, String msg, Object... args);
+
+    void destroy(); 
 }
