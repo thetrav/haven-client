@@ -27,12 +27,16 @@
 package haven;
 
 import java.net.URL;
+import java.io.File;
 import java.io.PrintStream;
 import static haven.Utils.getprop;
 
 public class Config {
     public static int RES_WIDTH=1100;
     public static int RES_HEIGHT=700;
+    public static String MINIMAP_PATH = "minimaps" + File.pathSeparator;
+    
+    
     public static byte[] authck;
     public static String authuser;
     public static String authserv;
