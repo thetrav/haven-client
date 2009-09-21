@@ -66,19 +66,11 @@ public class FlowerMenuExtendFactory implements ExtendoFactory
         public void select(int index)
         {
             LOG.info("clicked:"+index);
-            sendMessageToServer(id, WIDGET_CLOSE_MESSAGE, index);
+            Utils.sendMessageToServer(id, WIDGET_CLOSE_MESSAGE, index);
             ExtendoFrame.instance.content.remove(buttonPanel);
             ExtendoFrame.instance.content.revalidate();
         }
         
-        public void sendMessageToServer(int id, String name, Object... args) {
-            Message msg = new Message(Message.RMSG_WDGMSG);
-            msg.adduint16(id);
-            msg.addstring(name);
-            msg.addlist(args);
-            ExtendoFrame.sess.queuemsg(msg);
-        }
-
         @Override
         public boolean uimsg(int id, String msg, Object... args)
         {

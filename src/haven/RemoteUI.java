@@ -26,7 +26,10 @@
 
 package haven;
 
+import org.apache.log4j.Logger;
+
 public class RemoteUI implements UI.Receiver {
+    private static final Logger LOG = Logger.getLogger(RemoteUI.class);
     Session sess;
     UI ui;
 	
@@ -36,6 +39,7 @@ public class RemoteUI implements UI.Receiver {
     }
 	
     public void rcvmsg(int id, String name, Object... args) {
+    ExtendoFrame.instance.rcvmsg(id, name, args);
 	Message msg = new Message(Message.RMSG_WDGMSG);
 	msg.adduint16(id);
 	msg.addstring(name);
