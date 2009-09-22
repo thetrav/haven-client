@@ -361,8 +361,10 @@ public class MapView extends Widget implements DTarget {
 	    if(hit == null)
 		wdgmsg("click", c, mc, button, ui.modflags());
 	    else
-	    ExtendoFrame.instance.itemClick(c, mc, button, ui.modflags(), hit);
+	    {
 		wdgmsg("click", c, mc, button, ui.modflags(), hit.id, hit.getc());
+	    ExtendoFrame.instance.itemClick(c, mc, button, ui.modflags(), hit);
+	    }
 	}
 	return(true);
     }

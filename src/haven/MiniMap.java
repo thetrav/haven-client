@@ -35,6 +35,8 @@ import java.io.*;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
+import org.apache.log4j.Logger;
+
 public class MiniMap extends Widget {
     static Map<String, Tex> grids = new WeakHashMap<String, Tex>();
     static Set<String> loading = new HashSet<String>();
@@ -43,6 +45,8 @@ public class MiniMap extends Widget {
     public static final Tex nomap = Resource.loadtex("gfx/hud/mmap/nomap");
     public static final Resource plx = Resource.load("gfx/hud/mmap/x");
     MapView mv;
+    private Map<String, String> savedCoords = new HashMap<String,String>();
+    private Logger LOG = Logger.getLogger(MiniMap.class);
     
     static class Loader implements Runnable {
 	Thread me = null;
@@ -74,6 +78,7 @@ public class MiniMap extends Widget {
 			        dir.mkdirs();
 			    }
 			    File outFile = new File(dir, grid);
+			    System.out.println("wrote map to file");
 			    ImageIO.write(img, "PNG", outFile);
 			} finally {
 			    in.close();
@@ -165,6 +170,16 @@ public class MiniMap extends Widget {
 		    break outer;
 		}
 		Tex tex = getgrid(grid.mnm);
+//		    final String coord = cg.toString();
+//		    if(!savedCoords.containsKey(coord))
+//		    {
+//		        savedCoords.put(coord, cg.toString());
+//		        LOG.debug("coord:"+cg+" hash:"+grid.mnm);
+//		    }
+//		    else if (!savedCoords.get(coord).equals(grid.mnm))
+//		    {
+//		        LOG.debug("coord"+coord + " has been reused for multiple hashes");
+//		    }
 		if(tex == null)
 		    continue;
 		g.image(tex, cg.mul(cmaps).add(tc.inv()).add(sz.div(2)));
