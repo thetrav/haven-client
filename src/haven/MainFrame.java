@@ -138,7 +138,7 @@ public class MainFrame extends Frame implements Runnable, FSMan {
     }
 	
     public void run() {
-    LOG.debug("MainFrame.run");
+    if (Config.LOG) LOG.debug("MainFrame.run");
 	addWindowListener(new WindowAdapter() {
 		public void windowClosing(WindowEvent e) {
 		    g.interrupt();
@@ -201,7 +201,7 @@ public class MainFrame extends Frame implements Runnable, FSMan {
     }
 
     protected static void main2(String[] args) {
-    LOG.debug("mainframe.main2");
+    if (Config.LOG) LOG.debug("mainframe.main2");
 	Config.cmdline(args);
 	ThreadGroup g = Utils.tg();
 	Resource.loadergroup = g;

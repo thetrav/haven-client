@@ -29,7 +29,6 @@ package haven;
 import org.apache.log4j.Logger;
 
 public class RemoteUI implements UI.Receiver {
-    private static final Logger LOG = Logger.getLogger(RemoteUI.class);
     Session sess;
     UI ui;
 	

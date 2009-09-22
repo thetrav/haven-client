@@ -2,6 +2,7 @@ package haven;
 
 import haven.extend.ChatExtendFactory;
 import haven.extend.FlowerMenuExtendFactory;
+import haven.extend.ItemHitEvent;
 import haven.extend.Utils;
 
 import java.awt.event.ActionEvent;
@@ -24,6 +25,7 @@ public class ExtendoFrame extends JFrame
     private static final int WINDOW_GAP = 10;
     public final static ExtendoFrame instance = new ExtendoFrame();
     public static Session sess;
+    public static ItemHitEvent lastHit = null;
     public final JPanel content;
     private boolean logMessages = true;
     private static Map<String, ExtendoFactory> factories = new HashMap<String, ExtendoFactory>();
@@ -41,7 +43,7 @@ public class ExtendoFrame extends JFrame
      */
     public static void main(String[] args)
     {
-        LOG.info("running");
+        if (Config.LOG) LOG.info("running");
         MainFrame.main(args);
     }
     
@@ -93,14 +95,14 @@ public class ExtendoFrame extends JFrame
     public void rcvmsg(int id, String name, Object... args) 
     {
         final String argString = Utils.mkString(args);
-        if(logMessages) LOG.info("widget sent message via: rcvmsg("+id+", "+name+", "+argString+")");
+        if(Config.LOG) LOG.info("widget sent message via: rcvmsg("+id+", "+name+", "+argString+")");
         
     }
     
     public void newwidget(UI ui, int id, String type, Coord c, int parent, Object... args) throws InterruptedException
     {
         final String argString = Utils.mkString(args);
-        if(logMessages) LOG.info("newwidget("+id+", "+type+", "+c+ ", " + parent + ", " + argString + ")");
+        if(Config.LOG) LOG.info("newwidget("+id+", "+type+", "+c+ ", " + parent + ", " + argString + ")");
         final ExtendoFactory listener = factories.get(type);
         if(listener != null) 
         {
@@ -113,7 +115,7 @@ public class ExtendoFrame extends JFrame
     public void uimsg(final UI ui, int id, String name, Object... args) 
     {
         final String argString = Utils.mkString(args);
-        if(logMessages) LOG.info("uimsg("+id+", "+name+", "+argString+")");
+        if(Config.LOG) LOG.info("uimsg("+id+", "+name+", "+argString+")");
         final WidgetListener listener = widgetListeners.get(id);
         if (listener != null)
         {
@@ -125,13 +127,18 @@ public class ExtendoFrame extends JFrame
 
     public void destroy(int id)
     {
-        LOG.info("destroy " + id);
+        if(Config.LOG) LOG.info("destroy " + id);
         final WidgetListener listener = widgetListeners.get(id);
         if(listener!= null)
         {
             
             listener.destroy();
         }
+    }
+
+    public void itemClick(Coord c, Coord mc, int button, int modflags, Gob hit)
+    {
+        lastHit = new ItemHitEvent(c, mc, button, modflags, hit);
     }
 
 }

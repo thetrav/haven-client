@@ -1,11 +1,13 @@
 package haven.extend;
 
+import haven.Config;
 import haven.Coord;
 import haven.ExtendoFactory;
 import haven.ExtendoFrame;
 import haven.WidgetListener;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,7 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
 
 import org.apache.log4j.Logger;
 
@@ -41,8 +46,10 @@ public class FlowerMenuExtendFactory implements ExtendoFactory
         {
             this.id = id;
             buttonPanel = new JPanel();
-            buttonPanel.setLayout(new GridLayout(0,args.length+1));
+            buttonPanel.setLayout(new GridLayout(args.length+2, 0));
+            buttonPanel.setBorder(new LineBorder(Color.BLACK, 1));
             ExtendoFrame.instance.content.add(buttonPanel, BorderLayout.CENTER);
+            buttonPanel.add(new JLabel("flower menu from glob id:"+ExtendoFrame.instance.lastHit.hit.id));
             for (int i=0; i<args.length; i++)
             {
                 addButton((String)args[i], i);
@@ -68,7 +75,7 @@ public class FlowerMenuExtendFactory implements ExtendoFactory
         
         public void select(int index)
         {
-            LOG.info("clicked:"+index);
+            if(Config.LOG) LOG.info("clicked:"+index);
             Utils.sendMessageToServer(id, WIDGET_CLOSE_MESSAGE, index);
             destroy();
         }

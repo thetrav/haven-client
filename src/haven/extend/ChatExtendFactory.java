@@ -1,5 +1,6 @@
 package haven.extend;
 
+import haven.Config;
 import haven.Coord;
 import haven.ExtendoFactory;
 import haven.ExtendoFrame;
@@ -9,13 +10,10 @@ import haven.WidgetListener;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Rectangle;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -84,7 +82,7 @@ public class ChatExtendFactory implements ExtendoFactory
         @Override
         public boolean uimsg(int id, String msg, Object... args)
         {
-            LOG.info("got message" + msg);
+            if (Config.LOG) LOG.info("got message" + msg);
             if(msg.equals("log")) {
                 final String source = determineSource(args);
                 lines.append(Utils.padright(source, columnLength) + " > ");
