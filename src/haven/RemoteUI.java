@@ -26,7 +26,6 @@
 
 package haven;
 
-import org.apache.log4j.Logger;
 
 public class RemoteUI implements UI.Receiver {
     Session sess;
