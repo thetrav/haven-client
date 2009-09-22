@@ -77,7 +77,7 @@ public class MiniMap extends Widget {
 			    {
 			        dir.mkdirs();
 			    }
-			    File outFile = new File(dir, grid);
+			    File outFile = new File(dir, grid + ".png");
 			    System.out.println("wrote map to file");
 			    ImageIO.write(img, "PNG", outFile);
 			} finally {
