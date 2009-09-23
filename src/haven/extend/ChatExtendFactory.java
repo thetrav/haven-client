@@ -10,6 +10,7 @@ import haven.WidgetListener;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Rectangle;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
@@ -37,6 +38,7 @@ public class ChatExtendFactory implements ExtendoFactory
     
     class ChatExtend extends WindowAdapter implements WidgetListener, KeyListener
     {
+        private UtilHook util = new DefaultUtilHook();
         private final int id;
         private StringBuffer lines = new StringBuffer();
         private final JFrame frame;
@@ -52,7 +54,8 @@ public class ChatExtendFactory implements ExtendoFactory
             frame = new JFrame((String)args[0]);
             frame.setSize(300,200);
             frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-            pane = new JPanel(new BorderLayout());
+            pane = new JPanel();
+            pane.setLayout(new BorderLayout());
             input = new JTextField();
             pane.add(input, BorderLayout.SOUTH);
             input.addKeyListener(this);
@@ -91,6 +94,7 @@ public class ChatExtendFactory implements ExtendoFactory
                 text.setText(lines.toString());
                 scrollToBottom();
                 pane.revalidate();
+                pane.updateUI();
                 return true;
             }
             return false;
@@ -98,15 +102,7 @@ public class ChatExtendFactory implements ExtendoFactory
 
         private void scrollToBottom()
         {
-            final Rectangle bounds = text.getBounds();
-            int y = bounds.height - 90;
-            y = y < 0 ? 0 : y; 
-            int width = jScrollPane.getWidth();
-            int height = jScrollPane.getHeight();
-            int x = 0;
-            System.out.println("y="+y +" height="+height + " scrollheight="+jScrollPane.getHeight());
-            
-            jScrollPane.scrollRectToVisible(new Rectangle(0,frame.getHeight(),0,0));
+            text.setCaretPosition(text.getText().length());
         }
 
         private String determineSource(Object[] args)
@@ -132,7 +128,7 @@ public class ChatExtendFactory implements ExtendoFactory
             if (arg0.getKeyCode() == KeyEvent.VK_ENTER)
             {
                 uimsg(id, "msg", input.getText(), new Color(255,0,0));
-                Utils.sendMessageToServer(id, "msg",input.getText());
+                util.sendMessageToServer(id, "msg",input.getText());
                 input.setText("");
             }
         }
@@ -163,10 +159,34 @@ public class ChatExtendFactory implements ExtendoFactory
     {
         System.out.println("testing");
         final ChatExtend chatExtend = new ChatExtendFactory().new ChatExtend(1, "", null, 1, new Object[]{"test chat"});
+        chatExtend.util = new StubbedUtilHook();
         chatExtend.uimsg(1,"log", "test some blue text", new Color(0, 0, 255));
         for (int i=0; i<20; i++)
         {
             chatExtend.uimsg(1,"log", "test some red text "+i, new Color(255, 0, 0));
         }
+        
+        final JFrame testFrame = new JFrame("Test input");
+        testFrame.setSize(300,100);
+        testFrame.setLocation(500,100);
+        final JTextField text = new JTextField();
+        testFrame.getContentPane().add(text);
+        text.addKeyListener(new KeyAdapter(){@Override
+        public void keyPressed(KeyEvent e)
+        {
+            if (e.getKeyCode() == KeyEvent.VK_ENTER)
+            {
+                new Thread()
+                {
+                    public void run() 
+                    {
+                        chatExtend.uimsg(1, "log", text.getText(), new Color(0,0,255));
+                        text.setText("");
+                    }
+                }.start();
+            }
+        }});
+        testFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        testFrame.setVisible(true);
     }
 }
