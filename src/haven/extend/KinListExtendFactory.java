@@ -14,6 +14,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +42,7 @@ public class KinListExtendFactory implements ExtendoFactory
         return false;
     }
 
-    private class KinListExtend implements WidgetListener
+    private class KinListExtend extends WindowAdapter implements WidgetListener
     {
         private static final int FRAME_WIDTH = 300;
         private final JFrame frame;
@@ -53,12 +55,15 @@ public class KinListExtendFactory implements ExtendoFactory
         private String selectedBuddy = null;
         private UtilHook util = new DefaultUtilHook();
         
+        private final int id;
+        
         public KinListExtend(final int id, final String type, final Coord c, final int parent, final Object[] args)
         {
+            this.id = id;
             frame = new JFrame("Kin List");
             frame.setSize(FRAME_WIDTH, 400);
             frame.setLocation(100, 100);
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
             content = new JPanel();
             final FlowLayout flowLayout = new FlowLayout();
             content.setLayout(flowLayout);
@@ -79,6 +84,15 @@ public class KinListExtendFactory implements ExtendoFactory
             content.add(controls, BorderLayout.SOUTH);
             controls.setVisible(false);
             frame.setVisible(true);
+        }
+        
+        @Override
+        public void windowClosing(WindowEvent e)
+        {
+            super.windowClosing(e);
+            frame.removeWindowListener(this);
+            frame.dispose();
+            Utils.sendMessageToServer(id, "close");
         }
 
         private void addList(final JList list, final String str)
@@ -155,6 +169,7 @@ public class KinListExtendFactory implements ExtendoFactory
         @Override
         public void destroy()
         {
+            frame.removeWindowListener(this);
             frame.dispose();
         }
 

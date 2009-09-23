@@ -82,7 +82,6 @@ public class FlowerMenuExtendFactory implements ExtendoFactory
         @Override
         public boolean uimsg(int id, String msg, Object... args)
         {
-            
             final JPanel content = ExtendoFrame.instance.content;
             content.remove(buttonPanel);
             content.revalidate();
