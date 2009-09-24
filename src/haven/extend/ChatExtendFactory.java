@@ -1,6 +1,5 @@
 package haven.extend;
 
-import haven.Config;
 import haven.Coord;
 import haven.ExtendoFactory;
 import haven.ExtendoFrame;
