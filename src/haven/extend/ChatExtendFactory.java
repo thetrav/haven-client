@@ -5,16 +5,14 @@ import haven.Coord;
 import haven.ExtendoFactory;
 import haven.ExtendoFrame;
 import haven.MainFrame;
-import haven.WidgetListener;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Rectangle;
+import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -28,6 +26,7 @@ public class ChatExtendFactory implements ExtendoFactory
 {
     private static final Logger LOG = Logger.getLogger(ChatExtendFactory.class);
     public static final String NEW_WIDGET_MESSAGE_CODE = "slenchat";
+    public static final String NEW_GLOBAL_CHAT_WIDGET_MESSAGE_CODE = "chat";
 
     @Override
     public boolean newWidget(int id, String type, Coord c, int parent, Object... args)
@@ -36,56 +35,39 @@ public class ChatExtendFactory implements ExtendoFactory
         return false;
     }
     
-    class ChatExtend extends WindowAdapter implements WidgetListener, KeyListener
+    class ChatExtend extends ExtendoFrameWidget implements KeyListener
     {
         private UtilHook util = new DefaultUtilHook();
-        private final int id;
         private StringBuffer lines = new StringBuffer();
-        private final JFrame frame;
-        private final JTextArea text;
-        private final JTextField input;
-        private final JPanel pane;
-        private final JScrollPane jScrollPane;
+        private JTextArea text;
+        private JTextField input;
+        private JScrollPane jScrollPane;
         private int columnLength = "blue".length();
         
         public ChatExtend(int id, String type, Coord c, int parent, Object[] args)
         {
-            this.id = id;
-            frame = new JFrame((String)args[0]);
-            frame.setSize(300,200);
-            frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-            pane = new JPanel();
-            pane.setLayout(new BorderLayout());
-            input = new JTextField();
-            pane.add(input, BorderLayout.SOUTH);
-            input.addKeyListener(this);
-            text = new JTextArea();
-            text.setEditable(false);
-            jScrollPane = new JScrollPane(text);
-            pane.add(jScrollPane, BorderLayout.CENTER);
-            frame.getContentPane().add(pane);
-            if(MainFrame.f != null)
-            {
-                frame.setLocation(MainFrame.f.getWidth() + 10, MainFrame.f.getY());
-            }
-            frame.addWindowListener(this);
-           
-            frame.setVisible(true);
+            super(id, type, c, parent, args);
         }
         
         @Override
-        public void windowClosing(WindowEvent e)
+        protected void addContent(JPanel content)
         {
-            super.windowClosing(e);
-            frame.removeWindowListener(this);
-            frame.dispose();
-            Utils.sendMessageToServer(id, "close");
+            content.setLayout(new BorderLayout());
+            input = new JTextField();
+            content.add(input, BorderLayout.SOUTH);
+            input.addKeyListener(this);
+            text = new JTextArea();
+            text.setEditable(false);
+            text.setLineWrap(true);
+            text.setWrapStyleWord(true);
+            jScrollPane = new JScrollPane(text);
+            jScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            content.add(jScrollPane, BorderLayout.CENTER);
         }
 
         @Override
         public boolean uimsg(int id, String msg, Object... args)
         {
-            if (Config.LOG) LOG.info("got message" + msg);
             if(msg.equals("log")) {
                 final String source = determineSource(args);
                 lines.append(Utils.padright(source, columnLength) + " > ");
@@ -93,8 +75,8 @@ public class ChatExtendFactory implements ExtendoFactory
                 lines.append("\n");
                 text.setText(lines.toString());
                 scrollToBottom();
-                pane.revalidate();
-                pane.updateUI();
+                content.revalidate();
+                content.updateUI();
                 return true;
             }
             return false;
@@ -152,7 +134,32 @@ public class ChatExtendFactory implements ExtendoFactory
             frame.setVisible(false);
             frame.dispose();
         }
-        
+
+        @Override
+        protected String getFrameLabel()
+        {
+            if(type.equals("slenchat"))
+            {
+                return (String)args[0];
+            }
+            else return "Chat";
+        }
+
+        @Override
+        protected Point getFrameLocation()
+        {
+            if(MainFrame.f != null)
+            {
+                return new Point(MainFrame.f.getX() + MainFrame.f.getWidth() + 10, MainFrame.f.getY());
+            }
+            return new Point(100,100);
+        }
+
+        @Override
+        protected Dimension getFrameSize()
+        {
+            return new Dimension(400,300);
+        }
     }
     
     public static void main(String[] args)
@@ -165,7 +172,7 @@ public class ChatExtendFactory implements ExtendoFactory
         {
             chatExtend.uimsg(1,"log", "test some red text "+i, new Color(255, 0, 0));
         }
-        
+        chatExtend.uimsg(1,"log", "test some red text test some red texttest some red texttest some red texttest some red texttest some red text", new Color(255, 0, 0));
         final JFrame testFrame = new JFrame("Test input");
         testFrame.setSize(300,100);
         testFrame.setLocation(500,100);

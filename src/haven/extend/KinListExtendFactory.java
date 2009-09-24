@@ -3,24 +3,22 @@ package haven.extend;
 import haven.Coord;
 import haven.ExtendoFactory;
 import haven.ExtendoFrame;
-import haven.WidgetListener;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -42,57 +40,42 @@ public class KinListExtendFactory implements ExtendoFactory
         return false;
     }
 
-    private class KinListExtend extends WindowAdapter implements WidgetListener
+    private class KinListExtend extends ExtendoFrameWidget
     {
-        private static final int FRAME_WIDTH = 300;
-        private final JFrame frame;
-        private final JList onlineList;
-        private final JList offlineList;
-        private final JPanel content;
-        private final JPanel controls;
+        private static final int FRAME_WIDTH = 250;
+        private static final int FRAME_HEIGHT = 400;
+        private JList onlineList;
+        private JList offlineList;
+        private JPanel controls;
         private final List<String> onlineBuddies = new ArrayList<String>();
         private final List<String> offlineBuddies = new ArrayList<String>();
         private String selectedBuddy = null;
-        private UtilHook util = new DefaultUtilHook();
-        
-        private final int id;
         
         public KinListExtend(final int id, final String type, final Coord c, final int parent, final Object[] args)
         {
-            this.id = id;
-            frame = new JFrame("Kin List");
-            frame.setSize(FRAME_WIDTH, 400);
-            frame.setLocation(100, 100);
-            frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-            content = new JPanel();
+            super(id, type, c, parent, args);
+        }
+        
+        @Override
+        protected void addContent(JPanel content)
+        {
             final FlowLayout flowLayout = new FlowLayout();
             content.setLayout(flowLayout);
             flowLayout.setHgap(FRAME_WIDTH);
-//            content.setLayout(new BorderLayout());
-//            content.setLayout(new GridLayout(3,1));
-            frame.getContentPane().add(content);
+            
             onlineList = new JList();
-            addList(onlineList, "Online Kin");
             offlineList = new JList();
+            addList(onlineList, "Online Kin");
             addList(offlineList, "Offline Kin");
             addBuddySelectionListener(id, onlineList, offlineList);
             addBuddySelectionListener(id, offlineList, onlineList);
-            controls = new JPanel(new GridLayout(1,3));
+            controls = new JPanel();
+            controls.setLayout(new GridLayout(1,3));
             controls.add(makeBuddyButton(id, "chat", "chat"));
             controls.add(makeBuddyButton(id, "inv", "party"));
             controls.add(makeBuddyButton(id, "rm", "remove"));
             content.add(controls, BorderLayout.SOUTH);
             controls.setVisible(false);
-            frame.setVisible(true);
-        }
-        
-        @Override
-        public void windowClosing(WindowEvent e)
-        {
-            super.windowClosing(e);
-            frame.removeWindowListener(this);
-            frame.dispose();
-            Utils.sendMessageToServer(id, "close");
         }
 
         private void addList(final JList list, final String str)
@@ -115,7 +98,6 @@ public class KinListExtendFactory implements ExtendoFactory
                 content.revalidate();
             }});
             content.add(panel);
-//            content.add(panel, BorderLayout.NORTH);
         }
 
         private void addBuddySelectionListener(final int id, final JList selected, final JList other)
@@ -167,13 +149,6 @@ public class KinListExtendFactory implements ExtendoFactory
         }
 
         @Override
-        public void destroy()
-        {
-            frame.removeWindowListener(this);
-            frame.dispose();
-        }
-
-        @Override
         public boolean uimsg(int id, String msg, Object... args)
         {
             if (msg == "add") 
@@ -197,6 +172,24 @@ public class KinListExtendFactory implements ExtendoFactory
                 content.revalidate();
             }
             return false;
+        }
+
+        @Override
+        protected String getFrameLabel()
+        {
+            return "Kin List";
+        }
+
+        @Override
+        protected Point getFrameLocation()
+        {
+            return new Point(100, 100);
+        }
+
+        @Override
+        protected Dimension getFrameSize()
+        {
+            return new Dimension(FRAME_WIDTH, FRAME_HEIGHT);
         }
     }
  
