@@ -76,9 +76,9 @@ public class ChatExtendFactory implements ExtendoFactory
                 scrollToBottom();
                 content.revalidate();
                 content.updateUI();
-                return true;
+                return false;
             }
-            return false;
+            return true;
         }
 
         private void scrollToBottom()
@@ -127,11 +127,12 @@ public class ChatExtendFactory implements ExtendoFactory
         }
 
         @Override
-        public void destroy()
+        public boolean destroy()
         {
             input.removeKeyListener(this);
             frame.setVisible(false);
             frame.dispose();
+            return false;
         }
 
         @Override

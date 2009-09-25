@@ -48,7 +48,7 @@ public class FlowerMenuExtendFactory implements ExtendoFactory
             buttonPanel.setLayout(new GridLayout(args.length+2, 0));
             buttonPanel.setBorder(new LineBorder(Color.BLACK, 1));
             ExtendoFrame.instance.content.add(buttonPanel, BorderLayout.CENTER);
-            buttonPanel.add(new JLabel("flower menu from glob id:"+ExtendoFrame.instance.lastHit.hit.id));
+//            buttonPanel.add(new JLabel("flower menu from glob id:"+ExtendoFrame.instance.lastHit.hit.id));
             for (int i=0; i<args.length; i++)
             {
                 addButton((String)args[i], i);
@@ -85,11 +85,11 @@ public class FlowerMenuExtendFactory implements ExtendoFactory
             final JPanel content = ExtendoFrame.instance.content;
             content.remove(buttonPanel);
             content.revalidate();
-            return false;
+            return true;
         }
 
         @Override
-        public void destroy()
+        public boolean destroy()
         {
             for (JButton button : buttons)
             {
@@ -100,6 +100,7 @@ public class FlowerMenuExtendFactory implements ExtendoFactory
             }
             ExtendoFrame.instance.content.remove(buttonPanel);
             ExtendoFrame.instance.content.revalidate();
+            return true;
         }
     }
 }

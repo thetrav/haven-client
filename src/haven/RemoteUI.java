@@ -57,18 +57,24 @@ public class RemoteUI implements UI.Receiver {
 		    Coord c = msg.coord();
 		    int parent = msg.uint16();
 		    Object[] args = msg.list();
-		    ui.newwidget(id, type, c, parent, args);
-		    ExtendoFrame.instance.newwidget(ui, id, type, c, parent, args);
+		    if (ExtendoFrame.instance.newwidget(ui, id, type, c, parent, args))
+		    {
+		        ui.newwidget(id, type, c, parent, args);
+		    }
 		} else if(msg.type == Message.RMSG_WDGMSG) {
 		    int id = msg.uint16();
 		    String name = msg.string();
 		    final Object[] args = msg.list();
-		    ui.uimsg(id, name, args);
-		    ExtendoFrame.instance.uimsg(ui, id, name, args);
+		    if (ExtendoFrame.instance.uimsg(ui, id, name, args))
+		    {
+		        ui.uimsg(id, name, args);
+		    }
 		} else if(msg.type == Message.RMSG_DSTWDG) {
 		    int id = msg.uint16();
-		    ExtendoFrame.instance.destroy(id);
-		    ui.destroy(id);
+		    if (ExtendoFrame.instance.destroy(id))
+		    {
+		        ui.destroy(id);
+		    }
 		}
 	    }
 	    synchronized(sess) {

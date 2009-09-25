@@ -151,15 +151,15 @@ public class KinListExtendFactory implements ExtendoFactory
         @Override
         public boolean uimsg(int id, String msg, Object... args)
         {
-            if (msg == "add") 
+            if (msg.equals("add")) 
             {
                 addBuddy(((String)args[0]).intern(), ((Integer)args[1]) != 0);
             }
-            else if (msg == "rm") 
+            else if (msg.equals("rm")) 
             {
                 removeBuddy(((String)args[0]).intern());
             } 
-            else if(msg == "ch") 
+            else if(msg.equals("ch")) 
             {
                 String name = ((String)args[0]).intern();
                 boolean online = ((Integer)args[1]) != 0;

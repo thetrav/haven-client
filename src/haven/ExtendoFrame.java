@@ -3,6 +3,7 @@ package haven;
 import haven.extend.ChatExtendFactory;
 import haven.extend.FlowerMenuExtendFactory;
 import haven.extend.ItemHitEvent;
+import haven.extend.KinListExtendFactory;
 import haven.extend.Utils;
 
 import java.awt.event.ActionEvent;
@@ -36,6 +37,8 @@ public class ExtendoFrame extends JFrame
     {
         factories.put(FlowerMenuExtendFactory.NEW_WIDGET_MESSAGE_CODE, new FlowerMenuExtendFactory());
         factories.put(ChatExtendFactory.NEW_WIDGET_MESSAGE_CODE, new ChatExtendFactory());
+        factories.put(ChatExtendFactory.NEW_GLOBAL_CHAT_WIDGET_MESSAGE_CODE, new ChatExtendFactory());
+        factories.put(KinListExtendFactory.NEW_WIDGET_MESSAGE_CODE, new KinListExtendFactory());
     }
     
     /**
@@ -99,41 +102,39 @@ public class ExtendoFrame extends JFrame
         
     }
     
-    public void newwidget(UI ui, int id, String type, Coord c, int parent, Object... args) throws InterruptedException
+    public boolean newwidget(UI ui, int id, String type, Coord c, int parent, Object... args) throws InterruptedException
     {
         final String argString = Utils.mkString(args);
         if(Config.LOG) LOG.info("newwidget("+id+", "+type+", "+c+ ", " + parent + ", " + argString + ")");
         final ExtendoFactory listener = factories.get(type);
         if(listener != null) 
         {
-            if(!listener.newWidget(id, type, c, parent, args))
-            {
-            }
+            return listener.newWidget(id, type, c, parent, args);
         }
+        return true;
     }
     
-    public void uimsg(final UI ui, int id, String name, Object... args) 
+    public boolean uimsg(final UI ui, int id, String name, Object... args) 
     {
         final String argString = Utils.mkString(args);
         if(Config.LOG) LOG.info("uimsg("+id+", "+name+", "+argString+")");
         final WidgetListener listener = widgetListeners.get(id);
         if (listener != null)
         {
-            if(listener.uimsg(id, name, args))
-            {
-            }
+            return listener.uimsg(id, name, args);
         }
+        return true;
     }
 
-    public void destroy(int id)
+    public boolean destroy(int id)
     {
         if(Config.LOG) LOG.info("destroy " + id);
         final WidgetListener listener = widgetListeners.get(id);
         if(listener!= null)
         {
-            
-            listener.destroy();
+            return listener.destroy();
         }
+        return true;
     }
 
     public void itemClick(Coord c, Coord mc, int button, int modflags, Gob hit)

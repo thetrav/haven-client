@@ -60,9 +60,10 @@ public abstract class ExtendoFrameWidget extends WindowAdapter implements Widget
     }
     
     @Override
-    public void destroy()
+    public boolean destroy()
     {
         frame.removeWindowListener(this);
         frame.dispose();
+        return false;
     }
 }
