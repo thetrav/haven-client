@@ -826,8 +826,8 @@ public class MapView extends Widget implements DTarget {
 	map.sendreqs();
 	checkplmove();
 	try {
-//	    if((mask.amb = glob.amblight) == null)
-//		mask.amb = new Color(0, 0, 0, 0);
+	    if((mask.amb = glob.amblight) == null)
+		mask.amb = new Color(0, 0, 0, 0);
 	    drawmap(g);
 	    drawarrows(g);
 	    g.chcolor(Color.WHITE);
