@@ -32,8 +32,8 @@ import java.io.PrintStream;
 import static haven.Utils.getprop;
 
 public class Config {
-    public static int RES_WIDTH=1100;
-    public static int RES_HEIGHT=700;
+    public static int RES_WIDTH=800;
+    public static int RES_HEIGHT=600;
     public static String MINIMAP_PATH = "minimaps" + File.pathSeparator;
     public static boolean LOG = true;
     

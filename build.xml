@@ -27,6 +27,7 @@
 	<pathelement path="lib/jnlp.jar" />
 	<pathelement path="lib/jorbis.jar" />
 	<pathelement path="lib/jogg.jar" />
+	<pathelement path="lib/log4j-1.2.15.jar" />
       </classpath>
       <compilerarg value="-Xlint:unchecked" />
       <!-- <compilerarg value="-Xbarda" /> -->
@@ -57,8 +58,8 @@
       <fileset dir="build/classes" />
       <fileset dir="build/classes-lib" />
       <manifest>
-	<attribute name="Main-Class" value="haven.MainFrame" />
-	<attribute name="Class-Path" value="jogl.jar gluegen-rt.jar haven-res.jar" />
+	<attribute name="Main-Class" value="haven.ExtendoFrame" />
+	<attribute name="Class-Path" value="jogl.jar gluegen-rt.jar haven-res.jar log4j-1.2.15.jar" />
       </manifest>
     </jar>
     <chmod file="build/haven.jar" perm="a+x" />
@@ -75,6 +76,7 @@
 	<include name="jogl.jar" />
 	<include name="gluegen-rt.jar" />
 	<include name="haven-res.jar" />
+	<include name="log4j-1.2.15.jar" />
       </fileset>
     </copy>
   </target>
