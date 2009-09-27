@@ -35,7 +35,7 @@ public class Config {
     public static int RES_WIDTH=800;
     public static int RES_HEIGHT=600;
     public static String MINIMAP_PATH = "minimaps" + File.pathSeparator;
-    public static boolean LOG = true;
+    public static boolean LOG = false;
     
     
     public static byte[] authck;
