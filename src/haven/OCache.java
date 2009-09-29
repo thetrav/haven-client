@@ -31,7 +31,7 @@ import java.util.*;
 public class OCache implements Iterable<Gob> {
     /* XXX: Use weak refs */
     private Collection<Collection<Gob>> local = new LinkedList<Collection<Gob>>();
-    private Map<Integer, Gob> objs = new TreeMap<Integer, Gob>();
+    public Map<Integer, Gob> objs = new TreeMap<Integer, Gob>();
     private Map<Integer, Integer> deleted = new TreeMap<Integer, Integer>();
     private Glob glob;
     long lastctick = 0;

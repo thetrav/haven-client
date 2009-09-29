@@ -40,7 +40,7 @@
   </target>
   
   <target name="appletview" depends="build-env">
-    <copy file="etc/applet.html" todir="build" />
+    <copy file="etc/run.bat" todir="build" />
   </target>
 
   <target name="lib-classes" depends="build-env" unless="unpacked-lib">

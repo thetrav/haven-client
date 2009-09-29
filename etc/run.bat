@@ -1,0 +1,1 @@
+java -Dhaven.authserv=sh.seatribe.se -Dhaven.defserv=sh.seatribe.se -jar haven.jar

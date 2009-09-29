@@ -2,6 +2,8 @@ package haven;
 
 import haven.extend.ChatExtendFactory;
 import haven.extend.FlowerMenuExtendFactory;
+import haven.extend.GlobViewer;
+import haven.extend.HudExtendFactory;
 import haven.extend.ItemHitEvent;
 import haven.extend.KinListExtendFactory;
 import haven.extend.Utils;
@@ -12,7 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -28,7 +29,6 @@ public class ExtendoFrame extends JFrame
     public static Session sess;
     public static ItemHitEvent lastHit = null;
     public final JPanel content;
-    private boolean logMessages = true;
     private static Map<String, ExtendoFactory> factories = new HashMap<String, ExtendoFactory>();
     public static Map<Integer, WidgetListener> widgetListeners = new HashMap<Integer, WidgetListener>();
     
@@ -39,6 +39,7 @@ public class ExtendoFrame extends JFrame
         factories.put(ChatExtendFactory.NEW_WIDGET_MESSAGE_CODE, new ChatExtendFactory());
         factories.put(ChatExtendFactory.NEW_GLOBAL_CHAT_WIDGET_MESSAGE_CODE, new ChatExtendFactory());
         factories.put(KinListExtendFactory.NEW_WIDGET_MESSAGE_CODE, new KinListExtendFactory());
+        factories.put(HudExtendFactory.NEW_WIDGET_MESSAGE_CODE, new HudExtendFactory());
     }
     
     /**
@@ -67,21 +68,17 @@ public class ExtendoFrame extends JFrame
                 ExtendoFrame.this.fixedCam(arg0);
             }
         });
-        addCheckBox("log messages", new ActionListener() {
+        addButton("gob list", new ActionListener()
+        {
             @Override
-            public void actionPerformed(ActionEvent arg0)
+            public void actionPerformed(final ActionEvent arg0)
             {
-                logMessages = !logMessages;
-            }});
+                GlobViewer.instance.show();
+            }
+        });
+//        GlobViewer.instance.setObjs(ExtendoFrame.sess.glob.oc.objs);
     }
     
-    private void addCheckBox(String string, ActionListener actionListener)
-    {
-        JCheckBox checkbox = new JCheckBox(string);
-        content.add(checkbox);
-        checkbox.addActionListener(actionListener);
-    }
-
     private void addButton(final String string, final ActionListener actionListener)
     {
         JButton button = new JButton(string);

@@ -50,8 +50,13 @@ public class Inventory extends Widget implements DTarget {
     }
 	
     public Inventory(Coord c, Coord sz, Widget parent) {
-	super(c, invsq.sz().add(new Coord(-1, -1)).mul(sz).add(new Coord(1, 1)), parent);
+	super(c, transform(sz), parent);
 	isz = sz;
+    }
+    
+    private static Coord transform(final Coord sz)
+    {
+        return invsq.sz().add(new Coord(-1, -1)).mul(sz).add(new Coord(1, 1));
     }
 	
     public boolean drop(Coord cc, Coord ul) {
