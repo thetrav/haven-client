@@ -2,11 +2,15 @@ package haven.extend;
 
 import haven.Coord;
 import haven.ExtendoFactory;
+import haven.ExtendoFrame;
 import haven.WidgetListener;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.util.LinkedList;
+import java.util.List;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class CraftExtendFactory implements ExtendoFactory
@@ -32,12 +36,13 @@ public class CraftExtendFactory implements ExtendoFactory
         protected void addContent(JPanel content)
         {
             recipeName = (String)args[0];
+            content.add(new JLabel(recipeName));
         }
 
         @Override
         protected String getFrameLabel()
         {
-            return "Craft";
+            return "Craft ";
         }
 
         @Override
@@ -55,10 +60,44 @@ public class CraftExtendFactory implements ExtendoFactory
         @Override
         public boolean uimsg(int id, String msg, Object... args)
         {
-            // TODO Auto-generated method stub
+            if(msg.equals("pop"))
+            {
+                //add item
+                final List<ItemMsg> input = new LinkedList<ItemMsg>();
+                final List<ItemMsg> output = new LinkedList<ItemMsg>(); 
+                parseArgs(args, input, output);
+            }
             return false;
         }
         
+        
+        private void parseArgs(Object[] args, List<ItemMsg> input, List<ItemMsg> output)
+        {
+            int i=0;
+            i = parse(i, args, input);
+            parse(i, args, output);
+        }
+        
+        private int parse(int i, Object[] args, List<ItemMsg> items)
+        {
+            while((Integer)args[i] != 0)
+            {
+                items.add(new ItemMsg((Integer)args[i++], (Integer)args[i++]));
+            }
+            return i;
+        }
+
+        class ItemMsg
+        {
+            public ItemMsg(int resId, int qty)
+            {
+                this.resId = resId;
+                System.out.println("added item with resource name:" + ExtendoFrame.sess.getres(resId).get().name);
+                this.qty = qty;
+            }
+            int resId;
+            int qty;
+        }
     }
     
     
