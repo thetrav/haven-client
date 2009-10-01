@@ -3,10 +3,14 @@ package haven.extend;
 import haven.Coord;
 import haven.ExtendoFactory;
 import haven.ExtendoFrame;
+import haven.MainFrame;
 import haven.WidgetListener;
+import haven.extend.EventListeners.GameStateEventListener;
+import haven.extend.Events.GameStateEvent;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,20 +18,23 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+
+import org.apache.log4j.Logger;
 
 public class CraftExtendFactory implements ExtendoFactory
 {
     public static final String NEW_WIDGET_MESSAGE_CODE = "make";
+    private static final Logger LOG = Logger.getLogger(CraftExtendFactory.class);
 
     @Override
     public boolean newWidget(int id, String type, Coord c, int parent, Object... args)
     {
         new CraftExtend(id, type, c, parent, args);
-        return true;
+        return false;
     }
     
     class CraftExtend extends ExtendoFrameWidget implements WidgetListener
@@ -38,53 +45,46 @@ public class CraftExtendFactory implements ExtendoFactory
         public CraftExtend(int id, String type, Coord c, int parent, Object[] args)
         {
             super(id, type, c, parent, args);
+            ExtendoFrame.widgetListeners.put(id, this);
         }
 
         @Override
         protected void addContent(JPanel content)
         {
             recipeName = (String)args[0];
-            content.setLayout(new BorderLayout());
-            content.add(new JLabel(recipeName), BorderLayout.NORTH);
+            content.setLayout(new GridLayout(2,2));
+            frame.setTitle("Craft " + recipeName);
             inputs = new JList();
-            inputs.setEnabled(false);
             outputs = new JList();
-            outputs.setEnabled(false);
-            content.add(inputs, BorderLayout.CENTER);
-            content.add(outputs, BorderLayout.CENTER);
-            inputs.setVisible(false);
-            outputs.setVisible(false);
+            JScrollPane p1 = new JScrollPane(inputs);
+            content.add(p1);
+            JPanel p2 = new JPanel();
+            p2.add(outputs);
+            content.add(p2);
             final JTextField count = new JTextField("1");
-            content.add(count, BorderLayout.SOUTH);
+            content.add(count);
             final JButton button = new JButton("Craft");
             
             button.addActionListener(new ActionListener()
             {
                 public void actionPerformed(ActionEvent arg0)
                 {
-                    int qty1;
+                    int qty;
                     try
                     {
-                        qty1 = Integer.parseInt(count.getText());
+                        qty = Integer.parseInt(count.getText());
                     }
-                    catch (Exception e)
+                    catch (NumberFormatException e)
                     {
-                        qty1 = 1;
+                        qty = 1;
                     }
-                    final int qty = qty1; 
-                    new Thread()
+                    for(int i=0; i < qty; i++)
                     {
-                        public void run() 
-                        {
-                            for(int i=0; i < qty; i++)
-                            {
-                                Utils.sendMessageToServer(id, "make");
-                            }
-                        };
-                    }.start();
+                        new CraftTask(id, qty).run();
+                    }
                 }
             });
-            content.add(button, BorderLayout.SOUTH);
+            content.add(button);
         }
         
 
@@ -97,7 +97,7 @@ public class CraftExtendFactory implements ExtendoFactory
         @Override
         protected Point getFrameLocation()
         {
-            return new Point(20, 20);
+            return MainFrame.f.getLocation();
         }
 
         @Override
@@ -109,6 +109,7 @@ public class CraftExtendFactory implements ExtendoFactory
         @Override
         public boolean uimsg(int id, String msg, Object... args)
         {
+            LOG.info("message"+msg);
             if(msg.equals("pop"))
             {
                 //add item
@@ -124,6 +125,8 @@ public class CraftExtendFactory implements ExtendoFactory
         {
             addItems(input, inputs);
             addItems(output, outputs);
+            inputs.revalidate();
+            outputs.revalidate();
             content.revalidate();
         }
 
@@ -133,10 +136,13 @@ public class CraftExtendFactory implements ExtendoFactory
             int i=0;
             for(ItemMsg item : items)
             {
-                itemData[i] = item.qty + " x " + ExtendoFrame.sess.getres(item.resId).get().name;
+                final String resName = ExtendoFrame.sess.getres(item.resId).get().name;
+                final String[] resNameComponents = resName.split("/");
+                final String name = resNameComponents[resNameComponents.length-1];
+                itemData[i++] = item.qty + " x " + name;
             }
+            LOG.info("itemdata:"+Utils.mkString(itemData));
             list.setListData(itemData);
-            list.setVisible(true);
         }
 
         /**
@@ -155,7 +161,7 @@ public class CraftExtendFactory implements ExtendoFactory
          */
         private int parse(int i, Object[] args, List<ItemMsg> items)
         {
-            while((Integer)args[i] != 0)
+            while(i < args.length && (Integer)args[i] > 0)
             {
                 items.add(new ItemMsg((Integer)args[i++], (Integer)args[i++]));
             }
@@ -167,7 +173,6 @@ public class CraftExtendFactory implements ExtendoFactory
             public ItemMsg(int resId, int qty)
             {
                 this.resId = resId;
-                System.out.println("added item with resource name:" + ExtendoFrame.sess.getres(resId).get().name);
                 this.qty = qty;
             }
             int resId;
@@ -175,6 +180,82 @@ public class CraftExtendFactory implements ExtendoFactory
         }
     }
     
-    
+    class CraftTask implements Runnable, ExtendoFactory, WidgetListener, GameStateEventListener
+    {
+        private static final String PROGRESS_BAR_MSG = "img";
+        private final int craftWidgetId;
+        private int progressBarId;
+        private int qty;
+        private int progress;
+        
+        public CraftTask(int craftWidgetId, int qty)
+        {
+            this.craftWidgetId = craftWidgetId;
+            this.qty = qty;
+        }
+
+        @Override
+        public void run()
+        {
+            ExtendoFrame.factories.put(PROGRESS_BAR_MSG, this);
+            EventListeners.add(this);
+            new SendToServerUtilHook().sendMessageToServer(craftWidgetId, "make");
+        }
+
+        @Override
+        public boolean newWidget(int id, String type, Coord c, int parent, Object... args)
+        {
+            progressBarId = id;
+            ExtendoFrame.widgetListeners.put(id, this);
+            return true;
+        }
+
+        @Override
+        public boolean destroy(int id)
+        {
+            if(id == progressBarId && progress > 16)
+            {
+                qty--;
+                LOG.info("qty="+qty);
+                if(qty > 0)
+                {
+                    run();
+                }
+                else
+                {
+                    EventListeners.remove(this);
+                }
+            }
+            return true;
+        }
+
+        private void finished()
+        {
+            ExtendoFrame.factories.remove(PROGRESS_BAR_MSG);
+            ExtendoFrame.widgetListeners.remove(progressBarId);
+        }
+
+        @Override
+        public boolean uimsg(int id, String msg, Object... args)
+        {
+            String arg = (String)args[0];
+            progress = Integer.parseInt(arg.split("/")[3]);
+            return true;
+        }
+
+        @Override
+        public boolean event(GameStateEvent event)
+        {
+            if(event instanceof Events.Error)
+            {
+                Events.Error error = (Events.Error)event;
+                finished();
+                return true;
+            }
+            return false;
+        }
+        
+        
+    }
 
 }

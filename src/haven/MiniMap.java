@@ -72,14 +72,14 @@ public class MiniMap extends Widget {
 			BufferedImage img;
 			try {
 			    img = ImageIO.read(in);
-			    File dir = new File(Config.MINIMAP_PATH);
-			    if (!dir.isDirectory())
-			    {
-			        dir.mkdirs();
-			    }
-			    File outFile = new File(dir, grid + ".png");
-			    System.out.println("wrote map to file");
-			    ImageIO.write(img, "PNG", outFile);
+//			    File dir = new File(Config.MINIMAP_PATH);
+//			    if (!dir.isDirectory())
+//			    {
+//			        dir.mkdirs();
+//			    }
+//			    File outFile = new File(dir, grid + ".png");
+//			    System.out.println("wrote map to file");
+//			    ImageIO.write(img, "PNG", outFile);
 			} finally {
 			    in.close();
 			}

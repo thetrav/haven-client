@@ -2,6 +2,8 @@ package haven;
 
 import haven.extend.ChatExtendFactory;
 import haven.extend.CraftExtendFactory;
+import haven.extend.EventListeners;
+import haven.extend.Events;
 import haven.extend.FlowerMenuExtendFactory;
 import haven.extend.GlobViewer;
 import haven.extend.HudExtendFactory;
@@ -30,7 +32,7 @@ public class ExtendoFrame extends JFrame
     public static Session sess;
     public static ItemHitEvent lastHit = null;
     public final JPanel content;
-    private static Map<String, ExtendoFactory> factories = new HashMap<String, ExtendoFactory>();
+    public static Map<String, ExtendoFactory> factories = new HashMap<String, ExtendoFactory>();
     public static Map<Integer, WidgetListener> widgetListeners = new HashMap<Integer, WidgetListener>();
     
     //widget creation listeners
@@ -117,6 +119,10 @@ public class ExtendoFrame extends JFrame
     {
         final String argString = Utils.mkString(args);
         if(Config.LOG) LOG.info("uimsg("+id+", "+name+", "+argString+")");
+        if(name.equals("err"))
+        {
+            EventListeners.gameStateChanged(new Events.Error((String)args[0]));
+        }
         final WidgetListener listener = widgetListeners.get(id);
         if (listener != null)
         {
@@ -132,7 +138,7 @@ public class ExtendoFrame extends JFrame
         if(listener!= null)
         {
             widgetListeners.remove(id);
-            return listener.destroy();
+            return listener.destroy(id);
             
         }
         return true;

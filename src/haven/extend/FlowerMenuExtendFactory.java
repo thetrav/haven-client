@@ -40,6 +40,8 @@ public class FlowerMenuExtendFactory implements ExtendoFactory
         
         private JPanel buttonPanel;
         private List<JButton> buttons = new ArrayList<JButton>();
+
+        private final UtilHook util = new SendToServerUtilHook();
         
         FlowerMenuExtend(int id, String type, Coord c, int parent, Object... args)
         {
@@ -75,8 +77,8 @@ public class FlowerMenuExtendFactory implements ExtendoFactory
         public void select(int index)
         {
             if(Config.LOG) LOG.info("clicked:"+index);
-            Utils.sendMessageToServer(id, WIDGET_CLOSE_MESSAGE, index);
-            destroy();
+            util .sendMessageToServer(id, WIDGET_CLOSE_MESSAGE, index);
+            destroy(id);
         }
         
         @Override
@@ -89,7 +91,7 @@ public class FlowerMenuExtendFactory implements ExtendoFactory
         }
 
         @Override
-        public boolean destroy()
+        public boolean destroy(int id)
         {
             for (JButton button : buttons)
             {

@@ -22,7 +22,7 @@ public abstract class ExtendoFrameWidget extends WindowAdapter implements Widget
     protected final JFrame frame;
     protected final JPanel content;
     
-    protected UtilHook util = new DefaultUtilHook();
+    protected UtilHook util = new SendToServerUtilHook();
 
     public ExtendoFrameWidget(int id, String type, Coord c, int parent, Object[] args)
     {
@@ -60,7 +60,7 @@ public abstract class ExtendoFrameWidget extends WindowAdapter implements Widget
     }
     
     @Override
-    public boolean destroy()
+    public boolean destroy(int id)
     {
         frame.removeWindowListener(this);
         frame.dispose();

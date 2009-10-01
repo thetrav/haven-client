@@ -36,7 +36,7 @@ public class ChatExtendFactory implements ExtendoFactory
     
     class ChatExtend extends ExtendoFrameWidget implements KeyListener
     {
-        private UtilHook util = new DefaultUtilHook();
+        private UtilHook util = new SendToServerUtilHook();
         private StringBuffer lines = new StringBuffer();
         private JTextArea text;
         private JTextField input;
@@ -127,7 +127,7 @@ public class ChatExtendFactory implements ExtendoFactory
         }
 
         @Override
-        public boolean destroy()
+        public boolean destroy(int id)
         {
             input.removeKeyListener(this);
             frame.setVisible(false);

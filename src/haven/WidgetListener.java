@@ -10,5 +10,5 @@ public interface WidgetListener
     /**
      * @return true if base client should continue to process message, false otherwise
      */
-    boolean destroy(); 
+    boolean destroy(int id); 
 }

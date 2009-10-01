@@ -19,6 +19,7 @@ public class HudExtendFactory implements ExtendoFactory
 {
     public static final String NEW_WIDGET_MESSAGE_CODE = "slen";
     private List<JButton> buttons = new LinkedList<JButton>();
+    private final UtilHook util = new SendToServerUtilHook();
 
     @Override
     public boolean newWidget(int id, String type, Coord c, int parent, Object... args)
@@ -52,18 +53,16 @@ public class HudExtendFactory implements ExtendoFactory
             final JButton button = new JButton(label);
             button.addActionListener(new ActionListener()
             {
-                @Override
                 public void actionPerformed(ActionEvent arg0)
                 {
-                    Utils.sendMessageToServer(id, msg);
+                    util.sendMessageToServer(id, msg);
                 }
-
             });
             return button;
         }
 
         @Override
-        public boolean destroy()
+        public boolean destroy(int id)
         {
             ExtendoFrame.instance.content.remove(content);
             for (JButton button : buttons)
