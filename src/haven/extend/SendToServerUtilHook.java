@@ -9,7 +9,6 @@ public class SendToServerUtilHook implements UtilHook
      */
     public void sendMessageToServer(final int id, final String name, final Object... args) 
     {
-        System.out.println("SendToServerUtilHook: sending:" + id + " name " + name +" args"+ Utils.mkString(args));
         Utils.sendMessageToServer(id, name, args);
     }
 }
