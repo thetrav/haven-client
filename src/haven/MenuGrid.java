@@ -253,10 +253,14 @@ public class MenuGrid extends Widget {
 	    use(next);
 	    return(true);
 	}
-	Resource r = hotmap.get(Character.toUpperCase(k));
-	if(r != null) {
-	    use(r);
-	    return(true);
+	final char key = Character.toUpperCase(k);
+	if(key != 'G')
+	{
+        Resource r = hotmap.get(key);
+    	if(r != null) {
+    	    use(r);
+    	    return(true);
+    	}
 	}
 	return(false);
     }
