@@ -1,6 +1,7 @@
 package haven;
 
 import haven.extend.ChatExtendFactory;
+import haven.extend.CraftExtendFactory;
 import haven.extend.FlowerMenuExtendFactory;
 import haven.extend.GlobViewer;
 import haven.extend.HudExtendFactory;
@@ -40,6 +41,7 @@ public class ExtendoFrame extends JFrame
         factories.put(ChatExtendFactory.NEW_GLOBAL_CHAT_WIDGET_MESSAGE_CODE, new ChatExtendFactory());
         factories.put(KinListExtendFactory.NEW_WIDGET_MESSAGE_CODE, new KinListExtendFactory());
         factories.put(HudExtendFactory.NEW_WIDGET_MESSAGE_CODE, new HudExtendFactory());
+        factories.put(CraftExtendFactory.NEW_WIDGET_MESSAGE_CODE, new CraftExtendFactory());
     }
     
     /**

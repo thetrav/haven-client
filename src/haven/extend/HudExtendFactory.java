@@ -24,7 +24,7 @@ public class HudExtendFactory implements ExtendoFactory
     public boolean newWidget(int id, String type, Coord c, int parent, Object... args)
     {
         new HudExtend(id, type, c, parent, args);
-        return false;
+        return true;
     }
     
     class HudExtend implements WidgetListener
@@ -35,7 +35,7 @@ public class HudExtendFactory implements ExtendoFactory
         public HudExtend(final int id, final String type, final Coord c, final int parent, final Object[] args)
         {
             this.id = id;
-            content.setLayout(new GridLayout(4,1));
+            content.setLayout(new GridLayout(1,4));
             content.add(makeButton("inv","inv"));
             content.add(makeButton("equip", "equ"));
             content.add(makeButton("Char", "chr"));
