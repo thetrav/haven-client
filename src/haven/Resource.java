@@ -26,6 +26,8 @@
 
 package haven;
 
+import haven.extend.ActionMenuExtendFactory;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.annotation.*;
@@ -766,6 +768,7 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	    off[0] += 2;
 	    for(int i = 0; i < ad.length; i++)
 		ad[i] = Utils.strd(buf, off);
+	    ActionMenuExtendFactory.add(name, ad);
 	}
 		
 	public void init() {}
