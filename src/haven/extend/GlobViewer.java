@@ -102,6 +102,18 @@ public class GlobViewer
         gobText.append("\n");
         gobText.append("overlays:"+selectedObj.ols);
         gobText.append("\n");
+        appendDrawableResName(gobText);
+        gobText.append("attributes:"+selectedObj.attr);
+        gobText.append("\n");
+        
+        gobDetailPanel.add(new JScrollPane(new JTextArea(gobText.toString())), BorderLayout.CENTER);
+        gobDetailPanel.setVisible(true);
+        content.revalidate();
+    }
+
+
+    private void appendDrawableResName(final StringBuffer gobText)
+    {
         if(selectedObj.attr.containsKey(Drawable.class))
         {
             ResDrawable rDraw = (ResDrawable) selectedObj.attr.get(Drawable.class);
@@ -112,30 +124,6 @@ public class GlobViewer
             gobText.append("Res Name:"+name);
             gobText.append("\n");
         }
-        gobText.append("attributes:"+selectedObj.attr);
-        gobText.append("\n");
-        
-        gobDetailPanel.add(new JScrollPane(new JTextArea(gobText.toString())), BorderLayout.CENTER);
-//        final JPanel buttons = new JPanel(new GridLayout(1,2));
-//        final JButton overlays = new JButton("overlays");
-//        overlays.addActionListener(new ActionListener()
-//        {
-//            public void actionPerformed(ActionEvent arg0)
-//            {
-//                showOverlays(selectedObj.ols);
-//            }
-//        });
-//        buttons.add(overlays);
-//        final JButton attrs = new JButton("Attributes");
-//        attrs.addActionListener(new ActionListener()
-//        {
-//            public void actionPerformed(ActionEvent arg0)
-//            {
-//                showAttrs(selectedObj.attr);
-//            }
-//        });
-        gobDetailPanel.setVisible(true);
-        content.revalidate();
     }
     
     private void refreshGui()
@@ -153,8 +141,9 @@ public class GlobViewer
             for(final Integer id : objs.keySet())
             {
                 Gob obj = objs.get(id);
-                listData[i] = "Glob: " + id + " at " + obj.rc;
-                System.out.println("i="+i+" data="+listData[i]);
+                final StringBuffer text = new StringBuffer("Glob: " + id + " at " + obj.rc);
+                appendDrawableResName(text);
+                listData[i] = text.toString();
                 i++;
             }
             
