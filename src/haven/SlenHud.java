@@ -29,6 +29,9 @@ package haven;
 import java.util.*;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
+import org.relayirc.util.*;
+import org.relayirc.core.*;
+import org.relayirc.chatengine.*;
 import static haven.Inventory.invsq;
 
 public class SlenHud extends Widget implements DropTarget {
@@ -42,6 +45,7 @@ public class SlenHud extends Widget implements DropTarget {
     public static final Coord bc1 = new Coord(147, -8);
     public static final Coord bc2 = new Coord(485, -8);
     public static final Coord sz;
+    public List<SlenChat> ircChannels = new ArrayList<SlenChat>();
     int woff = 0;
     List<HWindow> wnds = new ArrayList<HWindow>();
     HWindow awnd;
@@ -50,8 +54,10 @@ public class SlenHud extends Widget implements DropTarget {
     Button sub, sdb;
     VC vc;
     String cmdline = null;
-    static Text.Foundry errfoundry = new Text.Foundry(new java.awt.Font("SansSerif", java.awt.Font.BOLD, 14), new Color(192, 0, 0));
-    static Text.Foundry cmdfoundry = new Text.Foundry(new java.awt.Font("Monospaced", java.awt.Font.PLAIN, 12), new Color(245, 222, 179));
+    static Text.Foundry errfoundry = new Text.Foundry(new java.awt.Font("SansSerif",
+    												java.awt.Font.BOLD, 14), new Color(192, 0, 0));
+    static Text.Foundry cmdfoundry = new Text.Foundry(new java.awt.Font("Monospaced", 
+    												java.awt.Font.PLAIN, 12), new Color(245, 222, 179));
     Text cmdtext, lasterr;
     long errtime;
     @SuppressWarnings("unchecked")
@@ -64,7 +70,7 @@ public class SlenHud extends Widget implements DropTarget {
 		}
 	    });
 	int h = bg.sz().y;
-	sz = new Coord(800, h);
+	sz = new Coord(1024, h);
 	sz.y = (h - fc.y > sz.y)?(h - fc.y):sz.y;
 	sz.y = (h - mc.y > sz.y)?(h - mc.y):sz.y;
     }
@@ -108,37 +114,48 @@ public class SlenHud extends Widget implements DropTarget {
 	    }
 	    if(!w && c) {
 		if(ca < 0.6) {
-		    m.c.y = 600 - (int)(sz.y * (1 - (ca / 0.6)));
+		    m.c.y = 768 - (int)(sz.y * (1 - (ca / 0.6)));
 		} else {
-		    m.c.y = 600;
-		    sb.c.y = 600 - (int)(sb.sz.y * ((ca - 0.6) / 0.4));
+		    m.c.y = 768;
+		    sb.c.y = 768 - (int)(sb.sz.y * ((ca - 0.6) / 0.4));
 		}
 	    }
 	    if(w && !c) {
 		if(ca < 0.6) {
-		    m.c.y = 600 - (int)(sz.y * (ca / 0.6));
-		    sb.c.y = 600 - (int)(sb.sz.y * (1 - (ca / 0.6)));
+		    m.c.y = 768 - (int)(sz.y * (ca / 0.6));
+		    sb.c.y = 768 - (int)(sb.sz.y * (1 - (ca / 0.6)));
 		} else {
-		    m.c.y = 600 - sz.y;
-		    sb.c.y = 600;
+		    m.c.y = 768 - sz.y;
+		    sb.c.y = 768;
 		}
 	    }
 	    if(ct >= ms)
 		c = w;
 	}
     }
-
+    
     public SlenHud(Coord c, Widget parent) {
-	super(new Coord(800, 600).add(sz.inv()), sz, parent);
+	super(new Coord(1024, 768).add(sz.inv()), sz, parent);
 	new Img(fc, flarps, this);
 	new Img(mc, mbg, this);
 	new Img(dispc, dispbg, this);
+	
+	//	Hide button
 	hb = new IButton(mc, this, Resource.loadimg("gfx/hud/slen/hbu"), Resource.loadimg("gfx/hud/slen/hbd"));
+	
+	//	Inventory button
 	invb = new IButton(mc, this, Resource.loadimg("gfx/hud/slen/invu"), Resource.loadimg("gfx/hud/slen/invd"));
+	
+	//	Equipment button
 	equb = new IButton(mc, this, Resource.loadimg("gfx/hud/slen/equu"), Resource.loadimg("gfx/hud/slen/equd"));
+	
+	//	Character button
 	chrb = new IButton(mc, this, Resource.loadimg("gfx/hud/slen/chru"), Resource.loadimg("gfx/hud/slen/chrd"));
+	
+	//	Kin list button
 	budb = new IButton(mc, this, Resource.loadimg("gfx/hud/slen/budu"), Resource.loadimg("gfx/hud/slen/budd"));
 	{
+		//	Village claims button
 	    new IButton(dispc, this, Resource.loadimg("gfx/hud/slen/dispauth"), Resource.loadimg("gfx/hud/slen/dispauthd")) {
 		public void click() {
 		    MapView mv = ui.root.findchild(MapView.class);
@@ -147,6 +164,7 @@ public class SlenHud extends Widget implements DropTarget {
 	    };
 	}
 	{
+		//	Totem claim button
 	    new IButton(dispc, this, Resource.loadimg("gfx/hud/slen/dispclaim"), Resource.loadimg("gfx/hud/slen/dispclaimd")) {
 		private boolean v = false;
 		
@@ -162,7 +180,7 @@ public class SlenHud extends Widget implements DropTarget {
 		}
 	    };
 	}
-	vc = new VC(this, new IButton(new Coord(380, 600), parent, Resource.loadimg("gfx/hud/slen/sbu"), Resource.loadimg("gfx/hud/slen/sbd")) {
+	vc = new VC(this, new IButton(new Coord(492, 768), parent, Resource.loadimg("gfx/hud/slen/sbu"), Resource.loadimg("gfx/hud/slen/sbd")) {
 		public void click() {
 		    vc.show();
 		}
@@ -179,6 +197,11 @@ public class SlenHud extends Widget implements DropTarget {
 	    };
 	new MiniMap(new Coord(5, 5), new Coord(125, 125), this, ui.mainview);
 	sub.visible = sdb.visible = false;
+	
+	//	Global Chat
+	ircChannels.add(new SlenChat(this));
+	ui.bind(ircChannels.get(0), 1000);
+	
     }
 	
     public Coord xlate(Coord c, boolean in) {
@@ -189,6 +212,10 @@ public class SlenHud extends Widget implements DropTarget {
 	    return(c.add(bgc.inv()));
     }
 	
+	
+	/*
+	 *	CLIENT COMMAND PARSER
+	 */
     public void runcmd(String[] argv) {
 	String cmd = argv[0].intern();
 	boolean die = false;
@@ -196,7 +223,8 @@ public class SlenHud extends Widget implements DropTarget {
 	    if(cmd == "q") {
 		Utils.tg().interrupt();
 	    } else if(cmd == "lo") {
-		ui.sess.close();
+	    	new Logout(new Coord(100,100), parent);
+		//ui.sess.close();
 	    } else if(cmd == "afk") {
 		wdgmsg("afk");
 	    } else if(cmd == "fs") {
@@ -415,6 +443,30 @@ public class SlenHud extends Widget implements DropTarget {
 	    w.visible = false;
 	if(wnd != null)
 	    wnd.visible = true;
+	if(!ircChannels.isEmpty())
+	{	
+		for(int i = 0; i < ircChannels.size(); i ++)
+		{
+			SlenChat tSCWnd = ircChannels.get(i);
+			if(tSCWnd.userList != null)	tSCWnd.userList.hide();
+		}
+		
+	}
+	for(Button b : btns.values())
+		{
+			if(wnd.getClass().getName().equals(ircChannels.get(0).getClass().getName()))
+			{
+				if(((SlenChat)wnd).initialized)
+				{
+					if(((SlenChat)wnd).getChannel().equalsIgnoreCase(b.text.text)
+						&& wnd.visible)
+						{
+							b.changeText(b.text.text, Color.YELLOW);
+							if(((SlenChat)wnd).userList != null)	((SlenChat)wnd).userList.show();
+						}
+				}
+			}
+		}
     }
 	
     public void addwnd(final HWindow wnd) {
@@ -513,7 +565,7 @@ public class SlenHud extends Widget implements DropTarget {
     }
     
     public int foldheight() {
-	return(600 - c.y);
+	return(768 - c.y);
     }
     
     public boolean dropthing(Coord c, Object thing) {
@@ -534,4 +586,10 @@ public class SlenHud extends Widget implements DropTarget {
 	}
 	return(false);
     }
+    public void destroy()
+    {
+    	ircChannels.get(0).IRC.close();
+    	super.destroy();
+    }
 }
+
