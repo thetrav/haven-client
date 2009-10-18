@@ -41,6 +41,7 @@ public class Button extends SSWidget {
     public Text text;
     public BufferedImage cont;
     static Text.Foundry tf = new Text.Foundry(new Font("Serif", Font.PLAIN, 12), Color.YELLOW);
+    static Text.Foundry newFoundry;
     boolean a = false;
 	
     static {
@@ -118,5 +119,12 @@ public class Button extends SSWidget {
 	    return(true);
 	}
 	return(false);
+    }
+    public void changeText(String newText, Color newColor)
+    {
+    	newFoundry = new Text.Foundry(new Font("Serif", Font.PLAIN, 12), newColor);
+    	text = newFoundry.render(newText);
+    	cont = text.img;
+    	render();
     }
 }

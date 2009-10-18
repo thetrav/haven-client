@@ -32,7 +32,9 @@ import java.util.*;
 
 public class Listbox extends Widget {
     public List<Option> opts;
-    public int chosen;
+    public Option chosen;
+    Scrollbar scrollBar;
+    int height;
 	
     static {
 	Widget.addtype("lb", new WidgetFactory() {
@@ -46,35 +48,56 @@ public class Listbox extends Widget {
     }
 
     public static class Option {
-	public String name, disp;
-	int y1, y2;
+		public String name, disp;
+		int y1, y2;
 		
-	public Option(String name, String disp) {
-	    this.name = name;
-	    this.disp = disp;
-	}
+		public Option(String name, String disp) {
+		    this.name = name;
+		    this.disp = disp;
+		}
     }
 	
     public void draw(GOut g) {
-	int y = 0, i = 0;
-	for(Option o : opts) {
-	    Color c;
-	    if(i++ == chosen)
-		c = FlowerMenu.pink;
-	    else
-		c = Color.BLACK;
-	    Text t = Text.render(o.disp, c);
-	    o.y1 = y;
-	    g.image(t.tex(), new Coord(0, y));
-	    y += t.sz().y;
-	    o.y2 = y;
-	}
+		/*int y = 0, i = 0;
+		for(Option o : opts) {
+		    Color c;
+		    if(o.equals(chosen)) {
+				c = FlowerMenu.pink;
+		    }
+		    else {
+				c = Color.BLACK;
+		    }
+		    Text t = Text.render(o.disp, c);
+		    o.y1 = y;
+		    g.image(t.tex(), new Coord(0, y));
+		    y += t.sz().y;
+		    o.y2 = y;
+		}*/
+		for(int i = 0; i < height; i++) {
+			Color c;
+			if(i + scrollBar.val >= opts.size())
+			    continue;
+			Option b = opts.get(i + scrollBar.val);
+			if(b.equals(chosen)) {
+				c = FlowerMenu.pink;
+		    }
+		    else {
+				c = Color.BLACK;
+		    }
+			g.image((Text.render(b.disp, c)).tex(), new Coord(0,i*10));
+		//	g.atext(b.name.substring(b.name.indexOf('/') + 1), new Coord(0, i * 10 + 10), 0, 0.5);
+		}
+		super.draw(g);
     }
 	
     public Listbox(Coord c, Coord sz, Widget parent, List<Option> opts) {
 	super(c, sz, parent);
 	this.opts = opts;
-	chosen = 0;
+	height = sz.y / 10;
+	scrollBar = new Scrollbar(Coord.z.add(sz.x,0), sz.y, this, 0, 50) {
+		public void changed() {}
+	};
+	chosen = !opts.isEmpty() ? opts.get(0) : null;
 	setcanfocus(true);
     }
 	
@@ -90,32 +113,32 @@ public class Listbox extends Widget {
     }
 	
     public void sendchosen() {
-	wdgmsg("chose", opts.get(chosen).name);
+	wdgmsg("chose", chosen.name);
     }
 	
     public boolean mousedown(Coord c, int button) {
-	parent.setfocus(this);
-	int i = 0;
-	for(Option o : opts) {
-	    if((c.y >= o.y1) && (c.y <= o.y2))
-		break;
-	    i++;
-	}
-	if(i < opts.size()) {
-	    chosen = i;
-	    sendchosen();
-	}
-	return(true);
+		int i = 0;
+		if(button == 1 && c.x < sz.x-25) {
+			int sel = (c.y / 10) + scrollBar.val;
+			if(sel >= opts.size()){
+				sel = -1;
+			}
+			if(sel < 0){
+				chosen = null;
+			} else {
+				chosen = opts.get(sel);
+			}
+		    changed(chosen);
+		    return(true);
+		}
+		if(scrollBar.mousedown(c, button))	return true;
+
+		return(false);
     }
 	
     public boolean keydown(KeyEvent e) { 
-	if((e.getKeyCode() == KeyEvent.VK_DOWN) && (chosen < opts.size() - 1)) {
-	    chosen++;
-	    sendchosen();
-	} else if((e.getKeyCode() == KeyEvent.VK_UP) && (chosen > 0)) {
-	    chosen--;
-	    sendchosen();
-	}
-	return(true);
+    	return parent.keydown(e);
     }
+    public void changed(Option changed)
+    {}
 }

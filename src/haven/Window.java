@@ -67,8 +67,9 @@ public class Window extends Widget implements DTarget {
 	cbtn.c = new Coord(wsz.x - 3 - Utils.imgsz(cbtni[0]).x, 3).add(mrgn.inv().add(wbox.tloff().inv()));
     }
 	
-    public Window(Coord c, Coord sz, Widget parent, String cap, Coord tlo, Coord rbo) {
-	super(c, new Coord(0, 0), parent);
+	public Window(Coord c, Coord sz, Widget parent, String cap, Coord tlo, Coord rbo, boolean closable)
+	{
+		super(c, new Coord(0, 0), parent);
 	this.tlo = tlo;
 	this.rbo = rbo;
 	cbtn = new IButton(Coord.z, this, cbtni[0], cbtni[1], cbtni[2]);
@@ -79,13 +80,21 @@ public class Window extends Widget implements DTarget {
 	atl = new Coord(wbox.bl.sz().x, wbox.bt.sz().y).add(tlo);
 	wsz = sz.add(tlo.inv()).add(rbo.inv());
 	asz = new Coord(wsz.x - wbox.bl.sz().x - wbox.br.sz().x - mrgn.x, wsz.y - wbox.bt.sz().y - wbox.bb.sz().y - mrgn.y);
-	placecbtn();
+	if(closable) placecbtn();
+	else cbtn.visible = false;
 	setfocustab(true);
 	parent.setfocus(this);
+	}
+    public Window(Coord c, Coord sz, Widget parent, String cap, Coord tlo, Coord rbo) {
+	this(c, sz, parent, cap, tlo, rbo, true);
     }
 	
     public Window(Coord c, Coord sz, Widget parent, String cap) {
 	this(c, sz, parent, cap, new Coord(0, 0), new Coord(0, 0));
+    }
+    public Window(Coord c, Coord sz, Widget parent, String cap, boolean closable)
+    {
+    	this(c, sz, parent, cap, new Coord(0,0), new Coord(0,0), closable);
     }
 	
     public void cdraw(GOut g) {
