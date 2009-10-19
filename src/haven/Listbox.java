@@ -55,6 +55,10 @@ public class Listbox extends Widget {
 		    this.name = name;
 		    this.disp = disp;
 		}
+		public boolean containsString(String data)
+		{
+			return (data.equals(name) || data.equals(disp));
+		}
     }
 	
     public void draw(GOut g) {
