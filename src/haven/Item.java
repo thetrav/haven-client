@@ -29,6 +29,7 @@ package haven;
 import java.awt.image.BufferedImage;
 import java.awt.Graphics;
 import java.awt.Color;
+import java.awt.event.KeyEvent;
 
 public class Item extends Widget implements DTarget {
     static Coord shoff = new Coord(1, 3);
@@ -255,7 +256,6 @@ public class Item extends Widget implements DTarget {
 	    meter = (Integer)args[0];
 	}
     }
-	
     public boolean mousedown(Coord c, int button) {
 	if(!dm) {
 	    if(button == 1) {

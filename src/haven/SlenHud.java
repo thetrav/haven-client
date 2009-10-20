@@ -70,7 +70,7 @@ public class SlenHud extends Widget implements DropTarget {
 		}
 	    });
 	int h = bg.sz().y;
-	sz = new Coord(1024, h);
+	sz = new Coord(CustomConfig.windowSize.x, h);
 	sz.y = (h - fc.y > sz.y)?(h - fc.y):sz.y;
 	sz.y = (h - mc.y > sz.y)?(h - mc.y):sz.y;
     }
@@ -114,19 +114,19 @@ public class SlenHud extends Widget implements DropTarget {
 	    }
 	    if(!w && c) {
 		if(ca < 0.6) {
-		    m.c.y = 768 - (int)(sz.y * (1 - (ca / 0.6)));
+		    m.c.y = CustomConfig.windowSize.y - (int)(sz.y * (1 - (ca / 0.6)));
 		} else {
-		    m.c.y = 768;
-		    sb.c.y = 768 - (int)(sb.sz.y * ((ca - 0.6) / 0.4));
+		    m.c.y = CustomConfig.windowSize.y;
+		    sb.c.y = CustomConfig.windowSize.y - (int)(sb.sz.y * ((ca - 0.6) / 0.4));
 		}
 	    }
 	    if(w && !c) {
 		if(ca < 0.6) {
-		    m.c.y = 768 - (int)(sz.y * (ca / 0.6));
-		    sb.c.y = 768 - (int)(sb.sz.y * (1 - (ca / 0.6)));
+		    m.c.y = CustomConfig.windowSize.y - (int)(sz.y * (ca / 0.6));
+		    sb.c.y = CustomConfig.windowSize.y - (int)(sb.sz.y * (1 - (ca / 0.6)));
 		} else {
-		    m.c.y = 768 - sz.y;
-		    sb.c.y = 768;
+		    m.c.y = CustomConfig.windowSize.y - sz.y;
+		    sb.c.y = CustomConfig.windowSize.y;
 		}
 	    }
 	    if(ct >= ms)
@@ -135,7 +135,7 @@ public class SlenHud extends Widget implements DropTarget {
     }
     
     public SlenHud(Coord c, Widget parent) {
-	super(new Coord(1024, 768).add(sz.inv()), sz, parent);
+	super(new Coord(CustomConfig.windowSize.x, CustomConfig.windowSize.y).add(sz.inv()), sz, parent);
 	new Img(fc, flarps, this);
 	new Img(mc, mbg, this);
 	new Img(dispc, dispbg, this);
@@ -180,7 +180,7 @@ public class SlenHud extends Widget implements DropTarget {
 		}
 	    };
 	}
-	vc = new VC(this, new IButton(new Coord(492, 768), parent, Resource.loadimg("gfx/hud/slen/sbu"), Resource.loadimg("gfx/hud/slen/sbd")) {
+	vc = new VC(this, new IButton(new Coord(492, CustomConfig.windowSize.y), parent, Resource.loadimg("gfx/hud/slen/sbu"), Resource.loadimg("gfx/hud/slen/sbd")) {
 		public void click() {
 		    vc.show();
 		}
@@ -565,7 +565,7 @@ public class SlenHud extends Widget implements DropTarget {
     }
     
     public int foldheight() {
-	return(768 - c.y);
+	return(CustomConfig.windowSize.y - c.y);
     }
     
     public boolean dropthing(Coord c, Object thing) {

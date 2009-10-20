@@ -235,7 +235,7 @@ public class HavenPanel extends GLCanvas implements Runnable {
 
     void redraw(GL gl) {
 	ui.tooltip = null;
-	GOut g = new GOut(gl, getContext(), new Coord(1024, 768));
+	GOut g = new GOut(gl, getContext(), new Coord(CustomConfig.windowSize.x, CustomConfig.windowSize.y));
 
 	gl.glMatrixMode(GL.GL_PROJECTION);
 	gl.glLoadIdentity();

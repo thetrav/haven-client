@@ -93,6 +93,8 @@ public class SlenChat extends ChatHW implements IRCConnectionListener
 	    		}
 	    		public void changeNick(String oldnick, String newnick)
 	    		{
+	    			oldnick = parseNick(oldnick);
+	    			newnick = parseNick(newnick);
 	    			if(!containsNick(oldnick))	return;
 	    			Listbox.Option tUser = getUser(oldnick);
 	    			if(tUser != null)	tUser.disp = newnick;
@@ -216,8 +218,7 @@ public class SlenChat extends ChatHW implements IRCConnectionListener
 	    			cArgs = new String[1];
 	    			cArgs[0] = input.substring(input.indexOf(" ")).trim();
 	    			IRC.close();
-	    			IRC = new IRCConnection("irc.synirc.net", 6667, user, user+"|1",
-    								user, user);
+	    			IRC = new IRCConnection(cArgs[0], 6667, user, user+"|1", user, user);
     				IRC.setIRCConnectionListener(this);
     				IRC.open();
     				return;
@@ -260,6 +261,9 @@ public class SlenChat extends ChatHW implements IRCConnectionListener
 	    			return;
 	    		}
 	    	}
+	    	if(IRC.getState() != IRC.CONNECTED){
+	    		IRC.open(IRC);
+	    	}
 	    	IRC.writeln("PRIVMSG " + channel + " :" + input);
 	    	out.append(user + ": " + input, Color.BLACK);
 	    }
@@ -293,9 +297,12 @@ public class SlenChat extends ChatHW implements IRCConnectionListener
 			out.append("Disconnected", Color.GREEN.darker());
 		}
 		public void onIsOn( String[] usersOn ){}
-		public void onInvite(String orgin,String orgnick,String invitee,String chan){}
+		public void onInvite(String orgin,String orgnick,String invitee,String chan)
+		{
+		}
 		public void onJoin( String user, String nick, String chan, boolean create )
 		{
+			nick = parseNick(nick);
 			tSCWnd = findWindow(chan);
 			if(tSCWnd == null)	return;
 			if(tSCWnd.userList != null)	
@@ -325,6 +332,7 @@ public class SlenChat extends ChatHW implements IRCConnectionListener
 			}
 		public void onPrivateMessage(String orgnick, String chan, String txt)
 			{								
+				orgnick = parseNick(orgnick);
 				//	Searches for existing windows and appends to the appropriate screen
 				tSCWnd = findWindow(chan);		//	Checks for a channel
 				if(tSCWnd == null){				//	Might be an existing PM screen
@@ -343,10 +351,12 @@ public class SlenChat extends ChatHW implements IRCConnectionListener
 				//	Window doesn't exist because its a PM with no channel, so a new one is created
 				tSCWnd = findWindow(orgnick);
 				tSCWnd = tSCWnd == null ? new SlenChat(this, orgnick, false) : tSCWnd;
-	    		tSCWnd.out.append(orgnick + ": " + txt, Color.BLUE);
+	    		tSCWnd.out.append(orgnick + ": " + txt, Color.BLUE.darker());
 			}
 		public void onNick( String user, String oldnick, String newnick )
 		{
+			oldnick = parseNick(oldnick);
+			newnick = parseNick(newnick);
 			for(SlenChat tSCWnd : ((SlenHud)parent).ircChannels)
 			{
 				//	Changes the links in the appropriate windows so all private messages are still
@@ -369,10 +379,11 @@ public class SlenChat extends ChatHW implements IRCConnectionListener
 		}
 		public void onPart( String user, String nick, String chan )
 		{
+			nick = parseNick(nick);
 			tSCWnd = findWindow(chan);
 			if(tSCWnd == null)	return;
 			tSCWnd.out.append(nick + " has left " + chan, Color.GREEN.darker());
-			if(tSCWnd.userList != null)	tSCWnd.userList.rmvUser(nick);
+			if(tSCWnd.userList != null)	tSCWnd.userList.rmvUser(user);
 		}
 		public void onOp( String oper, String chan, String oped ){}
 		public void onParsingError(String message)
@@ -393,6 +404,7 @@ public class SlenChat extends ChatHW implements IRCConnectionListener
 		public void onVersionNotice(String orgnick, String origin, String version){}
 		public void onQuit(String user, String nick, String txt )
 		{
+			nick = parseNick(nick);
 			out.append(nick + " quit. Reason: " + txt, Color.GREEN.darker());
 			
 			//	Checks all windows for this nick and removes it when found
@@ -402,6 +414,7 @@ public class SlenChat extends ChatHW implements IRCConnectionListener
 				{
 					if(SC.userList.containsUser(nick))
 					{
+						SC.out.append(nick + " has left the channel. Reason: " + txt, Color.GREEN.darker());
 						SC.userList.rmvUser(nick);
 					}
 				}
@@ -417,6 +430,7 @@ public class SlenChat extends ChatHW implements IRCConnectionListener
 		public void onReplyWhoIsUser(String nick, String user,
 									String name, String host)
 		{
+			parseNick(nick);
 			tSCWnd.userList.addUser(user,nick);
 		}
 		public void onReplyWhoIsServer(String nick, String server, String info){}
@@ -446,14 +460,13 @@ public class SlenChat extends ChatHW implements IRCConnectionListener
 				String tNick = "";
 				while(true)
 				{
-					tNick = users.substring(0,users.indexOf(" "))
-						.replace('~',' ').replace('%',' ').replace('@',' ').trim();
+					tNick = users.substring(0,users.indexOf(" "));
+					tNick = parseNick(tNick);
 					users = users.substring(users.indexOf(" ")).trim();
 					IRC.writeln("WHOIS " + tNick);
 				}
 			} catch(StringIndexOutOfBoundsException e)
 			{
-				e.printStackTrace();
 			}
 		}
 		public void onReplyTopic(String channel, String topic)
@@ -546,5 +559,9 @@ public class SlenChat extends ChatHW implements IRCConnectionListener
 			}
 			//	No inactive window found
 			return false;
+		}
+		private static String parseNick(String nickname)
+		{
+			return nickname.replace('~',' ').replace('@',' ').replace('%', ' ').trim();
 		}
     }
