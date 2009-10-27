@@ -32,6 +32,7 @@ import java.awt.event.KeyEvent;
 public class RootWidget extends Widget {
     Logout logout = null;
     Profile gprof;
+    GameOptions opts;
     boolean afk = false;
 	
     public RootWidget(UI ui, Coord sz) {
@@ -63,6 +64,14 @@ public class RootWidget extends Widget {
 		new Profwnd(findchild(SlenHud.class), gprof, "Glob prof");
 	    } else if(Config.profile && (key == '!')) {
 		new Profwnd(findchild(SlenHud.class), findchild(MapView.class).mask.prof, "ILM prof");
+	    } else if(key == 'O')
+	    {
+	   	    if(opts == null)
+	   	    {
+	   	    	opts = new GameOptions(this);
+	   	    	ui.bind(opts, 2750);
+	   	    }
+	    	else opts.toggle();
 	    } else if(key != 0) {
 		wdgmsg("gk", (int)key);
 	    }

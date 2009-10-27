@@ -46,6 +46,7 @@ public class SlenHud extends Widget implements DropTarget {
     public static final Coord bc2 = new Coord(485, -8);
     public static final Coord sz;
     public List<SlenChat> ircChannels = new ArrayList<SlenChat>();
+    public SlenConsole ircConsole;
     int woff = 0;
     List<HWindow> wnds = new ArrayList<HWindow>();
     HWindow awnd;
@@ -156,7 +157,8 @@ public class SlenHud extends Widget implements DropTarget {
 	budb = new IButton(mc, this, Resource.loadimg("gfx/hud/slen/budu"), Resource.loadimg("gfx/hud/slen/budd"));
 	{
 		//	Village claims button
-	    new IButton(dispc, this, Resource.loadimg("gfx/hud/slen/dispauth"), Resource.loadimg("gfx/hud/slen/dispauthd")) {
+	    new IButton(dispc, this, Resource.loadimg("gfx/hud/slen/dispauth"),
+	    			 Resource.loadimg("gfx/hud/slen/dispauthd")) {
 		public void click() {
 		    MapView mv = ui.root.findchild(MapView.class);
 		    mv.authdraw = !mv.authdraw;
@@ -165,7 +167,8 @@ public class SlenHud extends Widget implements DropTarget {
 	}
 	{
 		//	Totem claim button
-	    new IButton(dispc, this, Resource.loadimg("gfx/hud/slen/dispclaim"), Resource.loadimg("gfx/hud/slen/dispclaimd")) {
+	    new IButton(dispc, this, Resource.loadimg("gfx/hud/slen/dispclaim"),
+	    				 Resource.loadimg("gfx/hud/slen/dispclaimd")) {
 		private boolean v = false;
 		
 		public void click() {
@@ -180,7 +183,8 @@ public class SlenHud extends Widget implements DropTarget {
 		}
 	    };
 	}
-	vc = new VC(this, new IButton(new Coord(492, CustomConfig.windowSize.y), parent, Resource.loadimg("gfx/hud/slen/sbu"), Resource.loadimg("gfx/hud/slen/sbd")) {
+	vc = new VC(this, new IButton(new Coord(492, CustomConfig.windowSize.y), parent,
+				 Resource.loadimg("gfx/hud/slen/sbu"), Resource.loadimg("gfx/hud/slen/sbd")) {
 		public void click() {
 		    vc.show();
 		}
@@ -199,9 +203,8 @@ public class SlenHud extends Widget implements DropTarget {
 	sub.visible = sdb.visible = false;
 	
 	//	Global Chat
-	ircChannels.add(new SlenChat(this));
-	ui.bind(ircChannels.get(0), 1000);
-	
+	ircConsole = new SlenConsole(this);
+	ui.bind(ircConsole, 1000);	
     }
 	
     public Coord xlate(Coord c, boolean in) {
@@ -445,27 +448,29 @@ public class SlenHud extends Widget implements DropTarget {
 	    wnd.visible = true;
 	if(!ircChannels.isEmpty())
 	{	
-		for(int i = 0; i < ircChannels.size(); i ++)
+		for(SlenChat tSCWnd : ircChannels)
 		{
-			SlenChat tSCWnd = ircChannels.get(i);
-			if(tSCWnd.userList != null)	tSCWnd.userList.hide();
+			if(tSCWnd == null)	break;
+			if(tSCWnd.userList != null && !tSCWnd.visible)	tSCWnd.userList.hide();
 		}
 		
 	}
 	for(Button b : btns.values())
 		{
-			if(wnd.getClass().getName().equals(ircChannels.get(0).getClass().getName()))
-			{
-				if(((SlenChat)wnd).initialized)
+			if(wnd.title.equalsIgnoreCase("Messages"))
+				break;
+			if(wnd.title.equalsIgnoreCase(b.text.text)
+				&& wnd.visible)
 				{
-					if(((SlenChat)wnd).getChannel().equalsIgnoreCase(b.text.text)
-						&& wnd.visible)
+					b.changeText(b.text.text, Color.YELLOW);
+					if(!wnd.parent.getClass().getName().equalsIgnoreCase(RootWidget.class.getName()))
+					{
+						if(ircConsole.findWindow(wnd.title) != null)
 						{
-							b.changeText(b.text.text, Color.YELLOW);
-							if(((SlenChat)wnd).userList != null)	((SlenChat)wnd).userList.show();
+							if(((SlenChat)wnd).userList != null)	((SlenChat)wnd).userList.toggle();
 						}
+					}
 				}
-			}
 		}
     }
 	
@@ -588,7 +593,7 @@ public class SlenHud extends Widget implements DropTarget {
     }
     public void destroy()
     {
-    	ircChannels.get(0).IRC.close();
+    	ircConsole.IRC.close();
     	super.destroy();
     }
 }

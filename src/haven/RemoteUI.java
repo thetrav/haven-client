@@ -68,6 +68,7 @@ public class RemoteUI implements UI.Receiver {
 	    synchronized(sess) {
 		sess.wait();
 	    }
+	    
 	}
     }
 }

@@ -354,7 +354,7 @@ public class Session {
 		glob.party.msg(msg);
 	    } else if(msg.type == Message.RMSG_SFX) {
 		Indir<Resource> res = getres(msg.uint16());
-		double vol = ((double)msg.uint16()) / 256.0;
+		double vol = ((double)CustomConfig.sfxVol) / 100.0;
 		double spd = ((double)msg.uint16()) / 256.0;
 		Audio.play(res);
 	    } else if(msg.type == Message.RMSG_CATTR) {

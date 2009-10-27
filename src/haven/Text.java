@@ -67,8 +67,7 @@ public class Text {
 	public Foundry(Font f, Color defcol) {
 	    font = f;
 	    this.defcol = defcol;
-	    BufferedImage junk = TexI.mkbuf(new Coord(10, 10));
-	    tmpl = junk.getGraphics();
+	    tmpl = TexI.mkbuf(new Coord(10, 10)).getGraphics();
 	    tmpl.setFont(f);
 	    m = tmpl.getFontMetrics();
 	}

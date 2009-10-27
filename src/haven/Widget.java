@@ -460,4 +460,8 @@ public class Widget {
 	}
 	return(cursor);
     }
+    public void toggle()
+    {
+    	visible = !visible;
+    }
 }

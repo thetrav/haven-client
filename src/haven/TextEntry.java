@@ -68,7 +68,7 @@ public class TextEntry extends SSWidget {
 	
     private void render() {
 	String dtext;
-	if(pw) {
+	if(pw) {		//	Replace the text with stars if its a password
 	    dtext = "";
 	    for(int i = 0; i < text.length(); i++)
 		dtext += "*";
@@ -77,11 +77,14 @@ public class TextEntry extends SSWidget {
 	}
 	synchronized(ui) {
 	    Graphics g = graphics();
+	    //	Draw the white background and black text
 	    g.setColor(Color.WHITE);
 	    g.fillRect(0, 0, sz.x, sz.y);
 	    g.setColor(Color.BLACK);
 	    FontMetrics m = g.getFontMetrics();
 	    g.drawString(dtext, 0, m.getAscent());
+	    
+	    //	Draw the vertical line symbolizing the prompt
 	    if(hasfocus && prompt) {
 		Rectangle2D tm = m.getStringBounds(dtext.substring(0, pos), g);
 		g.drawLine((int)tm.getWidth(), 1, (int)tm.getWidth(), m.getHeight() - 1);
@@ -110,7 +113,7 @@ public class TextEntry extends SSWidget {
 	
     public boolean type(char c, KeyEvent ev) {
 	try {
-	    if(c == 8) {
+	    if(c == 8) {		//	BACKSPACE
 		if(pos > 0) {
 		    if(pos < text.length())
 			text = text.substring(0, pos - 1) + text.substring(pos);
@@ -119,12 +122,12 @@ public class TextEntry extends SSWidget {
 		    pos--;
 		}
 		return(true);
-	    } else if(c == 10) {
+	    } else if(c == 10) {	//	ENTER
 		if(!canactivate)
 		    return(false);
 		wdgmsg("activate", text);
 		return(true);
-	    } else if(c == 127) {
+	    } else if(c == 127) {	//	DELETE
 		if(pos < text.length())
 		    text = text.substring(0, pos) + text.substring(pos + 1);
 		return(true);
