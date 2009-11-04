@@ -15,6 +15,7 @@ public class CustomConfig {
 	public static int sfxVol = 100;
 	public static String ircServerAddress = "irc.synirc.net";
 	public static String ircChannelList = "#Haven";
+	public static int wdgtID = 1000;
 	
     public CustomConfig() {
     	try{

@@ -62,22 +62,7 @@ public class Listbox extends Widget {
     }
 	
     public void draw(GOut g) {
-		/*int y = 0, i = 0;
-		for(Option o : opts) {
-		    Color c;
-		    if(o.equals(chosen)) {
-				c = FlowerMenu.pink;
-		    }
-		    else {
-				c = Color.BLACK;
-		    }
-		    Text t = Text.render(o.disp, c);
-		    o.y1 = y;
-		    g.image(t.tex(), new Coord(0, y));
-		    y += t.sz().y;
-		    o.y2 = y;
-		}*/
-		for(int i = 0; i < height; i++) {
+		for(int i = 0; i < height && scrollBar != null; i++) {
 			Color c;
 			if(i + scrollBar.val >= opts.size())
 			    continue;
@@ -89,7 +74,6 @@ public class Listbox extends Widget {
 				c = Color.BLACK;
 		    }
 			g.image((Text.render(b.disp, c)).tex(), new Coord(0,i*10));
-		//	g.atext(b.name.substring(b.name.indexOf('/') + 1), new Coord(0, i * 10 + 10), 0, 0.5);
 		}
 		super.draw(g);
     }

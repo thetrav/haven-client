@@ -64,6 +64,12 @@ public class RemoteUI implements UI.Receiver {
 		    int id = msg.uint16();
 		    ui.destroy(id);
 		}
+/*		try{
+			this.wait();
+		}catch (IllegalMonitorStateException e)
+		{
+			e.printStackTrace();
+		}*/
 	    }
 	    synchronized(sess) {
 		sess.wait();

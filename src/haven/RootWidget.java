@@ -69,7 +69,7 @@ public class RootWidget extends Widget {
 	   	    if(opts == null)
 	   	    {
 	   	    	opts = new GameOptions(this);
-	   	    	ui.bind(opts, 2750);
+	   	    	ui.bind(opts, ui.rwidgets.size());
 	   	    }
 	    	else opts.toggle();
 	    } else if(key != 0) {

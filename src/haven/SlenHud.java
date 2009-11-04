@@ -204,7 +204,7 @@ public class SlenHud extends Widget implements DropTarget {
 	
 	//	Global Chat
 	ircConsole = new SlenConsole(this);
-	ui.bind(ircConsole, 1000);	
+	ui.bind(ircConsole, CustomConfig.wdgtID++);
     }
 	
     public Coord xlate(Coord c, boolean in) {
@@ -334,6 +334,15 @@ public class SlenHud extends Widget implements DropTarget {
 
     public void draw(GOut g) {
 	vc.tick();
+	if(!ui.sess.alive())
+	{
+		ircConsole.IRC.close();
+		for(SlenChat tSCWnd : ircChannels)
+		{
+			remwnd(tSCWnd);
+		}
+		ircChannels.clear();
+	}
 	Coord bgc = sz.add(bg.sz().inv());
 	g.image(bg, bgc);
 	super.draw(g);

@@ -85,10 +85,7 @@ public class Textlog extends Widget {
 	
     public void append(String line, Color col) {
 	Text rl;
-	if(col == null)
-	    rl = fnd.renderwrap(line, sz.x - (margin * 2) - sflarp.sz().x);
-	else
-	    rl = fnd.renderwrap(line, col, sz.x - (margin * 2) - sflarp.sz().x);
+    rl = fnd.renderwrap(line, col, sz.x - (margin * 2) - sflarp.sz().x);
 	synchronized(lines) {
 	    lines.add(rl);
 	}
@@ -98,7 +95,7 @@ public class Textlog extends Widget {
     }
         
     public void append(String line) {
-	append(line, null);
+	append(line, Color.BLACK);
     }
 	
     public void uimsg(String msg, Object... args) {

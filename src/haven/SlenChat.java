@@ -40,8 +40,8 @@ public class SlenChat extends ChatHW
 	    			super(new Coord(10, CustomConfig.windowSize.y-200), new Coord(125,parent.sz.y-10), parent.parent.parent, "Users", false);
 	    			out = new Listbox(Coord.z, new Coord(100,105), this, users);
 	    			owner = parent;
-	    			ui.bind(this, 1500 + ((SlenHud)parent.parent).ircChannels.size());
-	    			ui.bind(out, 2000 + ((SlenHud)parent.parent).ircChannels.size());
+	    			ui.bind(this, CustomConfig.wdgtID++);
+	    			ui.bind(out, CustomConfig.wdgtID++);
 	    		}
 	    		public void addUser(String user, String nick)
 	    		{

@@ -77,16 +77,23 @@ public class TextEntry extends SSWidget {
 	}
 	synchronized(ui) {
 	    Graphics g = graphics();
+	    int tPos = pos;
 	    //	Draw the white background and black text
 	    g.setColor(Color.WHITE);
 	    g.fillRect(0, 0, sz.x, sz.y);
 	    g.setColor(Color.BLACK);
 	    FontMetrics m = g.getFontMetrics();
+	    
+	    while(m.getStringBounds(dtext.substring(0, tPos), g).getWidth() > sz.x)
+	    {
+	    	dtext = dtext.substring(1);
+	    	tPos--;
+	    }
 	    g.drawString(dtext, 0, m.getAscent());
 	    
 	    //	Draw the vertical line symbolizing the prompt
 	    if(hasfocus && prompt) {
-		Rectangle2D tm = m.getStringBounds(dtext.substring(0, pos), g);
+		Rectangle2D tm = m.getStringBounds(dtext.substring(0, tPos), g);
 		g.drawLine((int)tm.getWidth(), 1, (int)tm.getWidth(), m.getHeight() - 1);
 	    }
 	    Rectangle2D tm = m.getStringBounds(dtext, g);

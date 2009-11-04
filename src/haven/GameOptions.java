@@ -41,7 +41,7 @@ public class GameOptions extends Window{
     	channelList = new TextEntry(Coord.z.add(sfxVol.sz().x + 5, 50), Coord.z.add(120, 15),
     					 this, CustomConfig.ircChannelList);
     	
-    	ui.bind(sfxVolBar, 450);
+    	ui.bind(sfxVolBar, CustomConfig.wdgtID++);
     }
     public void draw(GOut g)
     {

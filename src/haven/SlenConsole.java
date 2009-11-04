@@ -318,7 +318,14 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 		tSCWnd.out.append(nick + " has left " + chan, Color.GREEN.darker());
 		if(tSCWnd.userList != null)	tSCWnd.userList.rmvUser(user);
 	}
-	public void onOp( String oper, String chan, String oped ){}
+	public void onOp( String oper, String chan, String oped )
+	{
+		tSCWnd = findWindow(chan);
+		if(tSCWnd != null)
+		{
+			tSCWnd.out.append(oper + " " + oped);
+		}
+	}
 	public void onParsingError(String message)
 	{
 		out.append(message, Color.DARK_GRAY);
@@ -327,7 +334,10 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 	{
 		IRC.writeln("PONG " + params);
 	}
-	public void onStatus(String msg){}
+	public void onStatus(String msg)
+	{
+		out.append(msg);
+	}
 	public void onTopic(String chanName, String newTopic)
 	{
 		tSCWnd = findWindow(chanName);
