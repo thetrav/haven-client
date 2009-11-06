@@ -195,7 +195,6 @@ public class MainFrame extends Frame implements Runnable, FSMan {
 	ThreadGroup g = Utils.tg();
 	Resource.loadergroup = g;
 	setupres();
-	new CustomConfig();
 	MainFrame f = new MainFrame(CustomConfig.windowSize.x, CustomConfig.windowSize.y);
 	if(Config.fullscreen)
 	    f.setfs();

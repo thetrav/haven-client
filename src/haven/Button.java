@@ -43,6 +43,7 @@ public class Button extends SSWidget {
     static Text.Foundry tf = new Text.Foundry(new Font("Serif", Font.PLAIN, 12), Color.YELLOW);
     static Text.Foundry newFoundry;
     boolean a = false;
+    boolean isFlashing = false;
 	
     static {
 	Widget.addtype("btn", new WidgetFactory() {
@@ -84,11 +85,21 @@ public class Button extends SSWidget {
 	
     public void render() {
 	Graphics g = graphics();
-	g.drawImage(a?dt:ut, 3, 3, sz.x - 6, 13, null);
-	g.drawImage(bl, 0, 0, null);
-	g.drawImage(br, sz.x - br.getWidth(), 0, null);
-	g.drawImage(bt, 3, 0, sz.x - 6, bt.getHeight(), null);
-	g.drawImage(bb, 3, sz.y - bb.getHeight(), sz.x - 6, bb.getHeight(), null);
+	if(isFlashing)
+	{
+		g.drawImage(a?dt:ut, 3, 3, sz.x - 6, 13, Color.RED.darker(), null);
+		g.drawImage(bl, 0, 0, Color.RED.darker(), null);
+		g.drawImage(br, sz.x - br.getWidth(), 0, Color.RED.darker(), null);
+		g.drawImage(bt, 3, 0, sz.x - 6, bt.getHeight(), Color.RED.darker(), null);
+		g.drawImage(bb, 3, sz.y - bb.getHeight(), sz.x - 6, bb.getHeight(), Color.RED.darker(), null);
+	} else
+	{
+		g.drawImage(a?dt:ut, 3, 3, sz.x - 6, 13, null);
+		g.drawImage(bl, 0, 0, null);
+		g.drawImage(br, sz.x - br.getWidth(), 0, null);
+		g.drawImage(bt, 3, 0, sz.x - 6, bt.getHeight(), null);
+		g.drawImage(bb, 3, sz.y - bb.getHeight(), sz.x - 6, bb.getHeight(), null);
+	}
 	Coord tc = sz.div(2).add(Utils.imgsz(cont).div(2).inv());
 	if(a)
 	    tc = tc.add(1, 1);

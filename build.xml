@@ -57,7 +57,7 @@
       <fileset dir="build/classes" />
       <fileset dir="build/classes-lib" />
       <manifest>
-	<attribute name="Main-Class" value="haven.MainFrame" />
+	<attribute name="Main-Class" value="haven.CustomConfig" />
 	<attribute name="Class-Path" value="jogl.jar gluegen-rt.jar haven-res.jar" />
       </manifest>
     </jar>

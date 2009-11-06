@@ -472,6 +472,7 @@ public class SlenHud extends Widget implements DropTarget {
 				&& wnd.visible)
 				{
 					b.changeText(b.text.text, Color.YELLOW);
+					b.isFlashing = false;
 					if(!wnd.parent.getClass().getName().equalsIgnoreCase(RootWidget.class.getName()))
 					{
 						if(ircConsole.findWindow(wnd.title) != null)

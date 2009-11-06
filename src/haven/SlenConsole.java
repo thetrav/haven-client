@@ -32,6 +32,7 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 	    	IRC.setIRCConnectionListener(this);
 	    	IRC.open();
     	}
+    	Debug.setDebug(true);
     	initialized = true;
     }
 	public void handleInput(String input, ChatHW src)

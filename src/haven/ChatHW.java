@@ -83,6 +83,7 @@ public class ChatHW extends HWindow {
 			if(wnd.title.equalsIgnoreCase(b.text.text)
 				&& !wnd.visible)
 			{
+				b.isFlashing = true;
 				b.changeText(b.text.text, Color.RED);
 				return true;
 			}
