@@ -5,6 +5,7 @@
     <mkdir dir="build" />
     <mkdir dir="build/classes" />
     <available property="has-res-jar" file="build/haven-res.jar" />
+    <available property="has-sign-key" file="dist\IRC-Extended-Key"/>
     <available property="has-buildinfo" file="build/classes/buildinfo" />
     <available property="unpacked-lib" file="build/classes-lib" />
   </target>
@@ -82,7 +83,7 @@
   <target name="deftgt" depends="jars, appletview" />
 
   <target name="run" depends="jars">
-    <java jar="build/haven.jar" fork="true" />
+    <java jar="build/haven.jar" fork="true"/>
   </target>
   
   <target name="clean">
@@ -98,5 +99,19 @@
         <sysproperty key="haven.defserv" value="sh.seatribe.se" />
         <sysproperty key="haven.resdir" value="/home/fredrik/src/haven/res" />
       </java>
+  </target>
+  
+  <target name="make-key" unless="has-sign-key">
+  	<genkey alias="Pacho" keystore="dist\IRC-Extended-Key" keypass="Pacho87" storepass="Pacho87" validity="365"
+  	dname="CN=Pacho the Elf, OU=Worker Elves, O=Elves United, C=NP"/>
+  </target>
+  
+  <target name="signer" depends="jars, make-key">
+  	<copy file="build\haven.jar" todir="dist"/>
+  	<signjar jar="haven.jar" alias="Pacho" storepass="Pacho87" keystore="dist\IRC-Extended-Key" keypass="Pacho87"/>
+  </target>
+  
+  <target name="update-zips" depends="signer">
+  	<zip destfile="dist\update-patch-current.zip" basedir="dist" includes="haven.jar" update="true" whenempty="create"/>
   </target>
 </project>

@@ -2,7 +2,7 @@
  * @(#)CustomConfig.java
  *
  *
- * @author 
+ * @author
  * @version 1.00 2009/10/19
  */
 
@@ -30,14 +30,14 @@ public class CustomConfig {
 
 	static class IntegerTextField extends JTextField {
 
-	    final static String badchars 
+	    final static String badchars
 	       = "`~!@#$%^&*()_-+=\\|\"':;?/>.<, ";
-	    
+
 	    public void processKeyEvent(KeyEvent ev) {
-	
+
 	        char c = ev.getKeyChar();
-	
-	        if((Character.isLetter(c) && !ev.isAltDown()) 
+
+	        if((Character.isLetter(c) && !ev.isAltDown())
 	           || badchars.indexOf(c) > -1) {
 	            ev.consume();
 	            return;
@@ -48,7 +48,7 @@ public class CustomConfig {
 	        	return;
 	        }
 	        else super.processKeyEvent(ev);
-	
+
 	    }
 	}
 	public static Coord windowSize = new Coord(1024, 768);
@@ -56,7 +56,6 @@ public class CustomConfig {
 	public static String ircServerAddress = "irc.synirc.net";
 	public static String ircChannelList = "#Haven";
 	public static int wdgtID = 1000;
-	
     public static boolean load() {
     	try{
     		BufferedReader reader = new BufferedReader(new FileReader("config.cfg"));
@@ -87,11 +86,13 @@ public class CustomConfig {
     public static void saveSettings()
     {
     	try{
-    			BufferedWriter writer = new BufferedWriter(new FileWriter("config.cfg"));
+    			File cfg = new File("config.cfg");
+    			BufferedWriter writer = new BufferedWriter(new FileWriter(cfg));
     			writer.write(windowSize.x + " " + windowSize.y + "\n");
     			writer.write(Integer.toString(sfxVol) + "\n");
     			writer.write(ircServerAddress + "\n");
     			writer.write(ircChannelList + "\n");
+    			System.out.println(cfg.getAbsolutePath());
     			writer.close();
     	}catch(IOException e){}
     }
@@ -112,7 +113,7 @@ public class CustomConfig {
     			new Coord(1280, 720),
     			new Coord(1280, 800)
     		});
-    		
+
     		configFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     		stdRes.setSelectedIndex(0);
     		stdRes.setEditable(false);
@@ -129,7 +130,7 @@ public class CustomConfig {
     		contentPane.add(xField);
     		contentPane.add(yField);
     		contentPane.add(startBtn);
-    		
+
     		typeStandard.addChangeListener(new ChangeListener(){
     			public void stateChanged(ChangeEvent e)
     			{
@@ -193,7 +194,7 @@ public class CustomConfig {
     		startBtn.addActionListener(new ActionListener(){
 	   			public void actionPerformed(ActionEvent e)
     			{
-    				windowSize.x = stdRes.isEnabled() ? ((Coord)stdRes.getSelectedItem()).x 
+    				windowSize.x = stdRes.isEnabled() ? ((Coord)stdRes.getSelectedItem()).x
     												  : Integer.parseInt(xField.getText());
     				windowSize.y = stdRes.isEnabled() ? ((Coord)stdRes.getSelectedItem()).y
     												  : Integer.parseInt(yField.getText());
