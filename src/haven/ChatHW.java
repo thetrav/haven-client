@@ -46,9 +46,9 @@ public class ChatHW extends HWindow {
 
     public ChatHW(Widget parent, String title, boolean closable) {
 	super(parent, title, closable);
-	in = new TextEntry(new Coord(0, sz.y - 20), new Coord(sz.x, 20), this, "");
+	in = new TextEntry(new Coord(0, sz.y - 15), new Coord(sz.x, 15), this, "");
 	in.canactivate = true;
-	out = new ExtTextlog(Coord.z, new Coord(sz.x, sz.y - 20), this);
+	out = new ExtTextlog(Coord.z, new Coord(sz.x, sz.y - 15), this);
 	if(closable) cbtn.raise();
     }
 

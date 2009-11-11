@@ -179,7 +179,7 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 	    if(src.getClass().getName().equalsIgnoreCase(tSCWnd.getClass().getName()))
 	    {
 	    	IRC.writeln("PRIVMSG " + ((SlenChat)src).getChannel() + " :" + input);
-	    	src.out.append(user + ": " + input, Color.BLACK);
+	    	src.out.append(user + ": " + input, Color.RED.darker());
 	    	return;
 	    }
 	}
@@ -275,7 +275,7 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 
 			//	Window exists and text is added
 			if(tSCWnd != null){
-				tSCWnd.out.append(orgnick + ": " + txt, Color.BLUE.darker());
+				tSCWnd.out.append(orgnick + ": " + txt);
 
 				//	Changes the button color if the window isn't visible
 				flashWindow(tSCWnd);
@@ -286,7 +286,7 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 			tSCWnd = findWindow(orgnick);
 			tSCWnd = tSCWnd == null ? new SlenChat(this, orgnick, false) : tSCWnd;
 			((SlenHud)parent).ircChannels.add(tSCWnd);
-	   		tSCWnd.out.append(orgnick + ": " + txt, Color.BLUE.darker());
+	   		tSCWnd.out.append(orgnick + ": " + txt);
 		}
 	public void onNick( String user, String oldnick, String newnick )
 	{
