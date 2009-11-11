@@ -30,8 +30,8 @@ import java.awt.Color;
 
 public class ChatHW extends HWindow {
     TextEntry in;
-    Textlog out;
-	
+    ExtTextlog out;
+
     static {
 	Widget.addtype("slenchat", new WidgetFactory() {
 		public Widget create(Coord c, Widget parent, Object[] args) {
@@ -43,15 +43,15 @@ public class ChatHW extends HWindow {
 		}
 	    });
     }
-	
+
     public ChatHW(Widget parent, String title, boolean closable) {
 	super(parent, title, closable);
 	in = new TextEntry(new Coord(0, sz.y - 20), new Coord(sz.x, 20), this, "");
 	in.canactivate = true;
-	out = new Textlog(Coord.z, new Coord(sz.x, sz.y - 20), this);
+	out = new ExtTextlog(Coord.z, new Coord(sz.x, sz.y - 20), this);
 	if(closable) cbtn.raise();
     }
-	
+
     public void uimsg(String msg, Object... args) {
 	if(msg == "log") {
 	    Color col = null;
@@ -63,7 +63,7 @@ public class ChatHW extends HWindow {
 	    super.uimsg(msg, args);
 	}
     }
-	
+
     public void wdgmsg(Widget sender, String msg, Object... args) {
 	if(sender == in) {
 	    if(msg == "activate") {
@@ -73,6 +73,10 @@ public class ChatHW extends HWindow {
 	    }
 	}
 	super.wdgmsg(sender, msg, args);
+    }
+    public boolean mousewheel(Coord c, int amount)
+    {
+    	return(out.mousewheel(c, amount));
     }
     //	Changes the button text color to red if the window is not currently visible
 	protected boolean flashWindow(ChatHW wnd)

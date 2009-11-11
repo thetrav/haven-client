@@ -47,6 +47,7 @@ public class SlenHud extends Widget implements DropTarget {
     public static final Coord sz;
     public List<SlenChat> ircChannels = new ArrayList<SlenChat>();
     public SlenConsole ircConsole;
+    public HWindow activeWindow;
     int woff = 0;
     List<HWindow> wnds = new ArrayList<HWindow>();
     HWindow awnd;
@@ -57,13 +58,13 @@ public class SlenHud extends Widget implements DropTarget {
     String cmdline = null;
     static Text.Foundry errfoundry = new Text.Foundry(new java.awt.Font("SansSerif",
     												java.awt.Font.BOLD, 14), new Color(192, 0, 0));
-    static Text.Foundry cmdfoundry = new Text.Foundry(new java.awt.Font("Monospaced", 
+    static Text.Foundry cmdfoundry = new Text.Foundry(new java.awt.Font("Monospaced",
     												java.awt.Font.PLAIN, 12), new Color(245, 222, 179));
     Text cmdtext, lasterr;
     long errtime;
     @SuppressWarnings("unchecked")
     Indir<Resource>[] belt = new Indir[10];
-	
+
     static {
 	Widget.addtype("slen", new WidgetFactory() {
 		public Widget create(Coord c, Widget parent, Object[] args) {
@@ -75,36 +76,36 @@ public class SlenHud extends Widget implements DropTarget {
 	sz.y = (h - fc.y > sz.y)?(h - fc.y):sz.y;
 	sz.y = (h - mc.y > sz.y)?(h - mc.y):sz.y;
     }
-	
+
     static class VC {
 	static final long ms = 500;
 	SlenHud m;
 	IButton sb;
 	long st;
 	boolean w, c;
-		
+
 	VC(SlenHud m, IButton sb) {
 	    this.m = m;
 	    this.sb = sb;
 	    w = c = true;
 	}
-		
+
 	void hide() {
 	    st = System.currentTimeMillis();
 	    w = false;
 	}
-		
+
 	void show() {
 	    st = System.currentTimeMillis();
 	    w = true;
 	}
-		
+
 	void toggle() {
 	    st = System.currentTimeMillis();
 	    w = !w;
 	    c = !w;
 	}
-		
+
 	void tick() {
 	    long ct = System.currentTimeMillis() - st;
 	    double ca;
@@ -134,25 +135,25 @@ public class SlenHud extends Widget implements DropTarget {
 		c = w;
 	}
     }
-    
+
     public SlenHud(Coord c, Widget parent) {
 	super(new Coord(CustomConfig.windowSize.x, CustomConfig.windowSize.y).add(sz.inv()), sz, parent);
 	new Img(fc, flarps, this);
 	new Img(mc, mbg, this);
 	new Img(dispc, dispbg, this);
-	
+
 	//	Hide button
 	hb = new IButton(mc, this, Resource.loadimg("gfx/hud/slen/hbu"), Resource.loadimg("gfx/hud/slen/hbd"));
-	
+
 	//	Inventory button
 	invb = new IButton(mc, this, Resource.loadimg("gfx/hud/slen/invu"), Resource.loadimg("gfx/hud/slen/invd"));
-	
+
 	//	Equipment button
 	equb = new IButton(mc, this, Resource.loadimg("gfx/hud/slen/equu"), Resource.loadimg("gfx/hud/slen/equd"));
-	
+
 	//	Character button
 	chrb = new IButton(mc, this, Resource.loadimg("gfx/hud/slen/chru"), Resource.loadimg("gfx/hud/slen/chrd"));
-	
+
 	//	Kin list button
 	budb = new IButton(mc, this, Resource.loadimg("gfx/hud/slen/budu"), Resource.loadimg("gfx/hud/slen/budd"));
 	{
@@ -171,7 +172,7 @@ public class SlenHud extends Widget implements DropTarget {
 	    new IButton(dispc, this, Resource.loadimg("gfx/hud/slen/dispclaim"),
 	    				 Resource.loadimg("gfx/hud/slen/dispclaimd")) {
 		private boolean v = false;
-		
+
 		public void click() {
 		    MapView mv = ui.root.findchild(MapView.class);
 		    if(v) {
@@ -202,12 +203,12 @@ public class SlenHud extends Widget implements DropTarget {
 	    };
 	new MiniMap(new Coord(5, 5), new Coord(125, 125), this, ui.mainview);
 	sub.visible = sdb.visible = false;
-	
+
 	//	Global Chat
 	ircConsole = new SlenConsole(this);
 	ui.bind(ircConsole, CustomConfig.wdgtID++);
     }
-	
+
     public Coord xlate(Coord c, boolean in) {
 	Coord bgc = sz.add(bg.sz().inv());
 	if(in)
@@ -215,8 +216,8 @@ public class SlenHud extends Widget implements DropTarget {
 	else
 	    return(c.add(bgc.inv()));
     }
-	
-	
+
+
 	/*
 	 *	CLIENT COMMAND PARSER
 	 */
@@ -257,7 +258,7 @@ public class SlenHud extends Widget implements DropTarget {
 		    Music.play(Resource.load(resnm, ver), loop);
 		} else {
 		    Music.play(null, false);
-		}		
+		}
 	    } else if(cmd == "texdis") {
 		TexGL.disableall = (Integer.parseInt(argv[1]) != 0);
 	    } else if(cmd == "die") {
@@ -301,12 +302,12 @@ public class SlenHud extends Widget implements DropTarget {
 	if(die)
 	    throw(new RuntimeException("Triggered death"));
     }
-	
+
     public void error(String err) {
 	lasterr = errfoundry.render(err);
 	errtime = System.currentTimeMillis();
     }
-	
+
     private Coord beltc(int i) {
 	if(i < 5) {
 	    return(bc1.add(i * (invsq.sz().x + 2), 0));
@@ -314,7 +315,7 @@ public class SlenHud extends Widget implements DropTarget {
 	    return(bc2.add((i - 5) * (invsq.sz().x + 2), 0));
 	}
     }
-    
+
     private int beltslot(Coord c) {
 	c = xlate(c, false);
 	int sw = invsq.sz().x + 2;
@@ -347,7 +348,7 @@ public class SlenHud extends Widget implements DropTarget {
 	Coord bgc = sz.add(bg.sz().inv());
 	g.image(bg, bgc);
 	super.draw(g);
-	
+
 	for(int i = 0; i < 10; i++) {
 	    Coord c = xlate(beltc(i), true);
 	    g.image(invsq, c);
@@ -360,7 +361,7 @@ public class SlenHud extends Widget implements DropTarget {
 	    if(res != null)
 		g.image(res.layer(Resource.imgc).tex(), c.add(1, 1));
 	}
-	
+
 	if(cmdline != null) {
 	    GOut eg = g.reclip(new Coord(0, -20), new Coord(sz.x, 20));
 	    if((cmdtext == null) || !cmdtext.text.equals(cmdline))
@@ -376,7 +377,7 @@ public class SlenHud extends Widget implements DropTarget {
 	    }
 	}
     }
-	
+
     public void wdgmsg(Widget sender, String msg, Object... args) {
 	if(sender == hb) {
 	    vc.hide();
@@ -396,7 +397,7 @@ public class SlenHud extends Widget implements DropTarget {
 	}
 	super.wdgmsg(sender, msg, args);
     }
-	
+
     public void uimsg(String msg, Object... args) {
 	if(msg == "err") {
 	    error((String)args[0]);
@@ -410,7 +411,7 @@ public class SlenHud extends Widget implements DropTarget {
 	    super.uimsg(msg, args);
 	}
     }
-	
+
     private void updbtns() {
 	if(wnds.size() <= 5) {
 	    woff = 0;
@@ -439,31 +440,34 @@ public class SlenHud extends Widget implements DropTarget {
 	    }
 	}
     }
-	
+
     private void sup() {
 	woff--;
 	updbtns();
     }
-	
+
     private void sdn() {
 	woff++;
 	updbtns();
     }
-	
+
     private void setawnd(HWindow wnd) {
 	awnd = wnd;
 	for(HWindow w : wnds)
 	    w.visible = false;
 	if(wnd != null)
+	{
 	    wnd.visible = true;
+	    activeWindow = wnd;
+	}
 	if(!ircChannels.isEmpty())
-	{	
+	{
 		for(SlenChat tSCWnd : ircChannels)
 		{
 			if(tSCWnd == null)	break;
 			if(tSCWnd.userList != null && !tSCWnd.visible)	tSCWnd.userList.hide();
 		}
-		
+
 	}
 	for(Button b : btns.values())
 		{
@@ -484,7 +488,7 @@ public class SlenHud extends Widget implements DropTarget {
 				}
 		}
     }
-	
+
     public void addwnd(final HWindow wnd) {
 	wnds.add(wnd);
 	setawnd(wnd);
@@ -495,7 +499,7 @@ public class SlenHud extends Widget implements DropTarget {
 	    });
 	updbtns();
     }
-	
+
     public void remwnd(HWindow wnd) {
 	if(wnd == awnd) {
 	    int i = wnds.indexOf(wnd);
@@ -513,7 +517,7 @@ public class SlenHud extends Widget implements DropTarget {
 	btns.remove(wnd);
 	updbtns();
     }
-	
+
     public boolean mousedown(Coord c, int button) {
 	int slot = beltslot(c);
 	if(slot != -1) {
@@ -524,15 +528,9 @@ public class SlenHud extends Widget implements DropTarget {
     }
 
     public boolean mousewheel(Coord c, int amount) {
-	c = xlate(c, false);
-	if(c.isect(new Coord(134, 29), new Coord(100, 100))) {
-	    woff += amount;
-	    updbtns();
-	    return(true);
-	}
-	return(false);
+		return activeWindow.mousewheel(c, amount);
     }
-	
+
     public boolean globtype(char ch, KeyEvent ev) {
 	if(ch == ' ') {
 	    vc.toggle();
@@ -550,7 +548,7 @@ public class SlenHud extends Widget implements DropTarget {
 	}
 	return(super.globtype(ch, ev));
     }
-	
+
     public boolean type(char ch, KeyEvent ev) {
 	if(cmdline == null) {
 	    return(super.type(ch, ev));
@@ -579,11 +577,11 @@ public class SlenHud extends Widget implements DropTarget {
 	    return(true);
 	}
     }
-    
+
     public int foldheight() {
 	return(CustomConfig.windowSize.y - c.y);
     }
-    
+
     public boolean dropthing(Coord c, Object thing) {
 	int slot = beltslot(c);
 	if(slot != -1) {

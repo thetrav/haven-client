@@ -34,14 +34,14 @@ public class Scrollbar extends Widget {
     static Tex sflarp = Resource.loadtex("gfx/hud/sflarp");
     public int val, min, max;
     private boolean drag = false;
-    
+
     public Scrollbar(Coord c, int h, Widget parent, int min, int max) {
 	super(c.add(-sflarp.sz().x, 0), new Coord(sflarp.sz().x, h), parent);
 	this.min = min;
 	this.max = max;
 	val = min;
     }
-    
+
     public void draw(GOut g) {
 	if(max > min) {
 	    int cx = (sflarp.sz().x / 2) - (schain.sz().x / 2);
@@ -52,7 +52,12 @@ public class Scrollbar extends Widget {
 	    g.image(sflarp, new Coord(0, fy));
 	}
     }
-    
+
+    public boolean mousewheel(Coord c, int amount)
+    {
+    	val += val+amount >= min && val+amount <= max ? amount : 0;
+    	return true;
+    }
     public boolean mousedown(Coord c, int button) {
 	if(button != 1)
 	    return(false);
@@ -63,7 +68,7 @@ public class Scrollbar extends Widget {
 	mousemove(c);
 	return(true);
     }
-    
+
     public void mousemove(Coord c) {
 	if(drag) {
 	    double a = (double)(c.y - (sflarp.sz().y / 2)) / (double)(sz.y - sflarp.sz().y);
@@ -75,7 +80,7 @@ public class Scrollbar extends Widget {
 	    changed();
 	}
     }
-    
+
     public boolean mouseup(Coord c, int button) {
 	if(button != 1)
 	    return(false);
@@ -85,9 +90,9 @@ public class Scrollbar extends Widget {
 	ui.grabmouse(null);
 	return(true);
     }
-    
+
     public void changed() {}
-    
+
     public void ch(int a) {
 	int val = this.val + a;
 	if(val > max)

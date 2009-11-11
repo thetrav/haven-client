@@ -46,43 +46,43 @@ public class UI {
     public Object tooltip = null;
     public FSMan fsm;
     private Collection<AfterDraw> afterdraws = null;
-	
+
     public interface Receiver {
 	public void rcvmsg(int widget, String msg, Object... args);
     }
-    
+
     public interface AfterDraw {
 	public void draw(GOut g);
     }
-	
+
     @SuppressWarnings("serial")
     public static class UIException extends RuntimeException {
 	public String mname;
 	public Object[] args;
-		
+
 	public UIException(String message, String mname, Object... args) {
 	    super(message);
 	    this.mname = mname;
 	    this.args = args;
 	}
     }
-	
+
     public UI(Coord sz, Session sess) {
 	root = new RootWidget(this, sz);
 	widgets.put(0, root);
 	rwidgets.put(root, 0);
 	this.sess = sess;
     }
-	
+
     public void setreceiver(Receiver rcvr) {
 	this.rcvr = rcvr;
     }
-	
+
     public void bind(Widget w, int id) {
 	widgets.put(id, w);
 	rwidgets.put(w, id);
     }
-    
+
     public void drawafter(AfterDraw ad) {
 	synchronized(afterdraws) {
 	    afterdraws.add(ad);
@@ -99,7 +99,7 @@ public class UI {
 	}
 	afterdraws = null;
     }
-	
+
     public void newwidget(int id, String type, Coord c, int parent, Object... args) throws InterruptedException {
 	WidgetFactory f;
 	if(type.indexOf('/') >= 0) {
@@ -124,15 +124,15 @@ public class UI {
 		mainview = (MapView)wdg;
 	}
     }
-	
+
     public void grabmouse(Widget wdg) {
 	mousegrab = wdg;
     }
-	
+
     public void grabkeys(Widget wdg) {
 	keygrab = wdg;
     }
-	
+
     private void removeid(Widget wdg) {
 	if(rwidgets.containsKey(wdg)) {
 	    int id = rwidgets.get(wdg);
@@ -142,7 +142,7 @@ public class UI {
 	for(Widget child = wdg.child; child != null; child = child.next)
 	    removeid(child);
     }
-	
+
     public void destroy(Widget wdg) {
 	if((mousegrab != null) && mousegrab.hasparent(wdg))
 	    mousegrab = null;
@@ -152,7 +152,7 @@ public class UI {
 	wdg.destroy();
 	wdg.unlink();
     }
-    
+
     public void destroy(int id) {
 	synchronized(this) {
 	    if(widgets.containsKey(id)) {
@@ -161,7 +161,7 @@ public class UI {
 	    }
 	}
     }
-	
+
     public void wdgmsg(Widget sender, String msg, Object... args) {
 	int id;
 	synchronized(this) {
@@ -172,7 +172,7 @@ public class UI {
 	if(rcvr != null)
 	    rcvr.rcvmsg(id, msg, args);
     }
-	
+
     public void uimsg(int id, String msg, Object... args) {
 	Widget wdg;
 	synchronized(this) {
@@ -183,12 +183,11 @@ public class UI {
 	else
 	    throw(new UIException("Uimsg to non-existent widget " + id, msg, args));
     }
-	
+
     private void setmods(InputEvent ev) {
-	int mod = ev.getModifiersEx();
-	modshift = (mod & InputEvent.SHIFT_DOWN_MASK) != 0;
-	modctrl = (mod & InputEvent.CTRL_DOWN_MASK) != 0;
-	modmeta = (mod & InputEvent.META_DOWN_MASK) != 0;
+	modshift = ev.isShiftDown();
+	modctrl = ev.isControlDown();
+	modmeta = ev.isMetaDown();
 	/*
  	modsuper = (mod & InputEvent.SUPER_DOWN_MASK) != 0;
 	*/
@@ -203,7 +202,7 @@ public class UI {
 	    keygrab.type(ev.getKeyChar(), ev);
 	}
     }
-	
+
     public void keydown(KeyEvent ev) {
 	setmods(ev);
 	if(keygrab == null) {
@@ -213,19 +212,19 @@ public class UI {
 	    keygrab.keydown(ev);
 	}
     }
-	
+
     public void keyup(KeyEvent ev) {
 	setmods(ev);
 	if(keygrab == null)
 	    root.keyup(ev);
 	else
-	    keygrab.keyup(ev);		
+	    keygrab.keyup(ev);
     }
-	
+
     private Coord wdgxlate(Coord c, Widget wdg) {
 	return(c.add(wdg.c.inv()).add(wdg.parent.rootpos().inv()));
     }
-	
+
     public boolean dropthing(Widget w, Coord c, Object thing) {
 	if(w instanceof DropTarget) {
 	    if(((DropTarget)w).dropthing(c, thing))
@@ -249,7 +248,7 @@ public class UI {
 	else
 	    mousegrab.mousedown(wdgxlate(c, mousegrab), button);
     }
-	
+
     public void mouseup(MouseEvent ev, Coord c, int button) {
 	setmods(ev);
 	mc = c;
@@ -258,7 +257,7 @@ public class UI {
 	else
 	    mousegrab.mouseup(wdgxlate(c, mousegrab), button);
     }
-	
+
     public void mousemove(MouseEvent ev, Coord c) {
 	setmods(ev);
 	mc = c;
@@ -267,7 +266,7 @@ public class UI {
 	else
 	    mousegrab.mousemove(wdgxlate(c, mousegrab));
     }
-	
+
     public void mousewheel(MouseEvent ev, Coord c, int amount) {
 	setmods(ev);
 	lcc = mc = c;
@@ -276,7 +275,7 @@ public class UI {
 	else
 	    mousegrab.mousewheel(wdgxlate(c, mousegrab), amount);
     }
-    
+
     private Object tooltipat(Widget w, Coord c) {
         for(Widget ch = w.lchild; ch != null; ch = ch.prev) {
 	    if(!ch.visible)
@@ -290,11 +289,11 @@ public class UI {
             return(w.tooltip);
         return(null);
     }
-    
+
     public Object tooltipat(Coord c) {
         return(tooltipat(root, c));
     }
-    
+
     public int modflags() {
 	return((modshift?1:0) |
 	       (modctrl?2:0) |

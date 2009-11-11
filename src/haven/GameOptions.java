@@ -2,13 +2,14 @@
  * @(#)Menu.java
  *
  *
- * @author 
+ * @author
  * @version 1.00 2009/10/23
  */
 package haven;
 import java.awt.Color;
+import java.awt.*;
 public class GameOptions extends Window{
-	
+
 	static {
 	Widget.addtype("gopts", new WidgetFactory() {
 		public Widget create(Coord c, Widget parent, Object[] args) {
@@ -20,27 +21,26 @@ public class GameOptions extends Window{
 	    });
 	    wbox = new IBox("gfx/hud", "tl", "tr", "bl", "br", "extvl", "extvr", "extht", "exthb");
     }
-    
 	Text sfxVol = Text.render("SFX Vol:", Color.WHITE.darker());
 	Text serverLabel = Text.render("Server:", Color.WHITE);
 	Text chnlLabel = Text.render("Channels:", Color.WHITE);
 	TextEntry serverAddress;
 	TextEntry channelList;
 	FillBox sfxVolBar;
-	
+
     public GameOptions(Widget parent) {
     	super (CustomConfig.windowSize.div(2).add(-200,-200), Coord.z.add(200,200), parent, "Game Options", true);
-    	
+
     	//	SFX volume bar
     	sfxVolBar = new FillBox(Coord.z.add(sfxVol.sz().x + 5, 0), Coord.z.add(120,20), CustomConfig.sfxVol, this);
-    	
+
     	//	Server entry
     	serverAddress = new TextEntry(Coord.z.add(sfxVol.sz().x + 5, 30), Coord.z.add(120, 15),
     					 this, CustomConfig.ircServerAddress);
     	//	Channel list entry
     	channelList = new TextEntry(Coord.z.add(sfxVol.sz().x + 5, 50), Coord.z.add(120, 15),
     					 this, CustomConfig.ircChannelList);
-    	
+
     	ui.bind(sfxVolBar, CustomConfig.wdgtID++);
     }
     public void draw(GOut g)
@@ -111,7 +111,7 @@ class FillBox extends Widget
     		{
     			if(c.x > 10 && c.x < 110)
     				value = (c.x-10)%100;
-    			wdgmsg(this, "change", Integer.valueOf(value)); 
+    			wdgmsg(this, "change", Integer.valueOf(value));
     			return;
     		}
     		super.mousemove(c);

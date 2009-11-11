@@ -53,24 +53,24 @@ public class TexI extends TexGL {
 	super(sz);
 	pixels = new byte[tdim.x * tdim.y * 4];
     }
-    
+
     protected void fill(GOut g) {
 	GL gl = g.gl;
 	ByteBuffer data = ByteBuffer.wrap(pixels);
 	gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, fmt, tdim.x, tdim.y, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, data);
     }
-	
+
     protected void update(byte[] n) {
 	if(n.length != pixels.length)
 	    throw(new RuntimeException("Illegal new texbuf size (" + n.length + " != " + pixels.length + ")"));
 	pixels = n;
 	dispose();
     }
-	
+
     public int getRGB(Coord c) {
 	return(back.getRGB(c.x, c.y));
     }
-	
+
     public TexI mkmask() {
 	TexI n = new TexI(dim);
 	n.pixels = new byte[pixels.length];
@@ -78,13 +78,13 @@ public class TexI extends TexGL {
 	n.fmt = GL.GL_ALPHA;
 	return(n);
     }
-	
+
     public static BufferedImage mkbuf(Coord sz) {
 	WritableRaster buf = Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE, sz.x, sz.y, 4, null);
 	BufferedImage tgt = new BufferedImage(glcm, buf, false, null);
 	return(tgt);
     }
-	
+
     public static byte[] convert(BufferedImage img, Coord tsz) {
 	WritableRaster buf = Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE, tsz.x, tsz.y, 4, null);
 	BufferedImage tgt = new BufferedImage(glcm, buf, false, null);

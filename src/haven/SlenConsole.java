@@ -12,7 +12,7 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 	public String user;
 	private static SlenChat tSCWnd;
 	private boolean initialized = false;
-	    	
+
 	static {
     	Widget.addtype("ircconsole", new WidgetFactory() {
 	    	public Widget create(Coord c, Widget parent, Object[] args) {
@@ -20,7 +20,7 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 	    	}
     	});
     }
-    
+
     public SlenConsole(SlenHud parent)
     {
     	super(parent, "IRC Console", false);
@@ -32,7 +32,7 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 	    	IRC.setIRCConnectionListener(this);
 	    	IRC.open();
     	}
-    	Debug.setDebug(true);
+    	Debug.setDebug(false);
     	initialized = true;
     }
 	public void handleInput(String input, ChatHW src)
@@ -42,13 +42,13 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 	    {
 	    	String[] cArgs = input.split(" ");
 	    	String cmd = cArgs.length >= 1 ? cArgs[0].toUpperCase() : "/INVALIDCOMMAND";
-	    	
+
 	    	//	JOIN -	Join the specified channels
 	    	if(cmd.equals("/JOIN") && IRC != null)
 	    	{
 	    		if(cArgs.length >= 2) {
 	    			List<Listbox.Option> tChannels = new ArrayList<Listbox.Option>();
-	    			
+
 	    			//	Split the appropriate list into channels & their passwords using the Listbox.Options class
 		   			for(int i = 1; i < cArgs.length; i++)
 		   			{
@@ -61,7 +61,7 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 		   					tChannels.add(new Listbox.Option(cArgs[i], ""));
 		   				}
 		   			}
-		   			
+
 		   			//	Create all the channels specified if they dont'already exist
 		   			for(Listbox.Option tChanInfo : tChannels)
 		   			{
@@ -100,7 +100,7 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 	    		return;
 	    		//	NICK - Change your nick in the current server
 	    	} else if(cmd.equals("/NICK") && IRC != null)
-	    	{	   
+	    	{
 	    		if(cArgs.length >= 2) {
 		   			IRC.writeln("NICK " + cArgs[1]);
 		   			user = cArgs[1];
@@ -121,7 +121,7 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 	    		}
     			return;
     			//	TOPIC - Set the topic for the current channel
-	    	} else if(cmd.equals("/TOPIC") 
+	    	} else if(cmd.equals("/TOPIC")
 	    		&& src.getClass().getName().equalsIgnoreCase(tSCWnd.getClass().getName())
 	    		&& IRC != null)
 	    	{
@@ -175,6 +175,7 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 	    	IRC.open(IRC);
 	    	IRC.setIRCConnectionListener(this);
 	    }
+	    if(tSCWnd == null)	return;
 	    if(src.getClass().getName().equalsIgnoreCase(tSCWnd.getClass().getName()))
 	    {
 	    	IRC.writeln("PRIVMSG " + ((SlenChat)src).getChannel() + " :" + input);
@@ -182,7 +183,7 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 	    	return;
 	    }
 	}
-    	
+
     public void onAction( String user, String chan, String txt )
 	{
 		tSCWnd = findWindow(chan);
@@ -226,11 +227,11 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 		{
 			if(tSCWnd.visible)
 			{
-				tSCWnd.out.append("You have been invited into the " + chan + " channel by " 
+				tSCWnd.out.append("You have been invited into the " + chan + " channel by "
 						+ orgnick + ".  Type /ACCEPT "+ chan + " to accept the invitation.");
 			}
 		}
-		out.append("You have been invited into the " + chan + " channel by " 
+		out.append("You have been invited into the " + chan + " channel by "
 						+ orgnick + ".  Type /ACCEPT "+ chan + " to accept the invitation.");
 	}
 	public void onJoin( String user, String nick, String chan, boolean create )
@@ -238,7 +239,7 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 		nick = parseNick(nick);
 		tSCWnd = findWindow(chan);
 		if(tSCWnd == null)	return;
-		if(tSCWnd.userList != null)	
+		if(tSCWnd.userList != null)
 		{
 			tSCWnd.userList.addUser(user.trim(), nick.trim());
 			tSCWnd.out.append(nick + " has joined the channel", Color.GREEN.darker());
@@ -264,23 +265,23 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 			out.append(message,Color.GREEN.darker());
 		}
 	public void onPrivateMessage(String orgnick, String chan, String txt)
-		{								
+		{
 			orgnick = parseNick(orgnick);
 			//	Searches for existing windows and appends to the appropriate screen
 			tSCWnd = findWindow(chan);		//	Checks for a channel
 			if(tSCWnd == null){				//	Might be an existing PM screen
 				tSCWnd = findWindow(orgnick);
 			}
-			
+
 			//	Window exists and text is added
 			if(tSCWnd != null){
 				tSCWnd.out.append(orgnick + ": " + txt, Color.BLUE.darker());
-				
+
 				//	Changes the button color if the window isn't visible
 				flashWindow(tSCWnd);
 				return;
 			}
-			
+
 			//	Window doesn't exist because its a PM with no channel, so a new one is created
 			tSCWnd = findWindow(orgnick);
 			tSCWnd = tSCWnd == null ? new SlenChat(this, orgnick, false) : tSCWnd;
@@ -301,7 +302,7 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 				tSCWnd.out.append(oldnick + " is now known as " + newnick, Color.GREEN.darker());
 			}
 			//	Changes the nick on the appropriate userlist
-			if(tSCWnd.userList != null) 
+			if(tSCWnd.userList != null)
 			{
 				tSCWnd.userList.changeNick(oldnick, newnick);
 			}
@@ -350,7 +351,7 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 	{
 		nick = parseNick(nick);
 		out.append(nick + " quit. Reason: " + txt, Color.GREEN.darker());
-		
+
 		//	Checks all windows for this nick and removes it when found
 		for(SlenChat SC : ((SlenHud)parent).ircChannels)
 		{
@@ -364,7 +365,7 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 			}
 		}
 	}
-		
+
 	public void onReplyVersion(String version){}
 	public void onReplyListUserChannels(int channelCount){}
 	public void onReplyListStart(){}
@@ -459,9 +460,9 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 	{
 		out.append(message);
 	}
-	
+
 	public void wdgmsg(Widget sender, String msg, Object... args) {
-		if(sender == in) 
+		if(sender == in)
 		{
 			handleInput((String)args[0], this);
 			in.settext("");
@@ -475,13 +476,13 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 	}
 	//	Attempts to find a window of the same title; returns null if no windows match.
 	public SlenChat findWindow(String wndTitle)
-	{						
+	{
 		//	Searches for existing windows
 		for(SlenChat tSCWnd : ((SlenHud)parent).ircChannels)
 		{
 			//	There are no windows in the list
 			if(tSCWnd == null)	break;
-			
+
 			//	Found a matching window
 			if(wndTitle.equalsIgnoreCase(tSCWnd.title))
 			{
@@ -491,7 +492,7 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 		//	No existing windows match
 		return null;
 	}
-	
+
 	public static String parseNick(String nickname)
 	{
 		return nickname.replace('~',' ').replace('@',' ').replace('%', ' ').trim();

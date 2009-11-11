@@ -29,6 +29,12 @@ package haven;
 import java.util.*;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.image.BufferedImage;
+import java.awt.Graphics;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
+import java.awt.datatransfer.*;
 
 public class Textlog extends Widget {
     static Tex texpap = Resource.loadtex("gfx/hud/texpap");
@@ -39,7 +45,7 @@ public class Textlog extends Widget {
     int maxy, cury;
     int margin = 3;
     boolean sdrag = false;
-	
+
     static {
 	Widget.addtype("log", new WidgetFactory() {
 		public Widget create(Coord c, Widget parent, Object[] args) {
@@ -47,7 +53,7 @@ public class Textlog extends Widget {
 		}
 	    });
     }
-	
+
     public void draw(GOut g) {
 	Coord dc = new Coord();
 	for(dc.y = 0; dc.y < sz.y; dc.y += texpap.sz().y) {
@@ -76,13 +82,13 @@ public class Textlog extends Widget {
 	    g.image(sflarp, new Coord(fx, fy));
 	}
     }
-	
+
     public Textlog(Coord c, Coord sz, Widget parent) {
 	super(c, sz, parent);
 	lines = new LinkedList<Text>();
 	maxy = cury = 0;
     }
-	
+
     public void append(String line, Color col) {
 	Text rl;
 	if(line == null)	line = "";
@@ -94,17 +100,17 @@ public class Textlog extends Widget {
 	    cury += rl.sz().y;
 	maxy += rl.sz().y;
     }
-        
+
     public void append(String line) {
 	append(line, Color.BLACK);
     }
-	
+
     public void uimsg(String msg, Object... args) {
 	if(msg == "apnd") {
 	    append((String)args[0]);
 	}
     }
-        
+
     public boolean mousewheel(Coord c, int amount) {
 	cury += amount * 20;
 	if(cury < sz.y)
@@ -113,7 +119,7 @@ public class Textlog extends Widget {
 	    cury = maxy;
 	return(true);
     }
-        
+
     public boolean mousedown(Coord c, int button) {
 	if(button != 1)
 	    return(false);
@@ -127,7 +133,7 @@ public class Textlog extends Widget {
 	}
 	return(false);
     }
-        
+
     public void mousemove(Coord c) {
 	if(sdrag) {
 	    double a = (double)(c.y - (sflarp.sz().y / 2)) / (double)(sz.y - sflarp.sz().y);
@@ -138,7 +144,7 @@ public class Textlog extends Widget {
 	    cury = (int)(a * (maxy - sz.y)) + sz.y;
 	}
     }
-        
+
     public boolean mouseup(Coord c, int button) {
 	if((button == 1) && sdrag) {
 	    sdrag = false;
@@ -148,3 +154,4 @@ public class Textlog extends Widget {
 	return(false);
     }
 }
+
