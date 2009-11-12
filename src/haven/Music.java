@@ -32,7 +32,7 @@ import javax.sound.midi.*;
 public class Music {
     private static Player player;
     private static boolean debug = false;
-    
+
     private static void debug(String str) {
 	if(debug)
 	    System.out.println(str);
@@ -45,14 +45,14 @@ public class Music {
 	private Synthesizer synth;
 	private boolean done;
 	private boolean loop = false;
-	
+
 	private Player(Resource res, Thread waitfor) {
 	    super(Utils.tg(), "Music player");
 	    setDaemon(true);
 	    this.res = res;
 	    this.waitfor = waitfor;
 	}
-	
+
 	public void run() {
 	    try {
 		if(waitfor != null)
@@ -61,9 +61,19 @@ public class Music {
 		try {
 		    seq = MidiSystem.getSequencer(false);
 		    synth = MidiSystem.getSynthesizer();
+
 		    seq.open();
 		    seq.setSequence(res.layer(Resource.Music.class).seq);
 		    synth.open();
+		    //	Changes the music volume
+	        MidiChannel[] channels = synth.getChannels();
+
+	        // gain is a value between 0 and 1 (loudest)
+	        double gain = Math.sqrt((double)CustomConfig.musicVol/100);
+	        System.out.println(gain);
+	        for (int i=0; i<channels.length; i++) {
+	            channels[i].controlChange(7, (int)(gain * 127));
+	        }
 		    seq.getTransmitter().setReceiver(synth.getReceiver());
 		} catch(MidiUnavailableException e) {
 		    return;
@@ -130,7 +140,7 @@ public class Music {
 	    }
 	}
     }
-    
+
     public static void play(Resource res, boolean loop) {
 	synchronized(Music.class) {
 	    if(player != null)
@@ -142,7 +152,7 @@ public class Music {
 	    }
 	}
     }
-    
+
     public static void main(String[] args) throws Exception {
 	Resource.addurl(new java.net.URL("https://www.havenandhearth.com/res/"));
 	debug = true;

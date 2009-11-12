@@ -14,7 +14,7 @@ import java.awt.datatransfer.*;
 public class ExtTextlog extends Widget implements ClipboardOwner{
 
 	private List<GLCharacter> characterMap;
-	private BufferedImage visibleCharacters = new BufferedImage(sz.x,sz.y-12,BufferedImage.TYPE_INT_ARGB);
+	private BufferedImage visibleCharacters = new BufferedImage(sz.x,sz.y,BufferedImage.TYPE_INT_ARGB);
 	private BufferedImage drawnCharacters = new BufferedImage(sz.x,sz.y*20,BufferedImage.TYPE_INT_ARGB);
 	private Coord nextCharLoc = new Coord(3,0);
 	private int lineHeight = 0;
@@ -44,7 +44,7 @@ public class ExtTextlog extends Widget implements ClipboardOwner{
 	    }
 	}
 	if(lineHeight > 0 && scrollBar != null)
-		g.image(visibleCharacters,Coord.z.add(0,12));
+		g.image(visibleCharacters,Coord.z);
 	g.chcolor(alphaBlue);
 	synchronized (selectedArea)
 	{
@@ -63,7 +63,7 @@ public class ExtTextlog extends Widget implements ClipboardOwner{
 	};
     }
 
-    public void append(String line, Color col) {
+    public synchronized void append(String line, Color col) {
     	if(line == null || line == "") line = ".";
     	GLCharacter tGLChar;
     	String[] words = line.trim().split(" ");
@@ -111,7 +111,7 @@ public class ExtTextlog extends Widget implements ClipboardOwner{
 		    		scrollBar.val = scrollBar.max;
 		    	}
 	    	}
-	    	Pattern pat = Pattern.compile("(http://)*?(www\\.)*?\\S+\\.(co|net|com|org)(\\\\\\S+)*?", Pattern.CASE_INSENSITIVE);
+	    	Pattern pat = Pattern.compile("\\.(co|net|com|org)", Pattern.CASE_INSENSITIVE);
 	    	Matcher match = pat.matcher(words[i]);
 	    	boolean isLink = match.find();
 
@@ -157,7 +157,7 @@ public class ExtTextlog extends Widget implements ClipboardOwner{
     	updateDrawData();
     }
 
-    public void append(String line) {
+    public synchronized void append(String line) {
 		append(line, Color.BLACK);
     }
 
@@ -173,7 +173,7 @@ public class ExtTextlog extends Widget implements ClipboardOwner{
     	g.clearRect(0,0,sz.x,sz.y);
     	g.drawImage(background,0,0,sz.x,sz.y, null);
     	if(lineHeight > 0 && scrollBar != null)
-    		g.drawImage(drawnCharacters, 0, 0-lineHeight-(lineHeight*(scrollBar.val)), null);
+    		g.drawImage(drawnCharacters, 0, 0-(lineHeight*(scrollBar.val)), null);
    }
 
     public boolean mousewheel(Coord c, int amount) {
@@ -263,7 +263,7 @@ public class ExtTextlog extends Widget implements ClipboardOwner{
 
     	selectedArea.width = 2;
     	selectedArea.height = 2;
-    	System.out.println("activating link: ");
+    	System.out.print("activating link: ");
     	synchronized(characterMap)
     	{
 	    	for(GLCharacter tGLChar : characterMap)
@@ -273,6 +273,7 @@ public class ExtTextlog extends Widget implements ClipboardOwner{
 	    		if(selectedArea.intersects(charArea) && tGLChar.isLink())
 	    		{
 	    			selectedArea.setBounds(0,0,0,0);
+	    			System.out.println(tGLChar.address);
 	    			return tGLChar.activate();
 	    		}
 	    	}

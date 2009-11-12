@@ -32,7 +32,7 @@ import java.io.*;
 
 public class Session {
     public static final int PVER = 28;
-    
+
     public static final int MSG_SESS = 0;
     public static final int MSG_REL = 1;
     public static final int MSG_ACK = 2;
@@ -63,9 +63,9 @@ public class Session {
     public static final int SESSERR_CONN = 3;
     public static final int SESSERR_PVER = 4;
     public static final int SESSERR_EXPR = 5;
-    
+
     static final int ackthresh = 30;
-	
+
     DatagramSocket sk;
     InetAddress server;
     Thread rworker, sworker, ticker;
@@ -82,17 +82,17 @@ public class Session {
     byte[] cookie;
     final Map<Integer, Indir<Resource>> rescache = new TreeMap<Integer, Indir<Resource>>();
     public final Glob glob;
-	
+
     @SuppressWarnings("serial")
 	public class MessageException extends RuntimeException {
 	    public Message msg;
-		
+
 	    public MessageException(String text, Message msg) {
 		super(text);
 		this.msg = msg;
 	    }
 	}
-	
+
     public Indir<Resource> getres(final int id) {
 	synchronized(rescache) {
 	    Indir<Resource> ret = rescache.get(id);
@@ -101,7 +101,7 @@ public class Session {
 	    ret = new Indir<Resource>() {
 		public int resid = id;
 		Resource res;
-					
+
 		public Resource get() {
 		    if(res == null)
 			return(null);
@@ -111,15 +111,15 @@ public class Session {
 		    }
 		    return(res);
 		}
-					
+
 		public void set(Resource r) {
 		    res = r;
 		}
-				
+
 		public int compareTo(Indir<Resource> x) {
 		    return((this.getClass().cast(x)).resid - resid);
 		}
-		
+
 		public String toString() {
 		    if(res == null) {
 			return("<res:" + resid + ">");
@@ -141,7 +141,7 @@ public class Session {
 	int frame;
 	long recv;
 	long sent;
-		
+
 	public ObjAck(int id, int frame, long recv) {
 	    this.id = id;
 	    this.frame = frame;
@@ -149,13 +149,13 @@ public class Session {
 	    this.sent = 0;
 	}
     }
-    
+
     private class Ticker extends Thread {
 	public Ticker() {
 	    super(Utils.tg(), "Server time ticker");
 	    setDaemon(true);
 	}
-		
+
 	public void run() {
 	    try {
 		while(true) {
@@ -169,15 +169,15 @@ public class Session {
 	    } catch(InterruptedException e) {}
 	}
     }
-	
+
     private class RWorker extends Thread {
 	boolean alive;
-		
+
 	public RWorker() {
 	    super(Utils.tg(), "Session reader");
 	    setDaemon(true);
 	}
-		
+
 	private void gotack(int seq) {
 	    synchronized(pending) {
 		for(ListIterator<Message> i = pending.listIterator(); i.hasNext(); ) {
@@ -187,7 +187,7 @@ public class Session {
 		}
 	    }
 	}
-		
+
 	private void getobjdata(Message msg) {
 	    OCache oc = glob.oc;
 	    while(msg.off < msg.blob.length) {
@@ -323,7 +323,7 @@ public class Session {
 		}
 	    }
 	}
-		
+
 	private void handlerel(Message msg) {
 	    if(msg.type == Message.RMSG_NEWWDG) {
 		synchronized(uimsgs) {
@@ -352,14 +352,14 @@ public class Session {
 		}
 	    } else if(msg.type == Message.RMSG_PARTY) {
 		glob.party.msg(msg);
-	    } else if(msg.type == Message.RMSG_SFX) {
+	    } else if(msg.type == Message.RMSG_SFX && CustomConfig.isSoundOn) {
 		Indir<Resource> res = getres(msg.uint16());
 		double vol = ((double)CustomConfig.sfxVol) / 100.0;
 		double spd = ((double)msg.uint16()) / 256.0;
 		Audio.play(res);
 	    } else if(msg.type == Message.RMSG_CATTR) {
 		glob.cattr(msg);
-	    } else if(msg.type == Message.RMSG_MUSIC) {
+	    } else if(msg.type == Message.RMSG_MUSIC && CustomConfig.isMusicOn) {
 		String resnm = msg.string();
 		int resver = msg.uint16();
 		boolean loop = !msg.eom() && (msg.uint8() != 0);
@@ -375,7 +375,7 @@ public class Session {
 		throw(new MessageException("Unknown rmsg type: " + msg.type, msg));
 	    }
 	}
-		
+
 	private void getrel(int seq, Message msg) {
 	    if(seq == rseq) {
 		synchronized(uimsgs) {
@@ -396,7 +396,7 @@ public class Session {
 		waiting.put(seq, msg);
 	    }
 	}
-		
+
 	public void run() {
 	    try {
 		alive = true;
@@ -474,25 +474,25 @@ public class Session {
 		}
 	    }
 	}
-		
+
 	public void interrupt() {
 	    alive = false;
 	    super.interrupt();
 	}
     }
-	
+
     private class SWorker extends Thread {
-		
+
 	public SWorker() {
 	    super(Utils.tg(), "Session writer");
 	    setDaemon(true);
 	}
-		
+
 	public void run() {
 	    try {
 		long to, last = 0, retries = 0;
 		while(true) {
-					
+
 		    long now = System.currentTimeMillis();
 		    if(state == "conn") {
 			if(now - last > 2000) {
@@ -618,7 +618,7 @@ public class Session {
 	    }
 	}
     }
-	
+
     public Session(InetAddress server, String username, byte[] cookie) {
 	this.server = server;
 	this.username = username;
@@ -636,7 +636,7 @@ public class Session {
 	ticker = new Ticker();
 	ticker.start();
     }
-		
+
     private void sendack(int seq) {
 	synchronized(sworker) {
 	    if(acktime < 0)
@@ -645,15 +645,15 @@ public class Session {
 	    sworker.notifyAll();
 	}
     }
-	
+
     public void close() {
 	sworker.interrupt();
     }
-	
+
     public synchronized boolean alive() {
 	return(state != "dead");
     }
-	
+
     public void queuemsg(Message msg) {
 	msg.seq = tseq;
 	tseq = (tseq + 1) % 65536;
@@ -664,7 +664,7 @@ public class Session {
 	    sworker.notify();
 	}
     }
-	
+
     public Message getuimsg() {
 	synchronized(uimsgs) {
 	    if(uimsgs.size() == 0)
@@ -672,14 +672,14 @@ public class Session {
 	    return(uimsgs.remove());
 	}
     }
-	
+
     public void sendmsg(Message msg) {
 	byte[] buf = new byte[msg.blob.length + 1];
 	buf[0] = (byte)msg.type;
 	System.arraycopy(msg.blob, 0, buf, 1, msg.blob.length);
 	sendmsg(buf);
     }
-	
+
     public void sendmsg(byte[] msg) {
 	try {
 	    sk.send(new DatagramPacket(msg, msg.length, server, 1870));

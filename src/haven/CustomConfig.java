@@ -51,11 +51,14 @@ public class CustomConfig {
 
 	    }
 	}
-	public static Coord windowSize = new Coord(1024, 768);
+	public static Coord windowSize = new Coord(800, 600);
 	public static int sfxVol = 100;
+	public static int musicVol = 100;
 	public static String ircServerAddress = "irc.synirc.net";
 	public static String ircChannelList = "#Haven";
 	public static int wdgtID = 1000;
+	public static boolean isMusicOn = true;
+	public static boolean isSoundOn = true;
     public static boolean load() {
     	try{
     		BufferedReader reader = new BufferedReader(new FileReader("config.cfg"));
@@ -64,8 +67,11 @@ public class CustomConfig {
     		windowSize.x = Integer.parseInt(data[0].trim());
     		windowSize.y = Integer.parseInt(data[1].trim());
     		sfxVol = Integer.parseInt(reader.readLine().trim());
+    		musicVol = Integer.parseInt(reader.readLine().trim());
     		ircServerAddress = reader.readLine().trim();
     		ircChannelList = reader.readLine().trim();
+    		isSoundOn = Boolean.parseBoolean(reader.readLine().trim());
+    		isMusicOn = Boolean.parseBoolean(reader.readLine().trim());
     		reader.close();
     		if(windowSize.x < 800 || windowSize.y < 600)
     		{
@@ -74,6 +80,7 @@ public class CustomConfig {
     		}
     		return true;
     	}catch (FileNotFoundException fileNotFound){
+    		System.out.println("Config file not found, creating a new one");
     	}catch (IOException IOExcep){
     		IOExcep.printStackTrace();
     	}
@@ -90,11 +97,16 @@ public class CustomConfig {
     			BufferedWriter writer = new BufferedWriter(new FileWriter(cfg));
     			writer.write(windowSize.x + " " + windowSize.y + "\n");
     			writer.write(Integer.toString(sfxVol) + "\n");
+    			writer.write(Integer.toString(musicVol) + "\n");
     			writer.write(ircServerAddress + "\n");
     			writer.write(ircChannelList + "\n");
-    			System.out.println(cfg.getAbsolutePath());
+    			writer.write(Boolean.toString(isSoundOn) + "\n");
+    			writer.write(Boolean.toString(isMusicOn) + "\n");
     			writer.close();
-    	}catch(IOException e){}
+    	}catch(IOException e)
+    	{
+    		e.printStackTrace();
+    	}
     }
     public static void main(final String args[])
     {
