@@ -2,7 +2,7 @@
  * @(#)SlenChat.java
  *
  *
- * @author 
+ * @author
  * @version 1.00 2009/10/15
  */
 
@@ -20,12 +20,13 @@ public class SlenChat extends ChatHW
     	private String channel;
     	public UserList userList;
     	private SlenConsole handler;
-    	
+
     	public static class UserList extends Window
     	{
     		List<Listbox.Option> users = new ArrayList<Listbox.Option>();
     		Listbox out;
     		SlenChat owner;
+    		boolean isVisible = true;
 
     		static {
 		    		Widget.addtype("ircuserlist", new WidgetFactory() {
@@ -34,7 +35,7 @@ public class SlenChat extends ChatHW
 		    			}
 		    		});
     			}
-	    		
+
 	    		public UserList (SlenChat parent)
 	    		{
 	    			super(new Coord(10, CustomConfig.windowSize.y-200), new Coord(125,parent.sz.y-10), parent.parent.parent, "Users", false);
@@ -57,7 +58,7 @@ public class SlenChat extends ChatHW
 	    		public void rmvUser(String name)
 	    		{
 	    			Listbox.Option tUser;
-	    			if(name != null 
+	    			if(name != null
 	    				&& (tUser = getUser(name)) != null)
 	    			{
 	    				users.remove(tUser);
@@ -103,24 +104,22 @@ public class SlenChat extends ChatHW
 	    			Listbox.Option tUser = getUser(oldnick);
 	    			if(tUser != null)	tUser.disp = newnick;
 	    		}
-	    		public void show()
-	    		{
-	    			visible = true;
-	    		}
-	    		public void hide()
-	    		{
-	    			visible = false;
-	    		}
 	    		public boolean keydown(KeyEvent e)
 	    		{
-	    			if(e.getKeyCode() == KeyEvent.VK_ENTER 
-	    				&& out.chosen != null 
+	    			if(e.getKeyCode() == KeyEvent.VK_ENTER
+	    				&& out.chosen != null
 	    				&& out.hasfocus
 	    				&& ((SlenChat)owner).handler.findWindow(out.chosen.disp) == null)
 			    	{
 			    		((SlenHud)owner.parent).ircChannels.add(new SlenChat(owner.handler, out.chosen.disp, false));
 			    	}
 			    	return true;
+	    		}
+	    		public boolean toggle()
+	    		{
+	    			isVisible = !isVisible;
+	    			visible = isVisible;
+	    			return isVisible;
 	    		}
 	    		public void destroy()
 	    		{
@@ -130,7 +129,7 @@ public class SlenChat extends ChatHW
 	    			out.destroy();
 	    			super.destroy();
 	    		}
-				
+
 	    }
     	static {
     		Widget.addtype("ircchat", new WidgetFactory() {
@@ -153,7 +152,7 @@ public class SlenChat extends ChatHW
     		initialized = true;
     	}
     	public void wdgmsg(Widget sender, String msg, Object... args) {
-			if(sender == in) 
+			if(sender == in)
 			{
 				handler.handleInput((String)args[0], this);
 				in.settext("");
@@ -165,7 +164,17 @@ public class SlenChat extends ChatHW
 			}
 			super.wdgmsg(sender, msg, args);
 	    }
-	    
+	    public void hide()
+	    {
+	    	if(userList != null)	userList.hide();
+	    	super.hide();
+	    }
+	    public void show()
+	    {
+	    	if(userList != null && userList.isVisible)	userList.show();
+	    	super.show();
+	    }
+
 	    public void setChannel(String newChannel)
 	    {
 	       	channel = newChannel;
@@ -174,7 +183,7 @@ public class SlenChat extends ChatHW
 		{
 			return new String(channel);
 		}
-		
+
 		public void destroy()
 		{
 			handler.IRC.writeln("PART " + channel + " " + handler.user + " closed this window.");

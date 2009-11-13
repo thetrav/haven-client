@@ -108,7 +108,7 @@
   
   <target name="signer" depends="jars, make-key">
   	<copy file="build\haven.jar" todir="dist"/>
-  	<signjar jar="haven.jar" alias="Pacho" storepass="Pacho87" keystore="dist\IRC-Extended-Key" keypass="Pacho87"/>
+  	<signjar jar="haven.jar" alias="Pacho" storepass="Pacho87" keystore="dist\IRC-Extended-Key" sigfile="haven-signed.jar" verbose="true" keypass="Pacho87"/>
   </target>
   
   <target name="update-zips" depends="signer">

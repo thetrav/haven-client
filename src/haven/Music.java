@@ -70,7 +70,6 @@ public class Music {
 
 	        // gain is a value between 0 and 1 (loudest)
 	        double gain = Math.sqrt((double)CustomConfig.musicVol/100);
-	        System.out.println(gain);
 	        for (int i=0; i<channels.length; i++) {
 	            channels[i].controlChange(7, (int)(gain * 127));
 	        }

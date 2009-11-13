@@ -460,8 +460,18 @@ public class Widget {
 	}
 	return(cursor);
     }
-    public void toggle()
+    public void show()
+    {
+    	visible = true;
+    }
+    public void hide()
+    {
+    	visible = false;
+    }
+    public boolean toggle()
     {
     	visible = !visible;
+    	lostfocus();
+    	return visible;
     }
 }

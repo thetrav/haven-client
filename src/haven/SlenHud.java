@@ -47,7 +47,6 @@ public class SlenHud extends Widget implements DropTarget {
     public static final Coord sz;
     public List<SlenChat> ircChannels = new ArrayList<SlenChat>();
     public SlenConsole ircConsole;
-    public HWindow activeWindow;
     int woff = 0;
     List<HWindow> wnds = new ArrayList<HWindow>();
     HWindow awnd;
@@ -463,52 +462,36 @@ public class SlenHud extends Widget implements DropTarget {
     }
 
     private void setawnd(HWindow wnd) {
-	awnd = wnd;
-	for(HWindow w : wnds)
-	    w.visible = false;
-	if(wnd != null)
-	{
-	    wnd.visible = true;
-	    activeWindow = wnd;
-	}
-	if(!ircChannels.isEmpty())
-	{
-		for(SlenChat tSCWnd : ircChannels)
+    	if(awnd != null && awnd != wnd)
+    	{
+    		awnd.hide();
+    	}
+    	if(awnd == wnd)
 		{
-			if(tSCWnd == null)	break;
-			if(tSCWnd.userList != null && !tSCWnd.visible)	tSCWnd.userList.hide();
+			awnd.hudButton.changeText(awnd.hudButton.text.text, Color.YELLOW);
+			awnd.hudButton.isFlashing = false;
+			if(awnd.getClass().getName().equalsIgnoreCase(SlenChat.class.getName()))
+			{
+				if(((SlenChat)awnd).userList != null)	((SlenChat)awnd).userList.toggle();
+			}
+			return;
 		}
+		awnd = wnd;
 
-	}
-	for(Button b : btns.values())
-		{
-			if(wnd.title.equalsIgnoreCase("Messages"))
-				break;
-			if(wnd.title.equalsIgnoreCase(b.text.text)
-				&& wnd.visible)
-				{
-					b.changeText(b.text.text, Color.YELLOW);
-					b.isFlashing = false;
-					if(!wnd.parent.getClass().getName().equalsIgnoreCase(RootWidget.class.getName()))
-					{
-						if(ircConsole.findWindow(wnd.title) != null)
-						{
-							if(((SlenChat)wnd).userList != null)	((SlenChat)wnd).userList.toggle();
-						}
-					}
-				}
-		}
+		awnd.show();
     }
 
     public void addwnd(final HWindow wnd) {
 	wnds.add(wnd);
-	setawnd(wnd);
-	btns.put(wnd, new Button(new Coord(134, 29), 100, this, wnd.title) {
+	Button wndButton = new Button(new Coord(134, 29), 100, this, wnd.title) {
 		public void click() {
-		    setawnd(wnd);
+			setawnd(wnd);
 		}
-	    });
+	};
+	wnd.setButton(wndButton);
+	btns.put(wnd, wndButton);
 	updbtns();
+	setawnd(wnd);
     }
 
     public void remwnd(HWindow wnd) {
@@ -539,7 +522,7 @@ public class SlenHud extends Widget implements DropTarget {
     }
 
     public boolean mousewheel(Coord c, int amount) {
-		return activeWindow.mousewheel(c, amount);
+		return awnd.mousewheel(c, amount);
     }
 
     public boolean globtype(char ch, KeyEvent ev) {

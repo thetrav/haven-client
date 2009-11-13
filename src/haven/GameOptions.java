@@ -91,12 +91,12 @@ public class GameOptions extends Window{
 		}
 		super.wdgmsg(sender, msg, args);
 	}
-	public void toggle()
+	public boolean toggle()
 	{
 		CustomConfig.ircServerAddress = serverAddress.text;
 		CustomConfig.ircChannelList = channelList.text;
 		CustomConfig.saveSettings();
-		super.toggle();
+		return super.toggle();
 	}
 }
 class FillBox extends Widget

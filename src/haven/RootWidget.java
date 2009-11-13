@@ -34,21 +34,21 @@ public class RootWidget extends Widget {
     Profile gprof;
     GameOptions opts;
     boolean afk = false;
-	
+
     public RootWidget(UI ui, Coord sz) {
 	super(ui, new Coord(0, 0), sz);
 	setfocusctl(true);
 	cursor = Resource.load("gfx/hud/curs/arw");
     }
-	
+
     public boolean globtype(char key, KeyEvent ev) {
-	if(!super.globtype(key, ev)) {
+		if(!super.globtype(key, ev)) {
 	    /*
 	      if(key == 27) {
 	      if(logout == null) {
 	      if(ui.sess != null)
 	      logout = new Logout(new Coord(338, 275), this) {
-	      public void destroy() { 
+	      public void destroy() {
 	      super.destroy();
 	      logout = null;
 	      }
@@ -64,12 +64,12 @@ public class RootWidget extends Widget {
 		new Profwnd(findchild(SlenHud.class), gprof, "Glob prof");
 	    } else if(Config.profile && (key == '!')) {
 		new Profwnd(findchild(SlenHud.class), findchild(MapView.class).mask.prof, "ILM prof");
-	    } else if(key == 'O')
+	    } else if(key+96 == 'o' && ev.isControlDown())
 	    {
 	   	    if(opts == null)
 	   	    {
 	   	    	opts = new GameOptions(this);
-	   	    	ui.bind(opts, ui.rwidgets.size());
+	   	    	ui.bind(opts, CustomConfig.wdgtID++);
 	   	    }
 	    	else opts.toggle();
 	    } else if(key != 0) {
