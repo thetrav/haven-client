@@ -49,10 +49,10 @@ public class GameOptions extends Window{
     					 this, CustomConfig.ircChannelList);
 		//	Sound toggle
 		soundToggle = new CheckBox(Coord.z.add(0,100), this, "Sound On/Off");
-		soundToggle.a = true;
+		soundToggle.a = CustomConfig.isSoundOn;
 		//	Music toggle
     	musicToggle = new CheckBox(Coord.z.add(soundToggle.sz.x,100), this, "Music On/Off");
-    	musicToggle.a = true;
+    	musicToggle.a = CustomConfig.isMusicOn;
 
     	ui.bind(sfxVolBar, CustomConfig.wdgtID++);
     	ui.bind(musicVolBar, CustomConfig.wdgtID++);
