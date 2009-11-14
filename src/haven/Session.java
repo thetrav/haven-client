@@ -359,7 +359,8 @@ public class Session {
 		Audio.play(res);
 	    } else if(msg.type == Message.RMSG_CATTR) {
 		glob.cattr(msg);
-	    } else if(msg.type == Message.RMSG_MUSIC && CustomConfig.isMusicOn) {
+	    } else if(msg.type == Message.RMSG_MUSIC) {
+	    	if(!CustomConfig.isMusicOn)	return;		//	Music is disabled
 		String resnm = msg.string();
 		int resver = msg.uint16();
 		boolean loop = !msg.eom() && (msg.uint8() != 0);

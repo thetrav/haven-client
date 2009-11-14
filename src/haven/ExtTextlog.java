@@ -46,10 +46,11 @@ public class ExtTextlog extends Widget implements ClipboardOwner{
 	if(lineHeight > 0 && scrollBar != null)
 		g.image(visibleCharacters,Coord.z);
 	g.chcolor(alphaBlue);
-	synchronized (selectedArea)
-	{
-		g.frect(new Coord(selectedArea.x,selectedArea.y),new Coord(selectedArea.width,selectedArea.height));
-	}
+	if(selectedArea != null)
+		synchronized (selectedArea)
+		{
+			g.frect(new Coord(selectedArea.x,selectedArea.y),new Coord(selectedArea.width,selectedArea.height));
+		}
 	g.chcolor();
 	super.draw(g);
     }

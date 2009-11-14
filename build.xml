@@ -102,13 +102,12 @@
   </target>
   
   <target name="make-key" unless="has-sign-key">
-  	<genkey alias="Pacho" keystore="dist\IRC-Extended-Key" keypass="Pacho87" storepass="Pacho87" validity="365"
-  	dname="CN=Pacho the Elf, OU=Worker Elves, O=Elves United, C=NP"/>
+  	<exec executable="dist\keygen.bat"/>
   </target>
   
   <target name="signer" depends="jars, make-key">
   	<copy file="build\haven.jar" todir="dist"/>
-  	<signjar jar="haven.jar" alias="Pacho" storepass="Pacho87" keystore="dist\IRC-Extended-Key" sigfile="haven-signed.jar" verbose="true" keypass="Pacho87"/>
+  	<exec executable="dist\signer.bat"/>
   </target>
   
   <target name="update-zips" depends="signer">

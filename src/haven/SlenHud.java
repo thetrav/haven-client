@@ -468,8 +468,6 @@ public class SlenHud extends Widget implements DropTarget {
     	}
     	if(awnd == wnd)
 		{
-			awnd.hudButton.changeText(awnd.hudButton.text.text, Color.YELLOW);
-			awnd.hudButton.isFlashing = false;
 			if(awnd.getClass().getName().equalsIgnoreCase(SlenChat.class.getName()))
 			{
 				if(((SlenChat)awnd).userList != null)	((SlenChat)awnd).userList.toggle();
@@ -477,6 +475,8 @@ public class SlenHud extends Widget implements DropTarget {
 			return;
 		}
 		awnd = wnd;
+		awnd.hudButton.changeText(awnd.hudButton.text.text, Color.YELLOW);
+		awnd.hudButton.isFlashing = false;
 
 		awnd.show();
     }
