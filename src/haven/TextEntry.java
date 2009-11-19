@@ -34,6 +34,9 @@ import java.io.IOException;
 
 public class TextEntry extends SSWidget  implements ClipboardOwner{
     public String text;
+    public String badchars = "";
+    public boolean noNumbers = false;
+    public boolean noLetters = false;
     int pos, limit = 0;
     boolean prompt = false, pw = false;
     int cw = 0;
@@ -123,34 +126,52 @@ public class TextEntry extends SSWidget  implements ClipboardOwner{
     public boolean type(char c, KeyEvent ev) {
 	try {
 	    if(c == 8) {		//	BACKSPACE
-		if(pos > 0) {
-		    if(pos < text.length())
-			text = text.substring(0, pos - 1) + text.substring(pos);
-		    else
-			text = text.substring(0, pos - 1);
-		    pos--;
-		}
-		return(true);
-	    } else if(c == 10) {	//	ENTER
-		if(!canactivate)
-		    return(false);
-		wdgmsg("activate", text);
-		return(true);
-	    } else if(c == 127) {	//	DELETE
-		if(pos < text.length())
-		    text = text.substring(0, pos) + text.substring(pos + 1);
-		return(true);
-	    } else if(c+96 == 'v' && ev.isControlDown()) {
+			if(pos > 0) {
+			    if(pos < text.length())
+					text = text.substring(0, pos - 1) + text.substring(pos);
+			    else
+					text = text.substring(0, pos - 1);
+			    pos--;
+			}
+			return true;
+	    }
+	    if(c == 10) {	//	ENTER
+			if(!canactivate)
+			    return(false);
+			wdgmsg("activate", text);
+			return true;
+	    }
+	    if(c == 127) {	//	DELETE
+			if(pos < text.length())
+			{
+				text = text.substring(0, pos) + text.substring(pos + 1);
+			}
+			return true;
+	    }
+	    if(c+96 == 'v' && ev.isControlDown()) {
 	    	String clipboardContents = getClipboardContents();
 	    	text = text.substring(0, pos) + clipboardContents + text.substring(pos);
 	    	pos += clipboardContents.length();
-	    } if(c >= 32) {
-		String nt = text.substring(0, pos) + c + text.substring(pos);
-		if((limit == 0) || ((limit > 0) && (nt.length() <= limit)) || ((limit == -1) && (cw < sz.x))) {
-		    text = nt;
-		    pos++;
-		}
-		return(true);
+	    	return true;
+	    }
+
+	    	if(Character.isDigit(c) && noNumbers && !ev.isAltDown() || badchars.indexOf(c) > -1)
+	        {
+	            ev.consume();
+	            return true;
+	        }
+	        if(Character.isLetter(c) && noLetters && !ev.isAltDown() || badchars.indexOf(c) > -1)
+	        {
+	        	ev.consume();
+	        	return true;
+	        }
+	    if(c >= 32) {
+			String nt = text.substring(0, pos) + c + text.substring(pos);
+			if((limit == 0) || ((limit > 0) && (nt.length() <= limit)) || ((limit == -1) && (cw < sz.x))) {
+			    text = nt;
+			    pos++;
+			}
+			return(true);
 	    }
 	} finally {
 	    render();

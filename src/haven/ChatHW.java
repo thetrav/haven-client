@@ -58,7 +58,7 @@ public class ChatHW extends HWindow {
 	    if(args.length > 1)
 		col = (Color)args[1];
 	    out.append((String)args[0], col);
-	    flashWindow(this);
+	    flashWindow();
 	} else {
 	    super.uimsg(msg, args);
 	}
@@ -79,18 +79,13 @@ public class ChatHW extends HWindow {
     	return(out.mousewheel(c, amount));
     }
     //	Changes the button text color to red if the window is not currently visible
-	protected boolean flashWindow(ChatHW wnd)
+	protected boolean flashWindow()
 	{
 		//	Searches for an inactive window to flash
-		for(Button b : ((SlenHud)parent).btns.values())
+		if(!visible)
 		{
-			if(wnd.title.equalsIgnoreCase(b.text.text)
-				&& !wnd.visible)
-			{
-				b.isFlashing = true;
-				b.changeText(b.text.text, Color.RED);
-				return true;
-			}
+			hudButton.startFlashing();
+			return true;
 		}
 		//	No inactive window found
 		return false;

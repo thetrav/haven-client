@@ -352,7 +352,8 @@ public class Session {
 		}
 	    } else if(msg.type == Message.RMSG_PARTY) {
 		glob.party.msg(msg);
-	    } else if(msg.type == Message.RMSG_SFX && CustomConfig.isSoundOn) {
+	    } else if(msg.type == Message.RMSG_SFX) {
+	    	if(!CustomConfig.isSoundOn) return;		//	Sound effects disabled
 		Indir<Resource> res = getres(msg.uint16());
 		double vol = ((double)CustomConfig.sfxVol) / 100.0;
 		double spd = ((double)msg.uint16()) / 256.0;

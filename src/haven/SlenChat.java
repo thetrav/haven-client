@@ -18,7 +18,9 @@ public class SlenChat extends ChatHW
     {
     	public boolean initialized = false;
     	private String channel;
+    	private String password;
     	public UserList userList;
+
     	private SlenConsole handler;
 
     	public static class UserList extends Window
@@ -111,7 +113,7 @@ public class SlenChat extends ChatHW
 	    				&& out.hasfocus
 	    				&& ((SlenChat)owner).handler.findWindow(out.chosen.disp) == null)
 			    	{
-			    		((SlenHud)owner.parent).ircChannels.add(new SlenChat(owner.handler, out.chosen.disp, false));
+			    		((SlenHud)owner.parent).ircChannels.add(new SlenChat(owner.handler, out.chosen.disp, null, false));
 			    	}
 			    	return true;
 	    		}
@@ -135,18 +137,19 @@ public class SlenChat extends ChatHW
     		Widget.addtype("ircchat", new WidgetFactory() {
 	    		public Widget create(Coord c, Widget parent, Object[] args) {
 				    String channel = (String)args[0];
-				    return(new SlenChat((SlenConsole)parent, channel));
+				    return(new SlenChat((SlenConsole)parent, channel, null));
 	    		}
     		});
     	}
-    	SlenChat(SlenConsole parentHandler, String channel)
+    	SlenChat(SlenConsole parentHandler, String channel, String password)
     	{
-    		this(parentHandler, channel, true);
+    		this(parentHandler, channel, password, true);
     	}
-    	SlenChat(SlenConsole parentHandler, String channel, boolean hasUserList)
+    	SlenChat(SlenConsole parentHandler, String channel, String password, boolean hasUserList)
     	{
     		super(parentHandler.parent, channel, true);
     		this.channel = channel;
+    		this.password = password == null ? "" : password;
     		handler = parentHandler;
     		userList = hasUserList ? new UserList(this) : null;
     		initialized = true;
@@ -183,11 +186,15 @@ public class SlenChat extends ChatHW
 		{
 			return new String(channel);
 		}
+		public String getPassword()
+		{
+			return new String(password);
+		}
 
 		public void destroy()
 		{
 			handler.IRC.writeln("PART " + channel + " " + handler.user + " closed this window.");
-			((SlenHud)parent).ircChannels.remove(this);
+			((SlenHud)((SlenHud)parent)).ircChannels.remove(this);
 			if(userList != null)	userList.destroy();
 			channel = null;
 			initialized = false;

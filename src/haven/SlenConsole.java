@@ -10,13 +10,14 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 {
 	public IRCConnection IRC;
 	public String user;
+	public SlenHud parent;
 	private static SlenChat tSCWnd;
 	private boolean initialized = false;
 
 	static {
     	Widget.addtype("ircconsole", new WidgetFactory() {
 	    	public Widget create(Coord c, Widget parent, Object[] args) {
-			    return(new SlenConsole((SlenHud)parent));
+			    return(new SlenConsole(((SlenHud)parent)));
 	    	}
     	});
     }
@@ -25,9 +26,16 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
     {
     	super(parent, "IRC Console", false);
     	user = ui.sess.username;
+    	this.parent = parent;
+    	if(CustomConfig.ircDefNick == null || CustomConfig.ircDefNick.equals(""))
+    	{
+    		CustomConfig.ircDefNick = user;
+    		CustomConfig.ircAltNick = user + "|C";
+    	}
     	if(!CustomConfig.ircServerAddress.equals(""))
     	{
-	    	IRC = new IRCConnection(CustomConfig.ircServerAddress, 6667, user, user+"|C",
+	    	IRC = new IRCConnection(CustomConfig.ircServerAddress, 6667,
+	    							CustomConfig.ircDefNick, CustomConfig.ircAltNick,
 	    							user, user);
 	    	IRC.setIRCConnectionListener(this);
 	    	IRC.open();
@@ -68,10 +76,10 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 		   				tSCWnd = findWindow(tChanInfo.name);
 		    			if(tSCWnd != null)	return;
 		    			IRC.writeln("JOIN " + tChanInfo.name + " " + tChanInfo.disp);
-		    			tSCWnd = new SlenChat(this, tChanInfo.name);
-		    			if(!((SlenHud)parent).ircChannels.contains(tSCWnd))
+		    			tSCWnd = new SlenChat(this, tChanInfo.name, tChanInfo.disp);
+		    			if(!parent.ircChannels.contains(tSCWnd))
 		    			{
-		    				((SlenHud)parent).ircChannels.add(tSCWnd);
+		    				parent.ircChannels.add(tSCWnd);
 		    			}
 		   			}
 	    		} else {
@@ -157,8 +165,8 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 		   			IRC.writeln("PRIVMSG " + cArgs[1].trim() + " :" + msg);
 		   			tSCWnd = findWindow(cArgs[1].trim());
 		   			if(tSCWnd == null) {
-		   				tSCWnd = new SlenChat(this, cArgs[1].trim(), false);
-		   				((SlenHud)parent).ircChannels.add(tSCWnd);
+		   				tSCWnd = new SlenChat(this, cArgs[1].trim(), null, false);
+		   				parent.ircChannels.add(tSCWnd);
 		   			}
 		   			tSCWnd.out.append(user + ": " + msg);
 	    		} else {
@@ -203,11 +211,19 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 		out.append("Successfully connected to: "+ IRC.getServer());
 		if(!CustomConfig.ircChannelList.trim().equals(""))
 			handleInput("/JOIN " + CustomConfig.ircChannelList, this);
+		for(SlenChat tSCWnd : parent.ircChannels)
+		{
+			if(tSCWnd.getChannel().charAt(0) == '#')
+			{
+				IRC.writeln("/JOIN " + tSCWnd.getChannel() + " " + tSCWnd.getPassword());
+			}
+		}
 	}
 	public void onDisconnect()
 	{
 		out.append("Disconnected", Color.GREEN.darker());
-		for(SlenChat tSCWnd : ((SlenHud)parent).ircChannels)
+		if(parent == null || parent.ircChannels == null)	return;
+		for(SlenChat tSCWnd : parent.ircChannels)
 		{
 			tSCWnd.out.append("Disconnected from server");
 		}
@@ -223,7 +239,7 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 			tSCWnd.out.append(orgin + ": " + orgnick + " invited " + invitee + " into the channel.");
 			return;
 		}
-		for(SlenChat tSCWnd : ((SlenHud)parent).ircChannels)
+		for(SlenChat tSCWnd : parent.ircChannels)
 		{
 			if(tSCWnd.visible)
 			{
@@ -278,21 +294,21 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 				tSCWnd.out.append(orgnick + ": " + txt);
 
 				//	Changes the button color if the window isn't visible
-				flashWindow(tSCWnd);
+				tSCWnd.flashWindow();
 				return;
 			}
 
 			//	Window doesn't exist because its a PM with no channel, so a new one is created
 			tSCWnd = findWindow(orgnick);
-			tSCWnd = tSCWnd == null ? new SlenChat(this, orgnick, false) : tSCWnd;
-			((SlenHud)parent).ircChannels.add(tSCWnd);
+			tSCWnd = tSCWnd == null ? new SlenChat(this, orgnick, null, false) : tSCWnd;
+			parent.ircChannels.add(tSCWnd);
 	   		tSCWnd.out.append(orgnick + ": " + txt);
 		}
 	public void onNick( String user, String oldnick, String newnick )
 	{
 		oldnick = parseNick(oldnick);
 		newnick = parseNick(newnick);
-		for(SlenChat tSCWnd : ((SlenHud)parent).ircChannels)
+		for(SlenChat tSCWnd : parent.ircChannels)
 		{
 			//	Changes the links in the appropriate windows so all private messages are still
 			//	directed to the correct window
@@ -353,7 +369,7 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 		out.append(nick + " quit. Reason: " + txt, Color.GREEN.darker());
 
 		//	Checks all windows for this nick and removes it when found
-		for(SlenChat SC : ((SlenHud)parent).ircChannels)
+		for(SlenChat SC : parent.ircChannels)
 		{
 			if(SC.userList != null)
 			{
@@ -376,7 +392,7 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 								String name, String host)
 	{
 		nick = parseNick(nick);
-		for(SlenChat tSCWnd : ((SlenHud)parent).ircChannels)
+		for(SlenChat tSCWnd : parent.ircChannels)
 		{
 			if(tSCWnd.userList != null)
 				if(tSCWnd.userList.containsNick(nick))
@@ -467,18 +483,15 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 			handleInput((String)args[0], this);
 			in.settext("");
 			return;
-		} else if(sender == cbtn)
-		{
-			destroy();
-			return;
 		}
 		super.wdgmsg(sender, msg, args);
 	}
 	//	Attempts to find a window of the same title; returns null if no windows match.
 	public SlenChat findWindow(String wndTitle)
 	{
+		if(parent == null || parent.ircChannels == null)	return null;
 		//	Searches for existing windows
-		for(SlenChat tSCWnd : ((SlenHud)parent).ircChannels)
+		for(SlenChat tSCWnd : parent.ircChannels)
 		{
 			//	There are no windows in the list
 			if(tSCWnd == null)	break;
@@ -496,5 +509,13 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 	public static String parseNick(String nickname)
 	{
 		return nickname.replace('~',' ').replace('@',' ').replace('%', ' ').trim();
+	}
+	public void destroy()
+	{
+		IRC.close();
+		for(SlenChat tSCWnd : parent.ircChannels)
+		{
+			parent.remwnd(tSCWnd);
+		}
 	}
 }

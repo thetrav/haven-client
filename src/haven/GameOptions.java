@@ -25,8 +25,12 @@ public class GameOptions extends Window{
 	Text musicVol = Text.render("Music Vol:", Color.WHITE);
 	Text serverLabel = Text.render("Server:", Color.WHITE);
 	Text chnlLabel = Text.render("Channels:", Color.WHITE);
+	Text defIRCNickLabel = Text.render("IRC Nick:", Color.WHITE);
+	Text altIRCNickLabel = Text.render("Alt Nick:", Color.WHITE);
 	TextEntry serverAddress;
 	TextEntry channelList;
+	TextEntry defNick;
+	TextEntry altNick;
 	FillBox sfxVolBar;
 	FillBox musicVolBar;
 	CheckBox musicToggle;
@@ -44,14 +48,23 @@ public class GameOptions extends Window{
     	//	Server entry
     	serverAddress = new TextEntry(Coord.z.add(sfxVol.sz().x + 5, 60), Coord.z.add(120, 15),
     					 this, CustomConfig.ircServerAddress);
+    	serverAddress.badchars = " ";
     	//	Channel list entry
     	channelList = new TextEntry(Coord.z.add(sfxVol.sz().x + 5, 80), Coord.z.add(120, 15),
     					 this, CustomConfig.ircChannelList);
+    	//	Nickname entries
+    	defNick = new TextEntry(Coord.z.add(sfxVol.sz().x + 5, 100), Coord.z.add(120, 15),
+    					 this, CustomConfig.ircDefNick);
+    	defNick.badchars = "~@#$%^& ";
+    	altNick = new TextEntry(Coord.z.add(sfxVol.sz().x + 5, 120), Coord.z.add(120, 15),
+    					 this, CustomConfig.ircAltNick);
+    	altNick.badchars = defNick.badchars;
+
 		//	Sound toggle
-		soundToggle = new CheckBox(Coord.z.add(0,100), this, "Sound On/Off");
+		soundToggle = new CheckBox(Coord.z.add(0,140), this, "Sound On/Off");
 		soundToggle.a = CustomConfig.isSoundOn;
 		//	Music toggle
-    	musicToggle = new CheckBox(Coord.z.add(soundToggle.sz.x,100), this, "Music On/Off");
+    	musicToggle = new CheckBox(Coord.z.add(soundToggle.sz.x,140), this, "Music On/Off");
     	musicToggle.a = CustomConfig.isMusicOn;
 
     	ui.bind(sfxVolBar, CustomConfig.wdgtID++);
@@ -64,8 +77,10 @@ public class GameOptions extends Window{
     	super.draw(g);
     	g.image(sfxVol.img ,Coord.z.add(10,20));	//	SFX Volume
     	g.image(musicVol.img, Coord.z.add(10,50));
-    	g.image(serverLabel.img, Coord.z.add(10,70));	//	Server Address
-    	g.image(chnlLabel.img, Coord.z.add(10,90));	//	Channel List
+    	g.image(serverLabel.img, Coord.z.add(10,80));	//	Server Address
+    	g.image(chnlLabel.img, Coord.z.add(10,100));	//	Channel List
+    	g.image(defIRCNickLabel.img, Coord.z.add(10,120));
+    	g.image(altIRCNickLabel.img, Coord.z.add(10,140));
     }
     public void wdgmsg(Widget sender, String msg, Object... args) {
 		if(sender == cbtn)
@@ -120,6 +135,8 @@ class FillBox extends Widget
     		{
     			mouseDown = true;
     			ui.grabmouse(this);
+    			if(c.x > 10 && c.x < 110)
+    				value = (c.x-10)%100;
     			return true;
     		}
     		return super.mousedown(c, button);

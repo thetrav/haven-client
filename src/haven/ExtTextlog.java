@@ -264,7 +264,6 @@ public class ExtTextlog extends Widget implements ClipboardOwner{
 
     	selectedArea.width = 2;
     	selectedArea.height = 2;
-    	System.out.print("activating link: ");
     	synchronized(characterMap)
     	{
 	    	for(GLCharacter tGLChar : characterMap)

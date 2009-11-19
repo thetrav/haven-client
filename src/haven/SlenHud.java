@@ -227,7 +227,7 @@ public class SlenHud extends Widget implements DropTarget {
 	    if(cmd == "q") {
 		Utils.tg().interrupt();
 	    } else if(cmd == "lo") {
-	    	new Logout(new Coord(100,100), parent);
+	    	new Logout(CustomConfig.windowSize.div(2).add(this.sz.inv()), parent);
 		//ui.sess.close();
 	    } else if(cmd == "afk") {
 		wdgmsg("afk");
@@ -461,19 +461,24 @@ public class SlenHud extends Widget implements DropTarget {
 	updbtns();
     }
 
+	//	Handles the switching of windows
     private void setawnd(HWindow wnd) {
+    	//	Hide the current active window
     	if(awnd != null && awnd != wnd)
     	{
     		awnd.hide();
     	}
+    	//	Some windows have special toggles that act when the button is pressed twice
     	if(awnd == wnd)
 		{
+			//	IRC SlenChat userlist toggle
 			if(awnd.getClass().getName().equalsIgnoreCase(SlenChat.class.getName()))
 			{
 				if(((SlenChat)awnd).userList != null)	((SlenChat)awnd).userList.toggle();
 			}
 			return;
 		}
+		//	Make the specified window be the active window, set the appropriate coloring, and show
 		awnd = wnd;
 		awnd.hudButton.changeText(awnd.hudButton.text.text, Color.YELLOW);
 		awnd.hudButton.isFlashing = false;

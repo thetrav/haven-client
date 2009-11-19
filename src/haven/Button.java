@@ -128,4 +128,14 @@ public class Button extends SSWidget {
     	cont = text.img;
     	render();
     }
+    public void startFlashing()
+    {
+    	changeText(text.text, Color.RED.darker());
+    	isFlashing = true;
+    }
+    public void stopFlashing()
+    {
+    	changeText(text.text, Color.YELLOW);
+    	isFlashing = false;
+    }
 }
