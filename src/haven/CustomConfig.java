@@ -29,6 +29,12 @@ import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
+import javax.xml.parsers.*;
+import org.xml.sax.*;
+import org.xml.sax.helpers.*;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.ArrayList;
 
 public class CustomConfig {
 
@@ -93,29 +99,96 @@ public class CustomConfig {
 	public static int sfxVol = 100;
 	public static int musicVol = 100;
 	public static String ircServerAddress = "irc.synirc.net";
-	public static String ircChannelList = "#Haven";
-	public static String ircDefNick;
-	public static String ircAltNick;
+	public static List<Listbox.Option> ircChannelList = new ArrayList<Listbox.Option>();
+	public static String ircDefNick = "";
+	public static String ircAltNick = "";
 	public static int wdgtID = 1000;
 	public static boolean isMusicOn = true;
 	public static boolean isSoundOn = true;
+	public static boolean isIRCOn = true;
 	public static boolean hasNightVision = false;
+
+	private static Hashtable tags;
+
+	public static void setDefaults()
+	{
+		windowSize = new Coord(800,600);
+		sfxVol = 100;
+		musicVol = 100;
+		ircServerAddress = "irc.synirc.net";
+		ircChannelList.clear();
+		ircChannelList.add(new Listbox.Option("#Haven", ""));
+		ircDefNick = "";
+		ircAltNick = "";
+		isMusicOn = true;
+		isSoundOn = true;
+		hasNightVision = false;
+	}
     public static boolean load() {
     	BufferedReader reader = null;
     	try{
-    		reader = new BufferedReader(new FileReader("config.cfg"));
-    		String[] data;
-    		data = reader.readLine().split(" ", 2);
-    		windowSize.x = Integer.parseInt(data[0].trim());
-    		windowSize.y = Integer.parseInt(data[1].trim());
-    		sfxVol = Integer.parseInt(reader.readLine().trim());
-    		musicVol = Integer.parseInt(reader.readLine().trim());
-    		isSoundOn = Boolean.parseBoolean(reader.readLine().trim());
-    		isMusicOn = Boolean.parseBoolean(reader.readLine().trim());
-    		ircServerAddress = reader.readLine().trim();
-    		ircChannelList = reader.readLine().trim();
-    		ircDefNick = reader.readLine().trim();
-    		ircAltNick = reader.readLine().trim();
+    		SAXParserFactory spFactory = SAXParserFactory.newInstance();
+	    	SAXParser saxParser = spFactory.newSAXParser();
+
+	    	XMLReader xmlReader = saxParser.getXMLReader();
+		    xmlReader.setContentHandler(new DefaultHandler(){
+		    	private boolean ircElementActive = false;
+		    	public void startDocument() throws SAXException
+			    {
+			    	tags = new Hashtable();
+			    }
+			    public void startElement(String namespaceURI, String localName,
+			    							String qName, Attributes atts) throws SAXException
+			    {
+			    	String value;
+			    	String key = qName.toUpperCase().trim();
+			    	if(key.equals("SCREENSIZE")){
+			    		value = atts.getValue("width") == null ? "1024" : atts.getValue("width");
+			    		windowSize.x = Integer.parseInt(value);
+
+			    		value = atts.getValue("height") == null ? "1024" : atts.getValue("height");
+			    		windowSize.y = Integer.parseInt(value);
+			    	}else if(key.equals("SOUND")){
+			    		value = atts.getValue("enabled") == null ? "true" : atts.getValue("enabled");
+			    		isSoundOn = Boolean.parseBoolean(value);
+
+			    		value = atts.getValue("volume") == null ? "100" : atts.getValue("volume");
+			    		sfxVol = Integer.parseInt(value);
+			    	}else if(key.equals("MUSIC")){
+			    		value = atts.getValue("enabled") == null ? "true" : atts.getValue("enabled");
+			    		isMusicOn = Boolean.parseBoolean(value);
+
+			    		value = atts.getValue("volume") == null ? "100" : atts.getValue("volume");
+			    		musicVol = Integer.parseInt(value);
+			    	}else if(key.equals("IRC")){
+			    		ircElementActive = true;
+			    		ircChannelList.clear();
+			    		value = atts.getValue("enabled") == null ? "true" : atts.getValue("enabled");
+			    		isIRCOn = Boolean.parseBoolean(value);
+
+			    		value = atts.getValue("server") == null ? "irc.synirc.net" : atts.getValue("server");
+			    		ircServerAddress = value;
+
+			    		value = atts.getValue("default-nick") == null ? "" : atts.getValue("default-nick");
+			    		ircDefNick = value;
+
+			    		value = atts.getValue("alternate-nick") == null ? "" : atts.getValue("alternate-nick");
+			    		ircAltNick = value;
+			    	}else if(key.equals("CHANNEL") && atts.getValue("name") != null && ircElementActive){
+			    		value = atts.getValue("password") == null ? " " : " " + atts.getValue("password");
+			    		ircChannelList.add(new Listbox.Option(atts.getValue("name"),value));
+			    	}
+			    }
+			    public void endElement(String namespaceURI, String localName,
+			    						String qName) throws SAXException
+			    {
+			    	if(ircElementActive )
+			    	{
+			    		ircElementActive = false;
+			    	}
+			    }
+			});
+			xmlReader.parse("config.xml");
     		if(windowSize.x < 800 || windowSize.y < 600)
     		{
     			System.out.println("Window size must be at least 800x600");
@@ -132,8 +205,11 @@ public class CustomConfig {
     	}catch (NumberFormatException NFExcep)
     	{
     		System.out.println("Wrong config file format, creating a new one");
-    	}finally
-    	{
+    	}catch (ParserConfigurationException pcExcep){
+    		pcExcep.printStackTrace();
+    	}catch (SAXException saxExcep){
+	    	saxExcep.printStackTrace();
+	    }finally{
     		try
     		{
     			reader.close();
@@ -148,17 +224,25 @@ public class CustomConfig {
     public static void saveSettings()
     {
     	try{
-    			File cfg = new File("config.cfg");
+    			File cfg = new File("config.xml");
     			BufferedWriter writer = new BufferedWriter(new FileWriter(cfg));
-    			writer.write(windowSize.x + " " + windowSize.y + "\n");
-    			writer.write(Integer.toString(sfxVol) + "\n");
-    			writer.write(Integer.toString(musicVol) + "\n");
-    			writer.write(Boolean.toString(isSoundOn) + "\n");
-    			writer.write(Boolean.toString(isMusicOn) + "\n");
-    			writer.write(ircServerAddress + "\n");
-    			writer.write(ircChannelList + "\n");
-    			writer.write(ircDefNick + "\n");
-    			writer.write(ircAltNick + "\n");
+    			writer.write("<?xml version=\"1.0\" ?>\n");
+    			writer.write("<CONFIG>");
+    			writer.write("\t<SCREENSIZE width=\"" + windowSize.x + "\" height=\"" + windowSize.y + "\"/>\n");
+    			writer.write("\t<SOUND enabled=\"" + Boolean.toString(isSoundOn)
+    						+ "\" volume=\"" + Integer.toString(sfxVol) + "\"/>\n");
+    			writer.write("\t<MUSIC enabled=\"" + Boolean.toString(isMusicOn)
+    						+ "\" volume=\"" + Integer.toString(musicVol) + "\"/>\n");
+    			writer.write("\t<IRC enabled=\"" + Boolean.toString(isIRCOn)
+    						+ "\" server=\"" + ircServerAddress
+    						+ "\" default-nick=\"" + ircDefNick
+    						+ "\" alternate-nick=\"" + ircAltNick + "\">\n");
+    			for(Listbox.Option channel : ircChannelList)
+    			{
+    				writer.write("\t\t<CHANNEL name=\"" + channel.name + "\" password=\"" + channel.disp + "\"/>\n");
+    			}
+    			writer.write("\t</IRC>\n");
+    			writer.write("</CONFIG>");
     			writer.close();
     	}catch(IOException e)
     	{
@@ -169,6 +253,7 @@ public class CustomConfig {
     {
     	if(!load())
     	{
+    		setDefaults();
     		final JFrame configFrame = new JFrame("Screen Size");
     		Container contentPane = configFrame.getContentPane();
     		final JPanel clientSettingsPanel = new JPanel(new GridBagLayout(), true);

@@ -46,6 +46,11 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 	public void handleInput(String input, ChatHW src)
 	{
 		if(input == null || input.trim().equals(""))	return;
+		if(IRC != null)
+			if(IRC.getState() != IRC.CONNECTED){
+	    		IRC.open(IRC);
+	    		IRC.setIRCConnectionListener(this);
+	   		}
 	    if(input.charAt(0) == '/')
 	    {
 	    	String[] cArgs = input.split(" ");
@@ -173,15 +178,26 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 	    			src.out.append("FORMAT: /MSG <USER> <MESSAGE>");
 	    		}
 	    		return;
+	    	} else if((cmd.equals("/ME") || cmd.equals("/E") || cmd.equals("/EMOTE")) && IRC != null)
+	    	{
+	    		if(cArgs.length >= 2 ) {
+	    			String msg = "";
+	    			for(int i = 1; i < cArgs.length; i++)
+		   				msg += cArgs[i] + " ";
+		   			IRC.writeln("PRIVMSG " + ((SlenChat)src).getChannel() + " :\001ACTION " + msg + "\001");
+		   			src.out.append("*" + user + " " + msg + "*", Color.MAGENTA.darker());
+	    		} else {
+	    			src.out.append("FORMAT: <[/E][/EMOTE][/ME]> <ACTION>");
+	    		}
+	    		return;
+	    	} else if(cmd.equals("/COMMANDS"))
+	    	{
+	    		src.out.append("Placeholder", Color.WHITE);
 	    	} else
 	    	{
-	    		src.out.append("Command not recognized.");
+	    		src.out.append("Command not recognized.\n see /COMMANDS for a list of all available commands");
 	    		return;
 	    	}
-	    }
-	    if(IRC.getState() != IRC.CONNECTED){
-	    	IRC.open(IRC);
-	    	IRC.setIRCConnectionListener(this);
 	    }
 	    if(tSCWnd == null)	return;
 	    if(src.getClass().getName().equalsIgnoreCase(tSCWnd.getClass().getName()))
@@ -209,8 +225,10 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 	public void onConnect()
 	{
 		out.append("Successfully connected to: "+ IRC.getServer());
-		if(!CustomConfig.ircChannelList.trim().equals(""))
-			handleInput("/JOIN " + CustomConfig.ircChannelList, this);
+		for(Listbox.Option channel : CustomConfig.ircChannelList)
+		{
+			handleInput("/JOIN " + channel.name + " " + channel.disp, this);
+		}
 		for(SlenChat tSCWnd : parent.ircChannels)
 		{
 			if(tSCWnd.getChannel().charAt(0) == '#')

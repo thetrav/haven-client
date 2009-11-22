@@ -33,9 +33,10 @@ import java.util.*;
 public class Listbox extends Widget {
     public List<Option> opts;
     public Option chosen;
+    public List<? extends Widget> items;
     Scrollbar scrollBar;
     int height;
-	
+
     static {
 	Widget.addtype("lb", new WidgetFactory() {
 		public Widget create(Coord c, Widget parent, Object[] args) {
@@ -50,7 +51,7 @@ public class Listbox extends Widget {
     public static class Option {
 		public String name, disp;
 		int y1, y2;
-		
+
 		public Option(String name, String disp) {
 		    this.name = name;
 		    this.disp = disp;
@@ -59,8 +60,12 @@ public class Listbox extends Widget {
 		{
 			return (data.equals(name) || data.equals(disp));
 		}
+		public String toString()
+		{
+			return "Name="+name+":\tDisp="+disp;
+		}
     }
-	
+
     public void draw(GOut g) {
 		for(int i = 0; i < height && scrollBar != null; i++) {
 			Color c;
@@ -77,7 +82,7 @@ public class Listbox extends Widget {
 		}
 		super.draw(g);
     }
-	
+
     public Listbox(Coord c, Coord sz, Widget parent, List<Option> opts) {
 	super(c, sz, parent);
 	this.opts = opts;
@@ -88,22 +93,22 @@ public class Listbox extends Widget {
 	chosen = !opts.isEmpty() ? opts.get(0) : null;
 	setcanfocus(true);
     }
-	
+
     static List<Option> makelist(Option[] opts) {
 	List<Option> ol = new LinkedList<Option>();
 	for(Option o : opts)
 	    ol.add(o);
 	return(ol);
     }
-	
+
     public Listbox(Coord c, Coord sz, Widget parent, Option[] opts) {
 	this(c, sz, parent, makelist(opts));
     }
-	
+
     public void sendchosen() {
 	wdgmsg("chose", chosen.name);
     }
-	
+
     public boolean mousedown(Coord c, int button) {
 		int i = 0;
 		if(button == 1 && c.x < sz.x-25) {
@@ -123,10 +128,7 @@ public class Listbox extends Widget {
 
 		return(false);
     }
-	
-    public boolean keydown(KeyEvent e) { 
-    	return parent.keydown(e);
-    }
+
     public void changed(Option changed)
     {}
 }

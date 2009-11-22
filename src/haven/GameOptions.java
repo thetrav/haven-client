@@ -7,7 +7,6 @@
  */
 package haven;
 import java.awt.Color;
-import java.awt.*;
 public class GameOptions extends Window{
 
 	static {
@@ -35,6 +34,9 @@ public class GameOptions extends Window{
 	FillBox musicVolBar;
 	CheckBox musicToggle;
 	CheckBox soundToggle;
+	Listbox channelListbox;
+	Button okBtn;
+	Button cancelBtn;
 
     public GameOptions(Widget parent) {
     	super (CustomConfig.windowSize.div(2).add(-200,-200), Coord.z.add(200,200), parent, "Game Options", true);
@@ -50,8 +52,14 @@ public class GameOptions extends Window{
     					 this, CustomConfig.ircServerAddress);
     	serverAddress.badchars = " ";
     	//	Channel list entry
+    	String channels = "";
+    	for(Listbox.Option channel : CustomConfig.ircChannelList)
+    	{
+    		channels += channel.name + " " + channel.disp;
+    		channels = channels.trim() + " ";
+    	}
     	channelList = new TextEntry(Coord.z.add(sfxVol.sz().x + 5, 80), Coord.z.add(120, 15),
-    					 this, CustomConfig.ircChannelList);
+    					 this, channels.trim());
     	//	Nickname entries
     	defNick = new TextEntry(Coord.z.add(sfxVol.sz().x + 5, 100), Coord.z.add(120, 15),
     					 this, CustomConfig.ircDefNick);
@@ -63,14 +71,20 @@ public class GameOptions extends Window{
 		//	Sound toggle
 		soundToggle = new CheckBox(Coord.z.add(0,140), this, "Sound On/Off");
 		soundToggle.a = CustomConfig.isSoundOn;
+
 		//	Music toggle
     	musicToggle = new CheckBox(Coord.z.add(soundToggle.sz.x,140), this, "Music On/Off");
     	musicToggle.a = CustomConfig.isMusicOn;
+
+    	//	Ok button
+
 
     	ui.bind(sfxVolBar, CustomConfig.wdgtID++);
     	ui.bind(musicVolBar, CustomConfig.wdgtID++);
     	ui.bind(musicToggle, CustomConfig.wdgtID++);
     	ui.bind(soundToggle, CustomConfig.wdgtID++);
+    	ui.bind(okBtn, CustomConfig.wdgtID++);
+    	ui.bind(cancelBtn, CustomConfig.wdgtID++);
     }
     public void draw(GOut g)
     {
@@ -108,8 +122,52 @@ public class GameOptions extends Window{
 	}
 	public boolean toggle()
 	{
+		Listbox.Option channel = null;
 		CustomConfig.ircServerAddress = serverAddress.text;
-		CustomConfig.ircChannelList = channelList.text;
+		if(this.visible)
+		{
+			String channelData[] = channelList.text.split(" ");
+			CustomConfig.ircChannelList.clear();
+			for(int i = 0; i < channelData.length; i++)
+			{
+				channelData[i] = channelData[i].trim();
+				if(channelData[i].length() > 0)
+				{
+					if(channelData[i].startsWith("#"))
+					{
+						if(channel != null)
+						{
+							CustomConfig.ircChannelList.add(channel);
+							channel = null;
+						}
+						channel = new Listbox.Option(channelData[i],"");
+						continue;
+
+					} else
+					{
+						if(channel != null)
+							channel.disp = (channel.disp + " " + channelData[i]).trim();
+					}
+					if(channel != null){
+						CustomConfig.ircChannelList.add(channel);
+						channel = null;
+					}
+				}
+			}
+			if(channel != null)
+			{
+				CustomConfig.ircChannelList.add(channel);
+				channel = null;
+			}
+		} else{
+			String channels = "";
+	    	for(Listbox.Option chan : CustomConfig.ircChannelList)
+	    	{
+	    		channels += chan.name + " " + chan.disp;
+	    		channels = channels.trim() + " ";
+	    	}
+	    	channelList.settext(channels.trim());
+		}
 		CustomConfig.saveSettings();
 		return super.toggle();
 	}
