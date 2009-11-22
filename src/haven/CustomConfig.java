@@ -176,13 +176,14 @@ public class CustomConfig {
 			    		ircAltNick = value;
 			    	}else if(key.equals("CHANNEL") && atts.getValue("name") != null && ircElementActive){
 			    		value = atts.getValue("password") == null ? " " : " " + atts.getValue("password");
-			    		ircChannelList.add(new Listbox.Option(atts.getValue("name"),value));
+			    		Listbox.Option chan = new Listbox.Option(atts.getValue("name"),value);
+			    		ircChannelList.add(chan);
 			    	}
 			    }
 			    public void endElement(String namespaceURI, String localName,
 			    						String qName) throws SAXException
 			    {
-			    	if(ircElementActive )
+			    	if(ircElementActive && localName == "IRC")
 			    	{
 			    		ircElementActive = false;
 			    	}
