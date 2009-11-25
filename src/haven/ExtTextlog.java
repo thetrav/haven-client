@@ -112,24 +112,10 @@ public class ExtTextlog extends Widget implements ClipboardOwner{
 		    		scrollBar.val = scrollBar.max;
 		    	}
 	    	}
-	    	Pattern pat = Pattern.compile("\\.(co|net|com|org)", Pattern.CASE_INSENSITIVE);
+	    	Pattern pat = Pattern.compile("((http://)(\\S+))|((www.)(\\S+))|(\\S+.(co|net|com|org)(\\S+)?+)", Pattern.CASE_INSENSITIVE);
 	    	Matcher match = pat.matcher(words[i]);
 	    	boolean isLink = match.find();
 
-	    	//	Ugly regex crap because I'm tired and can't get the other one to work right
-	    	//	This is really horrible
-	    	if(!isLink)
-	    	{
-	    		pat = Pattern.compile("(http://)\\S+", Pattern.CASE_INSENSITIVE);
-	    		match = pat.matcher(words[i]);
-	    		isLink = match.find();
-	    		if(!isLink)
-	    		{
-	    			pat = Pattern.compile("(www\\.)\\S+", Pattern.CASE_INSENSITIVE);
-		    		match = pat.matcher(words[i]);
-		    		isLink = match.find();
-	    		}
-	    	}
 	    	for(int j = 0; j < words[i].length(); j++)
 	    	{
 	    		tGLChar = new GLCharacter(words[i].charAt(j),nextCharLoc ,fnd,false);
@@ -187,6 +173,7 @@ public class ExtTextlog extends Widget implements ClipboardOwner{
     }
 
     public boolean mousedown(Coord c, int button) {
+    	ui.grabmouse(this);
     	if(c.x >= sz.x-5 && c.x <= sz.x && scrollBar.mousedown(c,button))
     	{
     		updateDrawData();
@@ -222,6 +209,7 @@ public class ExtTextlog extends Widget implements ClipboardOwner{
     }
 
     public boolean mouseup(Coord c, int button) {
+    	ui.grabmouse(null);
     	if(c.x >= sz.x-5 && c.x <= sz.x && scrollBar.mouseup(c, button))
     	{
     		updateDrawData();

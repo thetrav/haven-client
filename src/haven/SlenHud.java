@@ -486,6 +486,34 @@ public class SlenHud extends Widget implements DTarget, DropTarget {
 		awnd.show();
     }
 
+    public void nextWindow()
+    {
+    	synchronized(wnds){
+    		if(wnds.size() >= 0)
+		    	if(wnds.indexOf(awnd)+1 < wnds.size())
+		    	{
+		    		setawnd(wnds.get(wnds.indexOf(awnd)+1));
+		    	} else
+		    	{
+		    		setawnd(wnds.get(0));
+		    	}
+    	}
+    }
+
+    public void prevWindow()
+    {
+    	synchronized(wnds){
+	    	if(wnds.size() >= 0)
+		    	if(wnds.indexOf(awnd)-1 > 0)
+		    	{
+		    		setawnd(wnds.get(wnds.indexOf(awnd)-1));
+		    	} else
+		    	{
+		    		setawnd(wnds.get(wnds.size()-1));
+		    	}
+    	}
+    }
+
     public void addwnd(final HWindow wnd) {
 	wnds.add(wnd);
 	Button wndButton = new Button(new Coord(134, 29), 100, this, wnd.title) {
