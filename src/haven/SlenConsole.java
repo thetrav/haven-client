@@ -25,13 +25,13 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
     public SlenConsole(SlenHud parent)
     {
     	super(parent, "IRC Console", false);
-    	user = ui.sess.username;
     	this.parent = parent;
     	if(CustomConfig.ircDefNick == null || CustomConfig.ircDefNick.equals(""))
     	{
-    		CustomConfig.ircDefNick = user;
-    		CustomConfig.ircAltNick = user + "|C";
+    		CustomConfig.ircDefNick = ui.sess.username;
+    		CustomConfig.ircAltNick = ui.sess.username + "|C";
     	}
+    	user = CustomConfig.ircDefNick;
     	if(!CustomConfig.ircServerAddress.equals(""))
     	{
 	    	IRC = new IRCConnection(CustomConfig.ircServerAddress, 6667,
@@ -470,9 +470,9 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 	public void onErrorNickNameInUse(String badNick)
 	{
 		out.append("Nick: \"" + badNick + "\" already in use");
-		if(!badNick.equals(user + "|C")){
-			user += "|C";
-			IRC.sendNick(user);
+		if(!badNick.equals(CustomConfig.ircAltNick)){
+			user = CustomConfig.ircAltNick;
+			IRC.sendNick(CustomConfig.ircAltNick);
 		}
 	}
 	public void onErrorNickCollision(String badNick)

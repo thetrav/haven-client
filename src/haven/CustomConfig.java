@@ -178,8 +178,8 @@ public class CustomConfig {
 			    		value = atts.getValue("alternate-nick") == null ? "" : atts.getValue("alternate-nick");
 			    		ircAltNick = value;
 			    	}else if(key.equals("CHANNEL") && atts.getValue("name") != null && ircElementActive){
-			    		value = atts.getValue("password") == null ? " " : " " + atts.getValue("password");
-			    		Listbox.Option chan = new Listbox.Option(atts.getValue("name"),value);
+			    		value = atts.getValue("password") == null ? "" : "" + atts.getValue("password");
+			    		Listbox.Option chan = new Listbox.Option(atts.getValue("name"),value.trim());
 			    		ircChannelList.add(chan);
 			    	}else if(key.equals("BELT") && !(beltElementActive || ircElementActive)){
 			    		beltElementActive = true;

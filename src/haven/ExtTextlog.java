@@ -112,7 +112,7 @@ public class ExtTextlog extends Widget implements ClipboardOwner{
 		    		scrollBar.val = scrollBar.max;
 		    	}
 	    	}
-	    	Pattern pat = Pattern.compile("((http://)(\\S+))|((www.)(\\S+))|(\\S+\\.(co|net|com|org)(\\S+)?+)", Pattern.CASE_INSENSITIVE);
+	    	Pattern pat = Pattern.compile("((http://)(\\S+))|((www.)(\\S+))|(\\S+\\.(co|net|com|org|edu)(\\S+)?+)", Pattern.CASE_INSENSITIVE);
 	    	Matcher match = pat.matcher(words[i]);
 	    	boolean isLink = match.find();
 
