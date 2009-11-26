@@ -100,6 +100,7 @@ public class CustomConfig {
 	public static int musicVol = 100;
 	public static String ircServerAddress = "irc.synirc.net";
 	public static List<Listbox.Option> ircChannelList = new ArrayList<Listbox.Option>();
+	public static String[][] hudBelt = new String[SlenHud._BELTSIZE][SlenHud._BELTSIZE];
 	public static String ircDefNick = "";
 	public static String ircAltNick = "";
 	public static int wdgtID = 1000;
@@ -107,8 +108,6 @@ public class CustomConfig {
 	public static boolean isSoundOn = true;
 	public static boolean isIRCOn = true;
 	public static boolean hasNightVision = false;
-
-	private static Hashtable tags;
 
 	public static void setDefaults()
 	{
@@ -123,8 +122,14 @@ public class CustomConfig {
 		isMusicOn = true;
 		isSoundOn = true;
 		hasNightVision = false;
+		for(int i = 0; i < hudBelt.length; i++){
+    		for(int j = 0; j < hudBelt[i].length; j++){
+    			hudBelt[i][j] = null;
+    		}
+    	}
 	}
     public static boolean load() {
+    	setDefaults();
     	BufferedReader reader = null;
     	try{
     		SAXParserFactory spFactory = SAXParserFactory.newInstance();
@@ -133,10 +138,8 @@ public class CustomConfig {
 	    	XMLReader xmlReader = saxParser.getXMLReader();
 		    xmlReader.setContentHandler(new DefaultHandler(){
 		    	private boolean ircElementActive = false;
-		    	public void startDocument() throws SAXException
-			    {
-			    	tags = new Hashtable();
-			    }
+		    	private boolean beltElementActive = false;
+		    	private int activeBelt = 0;
 			    public void startElement(String namespaceURI, String localName,
 			    							String qName, Attributes atts) throws SAXException
 			    {
@@ -160,7 +163,7 @@ public class CustomConfig {
 
 			    		value = atts.getValue("volume") == null ? "100" : atts.getValue("volume");
 			    		musicVol = Integer.parseInt(value);
-			    	}else if(key.equals("IRC")){
+			    	}else if(key.equals("IRC") && !(beltElementActive || ircElementActive)){
 			    		ircElementActive = true;
 			    		ircChannelList.clear();
 			    		value = atts.getValue("enabled") == null ? "true" : atts.getValue("enabled");
@@ -178,14 +181,24 @@ public class CustomConfig {
 			    		value = atts.getValue("password") == null ? " " : " " + atts.getValue("password");
 			    		Listbox.Option chan = new Listbox.Option(atts.getValue("name"),value);
 			    		ircChannelList.add(chan);
+			    	}else if(key.equals("BELT") && !(beltElementActive || ircElementActive)){
+			    		beltElementActive = true;
+			    		activeBelt = Integer.parseInt(atts.getValue("value"));
+			    	}else if(key.equals("SLOT") && atts.getValue("value") != null && atts.getValue("position") != null
+			    								&& beltElementActive){
+			    		hudBelt[activeBelt][Integer.parseInt(atts.getValue("position"))]
+			    			= atts.getValue("value").equalsIgnoreCase("null") ? null : atts.getValue("value");
 			    	}
 			    }
 			    public void endElement(String namespaceURI, String localName,
 			    						String qName) throws SAXException
 			    {
-			    	if(ircElementActive && localName == "IRC")
+			    	if(ircElementActive && qName == "IRC")
 			    	{
 			    		ircElementActive = false;
+			    	}else if(beltElementActive && qName == "BELT")
+			    	{
+			    		beltElementActive = false;
 			    	}
 			    }
 			});
@@ -228,7 +241,7 @@ public class CustomConfig {
     			File cfg = new File("config.xml");
     			BufferedWriter writer = new BufferedWriter(new FileWriter(cfg));
     			writer.write("<?xml version=\"1.0\" ?>\n");
-    			writer.write("<CONFIG>");
+    			writer.write("<CONFIG>\n");
     			writer.write("\t<SCREENSIZE width=\"" + windowSize.x + "\" height=\"" + windowSize.y + "\"/>\n");
     			writer.write("\t<SOUND enabled=\"" + Boolean.toString(isSoundOn)
     						+ "\" volume=\"" + Integer.toString(sfxVol) + "\"/>\n");
@@ -242,7 +255,16 @@ public class CustomConfig {
     			{
     				writer.write("\t\t<CHANNEL name=\"" + channel.name + "\" password=\"" + channel.disp + "\"/>\n");
     			}
-    			writer.write("\t</IRC>\n");
+	    		writer.write("\t</IRC>\n");
+
+	    		for(int i = 0; i < hudBelt.length; i++){
+    				writer.write("\t<BELT value=\"" + Integer.toString(i) + "\">\n");
+		    		for(int j = 0; j < hudBelt[i].length; j++){
+		    			writer.write("\t\t<SLOT value=\"" + hudBelt[i][j]
+		    						+ "\" position=\"" + Integer.toString(j) + "\"/>\n");
+		    		}
+		    		writer.write("\t</BELT>\n");
+		    	}
     			writer.write("</CONFIG>");
     			writer.close();
     	}catch(IOException e)

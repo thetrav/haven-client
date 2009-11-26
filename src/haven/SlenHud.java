@@ -35,6 +35,7 @@ import org.relayirc.chatengine.*;
 import static haven.Inventory.invsq;
 
 public class SlenHud extends Widget implements DTarget, DropTarget {
+	public static final int _BELTSIZE = 10;
     public static final Tex bg = Resource.loadtex("gfx/hud/slen/low");
     public static final Tex flarps = Resource.loadtex("gfx/hud/slen/flarps");
     public static final Tex mbg = Resource.loadtex("gfx/hud/slen/mcircle");
@@ -42,9 +43,10 @@ public class SlenHud extends Widget implements DTarget, DropTarget {
     public static final Coord fc = new Coord(96, -29);
     public static final Coord mc = new Coord(316, -55);
     public static final Coord dispc = new Coord(0, 4 - dispbg.sz().y);
-    public static final Coord bc1 = new Coord(147, -8);
-    public static final Coord bc2 = new Coord(485, -8);
+    public static final Coord bc1 = new Coord(147, -8);	//	Belt 1 location start
+    public static final Coord bc2 = new Coord(485, -8); //	Belt 2 location start
     public static final Coord sz;
+    public static int activeBelt = 0;
     public List<SlenChat> ircChannels = new ArrayList<SlenChat>();
     public SlenConsole ircConsole;
     int woff = 0;
@@ -62,7 +64,7 @@ public class SlenHud extends Widget implements DTarget, DropTarget {
     Text cmdtext, lasterr;
     long errtime;
     @SuppressWarnings("unchecked")
-    Indir<Resource>[] belt = new Indir[10];
+    Resource[][] belt = new Resource[_BELTSIZE][_BELTSIZE];
 
     static {
 	Widget.addtype("slen", new WidgetFactory() {
@@ -203,6 +205,21 @@ public class SlenHud extends Widget implements DTarget, DropTarget {
 	new MiniMap(new Coord(5, 5), new Coord(125, 125), this, ui.mainview);
 	sub.visible = sdb.visible = false;
 
+	//	Load the current belt
+	synchronized(belt)
+	{
+		for(int i = 0; i < belt.length; i++)
+		{
+			for(int j = 0; j < belt[i].length;j++)
+			{
+				if(CustomConfig.hudBelt[i][j] != null)
+				{
+					belt[i][j] = Resource.load(CustomConfig.hudBelt[i][j]);
+				}
+			}
+		}
+	}
+
 	//	Global Chat
 	ircConsole = new SlenConsole(this);
 	ui.bind(ircConsole, CustomConfig.wdgtID++);
@@ -227,7 +244,8 @@ public class SlenHud extends Widget implements DTarget, DropTarget {
 	    if(cmd == "q") {
 		Utils.tg().interrupt();
 	    } else if(cmd == "lo") {
-	    	new Logout(CustomConfig.windowSize.div(2).add(this.sz.inv()), parent);
+	    	Coord center = new Coord((CustomConfig.windowSize.x-125)/2, (CustomConfig.windowSize.y-50)/2);
+	    	new Logout(center, parent);
 		//ui.sess.close();
 	    } else if(cmd == "afk") {
 		wdgmsg("afk");
@@ -359,6 +377,7 @@ public class SlenHud extends Widget implements DTarget, DropTarget {
 	g.image(bg, bgc);
 	super.draw(g);
 
+	//	Draws the belt
 	for(int i = 0; i < 10; i++) {
 	    Coord c = xlate(beltc(i), true);
 	    g.image(invsq, c);
@@ -366,9 +385,9 @@ public class SlenHud extends Widget implements DTarget, DropTarget {
 	    g.atext(Integer.toString((i + 1) % 10), c.add(invsq.sz()), 1, 1);
 	    g.chcolor();
 	    Resource res = null;
-	    if(belt[i] != null)
-		res = belt[i].get();
-	    if(res != null)
+	    if(belt[activeBelt][i] != null)
+		res = belt[activeBelt][i];
+	    if(res != null && !res.loading)
 		g.image(res.layer(Resource.imgc).tex(), c.add(1, 1));
 	}
 
@@ -412,11 +431,19 @@ public class SlenHud extends Widget implements DTarget, DropTarget {
 	if(msg == "err") {
 	    error((String)args[0]);
 	} else if(msg == "setbelt") {
-	    if(args.length < 2) {
-		belt[(Integer)args[0]] = null;
-	    } else {
-		belt[(Integer)args[0]] = ui.sess.getres((Integer)args[1]);
-	    }
+		synchronized(belt)
+		{
+			if(args.length < 2) {
+			belt[activeBelt][(Integer)args[0]] = null;
+			CustomConfig.hudBelt[activeBelt][(Integer)args[0]] = null;
+		    } else {
+		    	if(CustomConfig.hudBelt[activeBelt][(Integer)args[0]] == null){
+					belt[activeBelt][(Integer)args[0]] = ui.sess.getres((Integer)args[1]).get();
+					CustomConfig.hudBelt[activeBelt][(Integer)args[0]] = belt[activeBelt][(Integer)args[0]].name;
+		    	}
+		    }
+		}
+	    synchronized (CustomConfig.class){CustomConfig.saveSettings();}
 	} else {
 	    super.uimsg(msg, args);
 	}
@@ -559,6 +586,7 @@ public class SlenHud extends Widget implements DTarget, DropTarget {
     }
 
     public boolean globtype(char ch, KeyEvent ev) {
+
 	if(ch == ' ') {
 	    vc.toggle();
 	    return(true);
@@ -566,6 +594,10 @@ public class SlenHud extends Widget implements DTarget, DropTarget {
 	    ui.grabkeys(this);
 	    cmdline = "";
 	    return(true);
+	} else if((((ch >= '1') && (ch <= '9')) || (ch == '0')) && ev.isAltDown())
+	{
+		activeBelt = ch-48 >= 0 && ch-48 < 10 ? ch-48 : 0;
+		return true;
 	} else if(ch == '0') {
 	    wdgmsg("belt", 9, 1, 0);
 	    return(true);
@@ -580,8 +612,10 @@ public class SlenHud extends Widget implements DTarget, DropTarget {
 	if(cmdline == null) {
 	    return(super.type(ch, ev));
 	} else {
+		//	Commandline text
 	    if(ch >= 32) {
 		cmdline += ch;
+		//	Backspace
 	    } else if(ch == 8) {
 		if(cmdline.length() > 0) {
 		    cmdline = cmdline.substring(0, cmdline.length() - 1);
@@ -589,9 +623,11 @@ public class SlenHud extends Widget implements DTarget, DropTarget {
 		    cmdline = null;
 		    ui.grabkeys(null);
 		}
+		//	Escape key -- escapes from console
 	    } else if(ch == 27) {
 		cmdline = null;
 		ui.grabkeys(null);
+		//	Enter key -- run command
 	    } else if(ch == 10) {
 		String[] argv = Utils.splitwords(cmdline);
 		if(argv != null) {
@@ -627,6 +663,7 @@ public class SlenHud extends Widget implements DTarget, DropTarget {
 	    if(thing instanceof Resource) {
 		Resource res = (Resource)thing;
 		if(res.layer(Resource.action) != null) {
+			CustomConfig.hudBelt[activeBelt][slot] = null;
 		    wdgmsg("setbelt", slot, res.name);
 		    return(true);
 		}

@@ -29,6 +29,7 @@ package haven;
 import java.net.*;
 import java.util.*;
 import java.io.*;
+import org.relayirc.core.IRCConnection;
 
 public class Session {
     public static final int PVER = 28;
@@ -65,6 +66,7 @@ public class Session {
     public static final int SESSERR_EXPR = 5;
 
     static final int ackthresh = 30;
+    static IRCConnection IRC;
 
     DatagramSocket sk;
     InetAddress server;
@@ -649,6 +651,11 @@ public class Session {
     }
 
     public void close() {
+    	if(IRC != null)
+    	{
+    		IRC.close();
+    	}
+    	CustomConfig.saveSettings();
 	sworker.interrupt();
     }
 

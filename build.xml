@@ -1,6 +1,9 @@
 <?xml version="1.0" ?>
 
 <project name="haven" default="deftgt">
+  <tstamp prefix="tstamp">
+  	<format property="date" pattern="yy.MM.dd"/>
+  </tstamp>
   <target name="build-env">
     <mkdir dir="build" />
     <mkdir dir="build/classes" />
@@ -111,6 +114,31 @@
   </target>
   
   <target name="update-zips" depends="signer">
-  	<zip destfile="dist\update-patch-current.zip" basedir="dist" includes="haven.jar" update="true" whenempty="create"/>
+  	<zip destfile="dist\update-patch-${tstamp.date}.zip" basedir="dist" includes="haven.jar"
+  		update="true" whenempty="create"/>
+  	<zip destfile="dist\haven-32bit-windows-full.zip" filesonly="true" update="true" whenempty="create">
+  		<zipfileset dir="dist\jogl-windows-i586\lib" excludes="*.jar" prefix=""/>
+  		<zipfileset dir="dist" includes="haven.jar,haven-res.jar,jorbis.jar,jogg.jar,gluegen-rt.jar,jogl.jar,run.bat"/>
+  	</zip>
+  	<zip destfile="dist\haven-64bit-windows-full.zip" filesonly="true" update="true" whenempty="create">
+  		<zipfileset dir="dist\jogl-windows-amd64\lib" excludes="*.jar" prefix=""/>
+  		<zipfileset dir="dist" includes="haven.jar,haven-res.jar,jorbis.jar,jogg.jar,gluegen-rt.jar,jogl.jar,run.bat"/>
+  	</zip>
+  	<zip destfile="dist\haven-32bit-linux-full.zip" filesonly="true" update="true" whenempty="create">
+  		<zipfileset dir="dist\jogl-linux-i586\lib" excludes="*.jar" prefix=""/>
+  		<zipfileset dir="dist" includes="haven.jar,haven-res.jar,jorbis.jar,jogg.jar,gluegen-rt.jar,jogl.jar,run.bat"/>
+  	</zip>
+  	<zip destfile="dist\haven-64bit-linux-full.zip" filesonly="true" update="true" whenempty="create">
+  		<zipfileset dir="dist\jogl-linux-amd64\lib" excludes="*.jar" prefix=""/>
+  		<zipfileset dir="dist" includes="haven.jar,haven-res.jar,jorbis.jar,jogg.jar,gluegen-rt.jar,jogl.jar,run.bat"/>
+  	</zip>
+  	<zip destfile="dist\haven-macosx-ppc-full.zip" filesonly="true" update="true" whenempty="create">
+  		<zipfileset dir="dist\jogl-macosx-ppc\lib" excludes="*.jar" prefix=""/>
+  		<zipfileset dir="dist" includes="haven.jar,haven-res.jar,jorbis.jar,jogg.jar,gluegen-rt.jar,jogl.jar,run.bat"/>
+  	</zip>
+  	<zip destfile="dist\haven-macosx-universal-full.zip" filesonly="true" update="true" whenempty="create">
+  		<zipfileset dir="dist\jogl-macosx-universal\lib" excludes="*.jar" prefix=""/>
+  		<zipfileset dir="dist" includes="haven.jar,haven-res.jar,jorbis.jar,jogg.jar,gluegen-rt.jar,jogl.jar,run.bat"/>
+  	</zip>
   </target>
 </project>

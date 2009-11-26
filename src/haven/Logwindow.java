@@ -27,8 +27,8 @@
 package haven;
 
 public class Logwindow extends HWindow {
-    Textlog log;
-	
+    ExtTextlog log;
+
     static {
 	Widget.addtype("slenlog", new WidgetFactory() {
 		public Widget create(Coord c, Widget parent, Object[] args) {
@@ -40,12 +40,12 @@ public class Logwindow extends HWindow {
 		}
 	    });
     }
-	
+
     public Logwindow(Widget parent, String title, boolean closable) {
 	super(parent, title, closable);
-	log = new Textlog(Coord.z, sz, this);
+	log = new ExtTextlog(Coord.z, sz, this);
     }
-	
+
     public void uimsg(String name, Object... args) {
 	if(name == "log") {
 	    log.append((String)args[0]);
