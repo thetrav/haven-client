@@ -95,20 +95,48 @@ public class CustomConfig {
 	    	noLetters = state;
 	    }
 	}
+	static class CharData
+	{
+		String name;
+		int hudActiveBelt = 1;
+		String[][]hudBelt = new String[SlenHud._BELTSIZE][SlenHud._BELTSIZE];
+
+		public CharData(String name)
+		{
+			this.name = name;
+		}
+		public String toString()
+		{
+			return "Name=\"" + name + "\"";
+		}
+	}
 	public static Coord windowSize = new Coord(800, 600);
 	public static int sfxVol = 100;
 	public static int musicVol = 100;
 	public static String ircServerAddress = "irc.synirc.net";
 	public static List<Listbox.Option> ircChannelList = new ArrayList<Listbox.Option>();
-	public static String[][] hudBelt = new String[SlenHud._BELTSIZE][SlenHud._BELTSIZE];
+	public static List<CharData> characterList = new ArrayList<CharData>();
 	public static String ircDefNick = "";
 	public static String ircAltNick = "";
+	public static CharData activeCharacter;
 	public static int wdgtID = 1000;
 	public static boolean isMusicOn = true;
 	public static boolean isSoundOn = true;
 	public static boolean isIRCOn = true;
 	public static boolean hasNightVision = false;
 
+	public static void setActiveCharacter(String name)
+	{
+		for(CharData cData : characterList)
+		{
+			if(cData.name.equalsIgnoreCase(name)){
+				activeCharacter = cData;
+				return;
+			}
+		}
+		activeCharacter = new CharData(name);
+		characterList.add(activeCharacter);
+	}
 	public static void setDefaults()
 	{
 		windowSize = new Coord(800,600);
@@ -122,11 +150,6 @@ public class CustomConfig {
 		isMusicOn = true;
 		isSoundOn = true;
 		hasNightVision = false;
-		for(int i = 0; i < hudBelt.length; i++){
-    		for(int j = 0; j < hudBelt[i].length; j++){
-    			hudBelt[i][j] = null;
-    		}
-    	}
 	}
     public static boolean load() {
     	setDefaults();
@@ -139,6 +162,7 @@ public class CustomConfig {
 		    xmlReader.setContentHandler(new DefaultHandler(){
 		    	private boolean ircElementActive = false;
 		    	private boolean beltElementActive = false;
+		    	private boolean beltListElementActive = false;
 		    	private int activeBelt = 0;
 			    public void startElement(String namespaceURI, String localName,
 			    							String qName, Attributes atts) throws SAXException
@@ -177,16 +201,25 @@ public class CustomConfig {
 
 			    		value = atts.getValue("alternate-nick") == null ? "" : atts.getValue("alternate-nick");
 			    		ircAltNick = value;
-			    	}else if(key.equals("CHANNEL") && atts.getValue("name") != null && ircElementActive){
+			    	}else if(key.equals("CHANNEL")	&& atts.getValue("name") != null
+			    									&& ircElementActive){
 			    		value = atts.getValue("password") == null ? "" : "" + atts.getValue("password");
 			    		Listbox.Option chan = new Listbox.Option(atts.getValue("name"),value.trim());
 			    		ircChannelList.add(chan);
-			    	}else if(key.equals("BELT") && !(beltElementActive || ircElementActive)){
+			    	}else if(key.equals("BELT-LIST")	&& !(beltElementActive	|| ircElementActive
+			    																|| beltListElementActive)
+			    										&&	atts.getValue("name") != null){
+			    		beltListElementActive = true;
+			    		activeCharacter = new CharData(atts.getValue("name"));
+			    		activeCharacter.hudActiveBelt = Integer.parseInt(atts.getValue("active-belt"));
+			    	}else if(key.equals("BELT")	&& !(beltElementActive || ircElementActive)
+			    								&& beltListElementActive){
 			    		beltElementActive = true;
 			    		activeBelt = Integer.parseInt(atts.getValue("value"));
-			    	}else if(key.equals("SLOT") && atts.getValue("value") != null && atts.getValue("position") != null
-			    								&& beltElementActive){
-			    		hudBelt[activeBelt][Integer.parseInt(atts.getValue("position"))]
+			    	}else if(key.equals("SLOT")	&& atts.getValue("value") != null && atts.getValue("position") != null
+			    								&& beltElementActive
+			    								&& beltListElementActive){
+			    		activeCharacter.hudBelt[activeBelt][Integer.parseInt(atts.getValue("position"))]
 			    			= atts.getValue("value").equalsIgnoreCase("null") ? null : atts.getValue("value");
 			    	}
 			    }
@@ -199,6 +232,10 @@ public class CustomConfig {
 			    	}else if(beltElementActive && qName == "BELT")
 			    	{
 			    		beltElementActive = false;
+			    	}else if(beltListElementActive && qName == "BELT-LIST")
+			    	{
+			    		beltListElementActive = false;
+			    		characterList.add(activeCharacter);
 			    	}
 			    }
 			});
@@ -257,14 +294,21 @@ public class CustomConfig {
     			}
 	    		writer.write("\t</IRC>\n");
 
-	    		for(int i = 0; i < hudBelt.length; i++){
-    				writer.write("\t<BELT value=\"" + Integer.toString(i) + "\">\n");
-		    		for(int j = 0; j < hudBelt[i].length; j++){
-		    			writer.write("\t\t<SLOT value=\"" + hudBelt[i][j]
-		    						+ "\" position=\"" + Integer.toString(j) + "\"/>\n");
-		    		}
-		    		writer.write("\t</BELT>\n");
-		    	}
+	    		for(CharData cData : characterList)
+	    		{
+	    			if(cData.name.equals(activeCharacter.name))	cData.hudActiveBelt = activeCharacter.hudActiveBelt;
+	    			writer.write("\t<BELT-LIST name=\"" + cData.name
+	    					+ "\" active-belt=\"" + Integer.toString(cData.hudActiveBelt) + "\">\n");
+		    		for(int i = 0; i < cData.hudBelt.length; i++){
+	    				writer.write("\t\t<BELT value=\"" + Integer.toString(i) + "\">\n");
+			    		for(int j = 0; j < cData.hudBelt[i].length; j++){
+			    			writer.write("\t\t\t<SLOT value=\"" + cData.hudBelt[i][j]
+			    						+ "\" position=\"" + Integer.toString(j) + "\"/>\n");
+			    		}
+			    		writer.write("\t\t</BELT>\n");
+			    	}
+			    	writer.write("\t</BELT-LIST>\n");
+	    		}
     			writer.write("</CONFIG>");
     			writer.close();
     	}catch(IOException e)

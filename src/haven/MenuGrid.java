@@ -41,7 +41,7 @@ public class MenuGrid extends Widget {
     private int curoff = 0;
     private Map<Character, Resource> hotmap = new TreeMap<Character, Resource>();
     private Resource hover = null;
-	
+
     static {
 	Widget.addtype("scm", new WidgetFactory() {
 		public Widget create(Coord c, Widget parent, Object[] args) {
@@ -49,10 +49,10 @@ public class MenuGrid extends Widget {
 		}
 	    });
     }
-	
+
     public class PaginaException extends RuntimeException {
 	public Resource res;
-	
+
 	public PaginaException(Resource r) {
 	    super("Invalid pagina: " + r.name);
 	    res = r;
@@ -90,12 +90,12 @@ public class MenuGrid extends Widget {
 	}
 	return(tobe.toArray(cp));
     }
-	
+
     public MenuGrid(Coord c, Widget parent) {
 	super(c, bgsz.mul(gsz).add(1, 1), parent);
 	cons(null);
     }
-	
+
     private static Comparator<Resource> sorter = new Comparator<Resource>() {
 	public int compare(Resource a, Resource b) {
 	    AButton aa = a.layer(Resource.action), ab = b.layer(Resource.action);
@@ -128,7 +128,7 @@ public class MenuGrid extends Widget {
 	    }
 	}
     }
-	
+
     public void draw(GOut g) {
 	updlayout();
 	for(int y = 0; y < gsz.y; y++) {
@@ -163,7 +163,7 @@ public class MenuGrid extends Widget {
 		});
 	}
     }
-	
+
     private Resource bhit(Coord c) {
 	Coord bc = c.div(bgsz);
 	if((bc.x >= 0) && (bc.y >= 0) && (bc.x < gsz.x) && (bc.y < gsz.y))
@@ -171,13 +171,13 @@ public class MenuGrid extends Widget {
 	else
 	    return(null);
     }
-	
+
     private void updhover(Coord c) {
 	hover = bhit(c);
 	if((hover != null) && (hover.layer(Resource.action) == null))
 	    hover = null;
     }
-	
+
     public boolean mousedown(Coord c, int button) {
 	Resource h = bhit(c);
 	if((button == 1) && (h != null)) {
@@ -187,7 +187,7 @@ public class MenuGrid extends Widget {
 	updhover(c);
 	return(true);
     }
-	
+
     public void mousemove(Coord c) {
 	updhover(c);
 	if((dragging == null) && (pressed != null)) {
@@ -196,7 +196,7 @@ public class MenuGrid extends Widget {
 		dragging = pressed;
 	}
     }
-	
+
     private void use(Resource r) {
 	if(cons(r).length > 0) {
 	    cur = r;
@@ -213,7 +213,7 @@ public class MenuGrid extends Widget {
 	    wdgmsg("act", (Object[])r.layer(Resource.action).ad);
 	}
     }
-	
+
     public boolean mouseup(Coord c, int button) {
 	Resource h = bhit(c);
 	if(button == 1) {
@@ -231,7 +231,7 @@ public class MenuGrid extends Widget {
 	updhover(c);
 	return(true);
     }
-	
+
     public void uimsg(String msg, Object... args) {
 	if(msg == "goto") {
 	    String res = (String)args[0];
@@ -242,7 +242,7 @@ public class MenuGrid extends Widget {
 	    curoff = 0;
 	}
     }
-	
+
     public boolean globtype(char k, KeyEvent ev) {
 	if((k == 27) && (this.cur != null)) {
 	    this.cur = null;

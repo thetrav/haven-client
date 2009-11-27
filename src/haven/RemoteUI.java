@@ -29,12 +29,12 @@ package haven;
 public class RemoteUI implements UI.Receiver {
     Session sess;
     UI ui;
-	
+
     public RemoteUI(Session sess) {
 	this.sess = sess;
 	Widget.initbardas();
     }
-	
+
     public void rcvmsg(int id, String name, Object... args) {
 	Message msg = new Message(Message.RMSG_WDGMSG);
 	msg.adduint16(id);
@@ -42,7 +42,7 @@ public class RemoteUI implements UI.Receiver {
 	msg.addlist(args);
 	sess.queuemsg(msg);
     }
-	
+
     public void run(UI ui) throws InterruptedException {
 	this.ui = ui;
 	ui.setreceiver(this);
@@ -64,17 +64,11 @@ public class RemoteUI implements UI.Receiver {
 		    int id = msg.uint16();
 		    ui.destroy(id);
 		}
-/*		try{
-			this.wait();
-		}catch (IllegalMonitorStateException e)
-		{
-			e.printStackTrace();
-		}*/
 	    }
 	    synchronized(sess) {
 		sess.wait();
 	    }
-	    
+
 	}
     }
 }

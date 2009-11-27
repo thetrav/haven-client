@@ -206,19 +206,7 @@ public class SlenHud extends Widget implements DTarget, DropTarget {
 	sub.visible = sdb.visible = false;
 
 	//	Load the current belt
-	synchronized(belt)
-	{
-		for(int i = 0; i < belt.length; i++)
-		{
-			for(int j = 0; j < belt[i].length;j++)
-			{
-				if(CustomConfig.hudBelt[i][j] != null)
-				{
-					belt[i][j] = Resource.load(CustomConfig.hudBelt[i][j]);
-				}
-			}
-		}
-	}
+	initBelt();
 
 	//	Global Chat
 	ircConsole = new SlenConsole(this);
@@ -378,17 +366,21 @@ public class SlenHud extends Widget implements DTarget, DropTarget {
 	super.draw(g);
 
 	//	Draws the belt
-	for(int i = 0; i < 10; i++) {
+	for(int i = 0; i < _BELTSIZE; i++) {
 	    Coord c = xlate(beltc(i), true);
+	    Coord x = c.add(invsq.sz().add(-10,0));
 	    g.image(invsq, c);
 	    g.chcolor(156, 180, 158, 255);
 	    g.atext(Integer.toString((i + 1) % 10), c.add(invsq.sz()), 1, 1);
 	    g.chcolor();
 	    Resource res = null;
 	    if(belt[activeBelt][i] != null)
-		res = belt[activeBelt][i];
+			res = belt[activeBelt][i];
 	    if(res != null && !res.loading)
-		g.image(res.layer(Resource.imgc).tex(), c.add(1, 1));
+			g.image(res.layer(Resource.imgc).tex(), c.add(1, 1));
+		g.chcolor(Color.BLACK);
+	    g.atext(Integer.toString(activeBelt), x, 1, 1);
+	    g.chcolor();
 	}
 
 	if(cmdline != null) {
@@ -434,14 +426,12 @@ public class SlenHud extends Widget implements DTarget, DropTarget {
 		synchronized(belt)
 		{
 			if(args.length < 2) {
-			belt[activeBelt][(Integer)args[0]] = null;
-			CustomConfig.hudBelt[activeBelt][(Integer)args[0]] = null;
-		    } else {
-		    	if(CustomConfig.hudBelt[activeBelt][(Integer)args[0]] == null){
-					belt[activeBelt][(Integer)args[0]] = ui.sess.getres((Integer)args[1]).get();
-					CustomConfig.hudBelt[activeBelt][(Integer)args[0]] = belt[activeBelt][(Integer)args[0]].name;
-		    	}
-		    }
+				belt[activeBelt][(Integer)args[0]] = null;
+				CustomConfig.activeCharacter.hudBelt[activeBelt][(Integer)args[0]] = null;
+		    } else {/*
+		    	belt[activeBelt][(Integer)args[0]] = ui.sess.getres((Integer)args[1]).get();
+				CustomConfig.activeCharacter.hudBelt[activeBelt][(Integer)args[0]] = belt[activeBelt][(Integer)args[0]].name;
+		    */}
 		}
 	    synchronized (CustomConfig.class){CustomConfig.saveSettings();}
 	} else {
@@ -596,13 +586,25 @@ public class SlenHud extends Widget implements DTarget, DropTarget {
 	    return(true);
 	} else if((((ch >= '1') && (ch <= '9')) || (ch == '0')) && ev.isAltDown())
 	{
-		activeBelt = ch-48 >= 0 && ch-48 < 10 ? ch-48 : 0;
+		activeBelt = ch-48;
+		CustomConfig.activeCharacter.hudActiveBelt = activeBelt;
+		for(int i = 0; i < belt[activeBelt].length; i++)
+		{
+			if(belt[activeBelt][i] == null){
+				wdgmsg("setbelt", i, 0);
+				continue;
+			}
+
+			wdgmsg("setbelt", i, belt[activeBelt][i].name);
+		}
 		return true;
 	} else if(ch == '0') {
-	    wdgmsg("belt", 9, 1, 0);
+	    if(belt[activeBelt][9] != null)
+	    	wdgmsg("belt", 9, 1, 0);
 	    return(true);
 	} else if((ch >= '1') && (ch <= '9')) {
-	    wdgmsg("belt", ch - '1', 1, 0);
+	    if(belt[activeBelt][ch-'1'] != null)
+	    	wdgmsg("belt", ch - '1', 1, 0);
 	    return(true);
 	}
 	return(super.globtype(ch, ev));
@@ -663,13 +665,31 @@ public class SlenHud extends Widget implements DTarget, DropTarget {
 	    if(thing instanceof Resource) {
 		Resource res = (Resource)thing;
 		if(res.layer(Resource.action) != null) {
-			CustomConfig.hudBelt[activeBelt][slot] = null;
+			belt[activeBelt][slot] = res;
+			CustomConfig.activeCharacter.hudBelt[activeBelt][slot] = belt[activeBelt][slot].name;
 		    wdgmsg("setbelt", slot, res.name);
 		    return(true);
 		}
 	    }
 	}
 	return(false);
+    }
+    public void initBelt()
+    {
+    	activeBelt = CustomConfig.activeCharacter.hudActiveBelt;
+		synchronized(belt)
+		{
+			for(int i = 0; i < belt.length; i++)
+			{
+				for(int j = 0; j < belt[i].length;j++)
+				{
+					if(CustomConfig.activeCharacter.hudBelt[i][j] != null)
+					{
+						belt[i][j] = Resource.load(CustomConfig.activeCharacter.hudBelt[i][j]);
+					}
+				}
+			}
+		}
     }
     public void destroy()
     {

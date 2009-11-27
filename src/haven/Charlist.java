@@ -34,20 +34,20 @@ public class Charlist extends Widget {
     public int height, y;
     public Button sau, sad;
     public List<Char> chars = new ArrayList<Char>();
-    
+
     public static class Char {
 	static Text.Foundry tf = new Text.Foundry("Serif", 20);
 	String name;
 	Text nt;
 	Avaview ava;
 	Button plb;
-	
+
 	public Char(String name) {
 	    this.name = name;
 	    nt = tf.render(name);
 	}
     }
-    
+
     static {
 	Widget.addtype("charlist", new WidgetFactory() {
 		public Widget create(Coord c, Widget parent, Object[] args) {
@@ -72,7 +72,7 @@ public class Charlist extends Widget {
 	    };
 	sau.visible = sad.visible = false;
     }
-    
+
     public void scroll(int amount) {
 	y += amount;
 	synchronized(chars) {
@@ -82,7 +82,7 @@ public class Charlist extends Widget {
 	if(y < 0)
 	    y = 0;
     }
-    
+
     public void draw(GOut g) {
 	int y = 20;
 	synchronized(chars) {
@@ -104,18 +104,25 @@ public class Charlist extends Widget {
 	}
 	super.draw(g);
     }
-    
+
     public boolean mousewheel(Coord c, int amount) {
 	scroll(amount);
 	return(true);
     }
-    
+
     public void wdgmsg(Widget sender, String msg, Object... args) {
 	if(sender instanceof Button) {
 	    synchronized(chars) {
 		for(Char c : chars) {
 		    if(sender == c.plb)
-			wdgmsg("play", c.name);
+		    {
+		    	wdgmsg("play", c.name);
+		    	CustomConfig.setActiveCharacter(c.name);
+		    	if(parent.findchild(SlenHud.class) != null)
+		    	{
+		    		((SlenHud)parent.findchild(SlenHud.class)).initBelt();
+		    	}
+		    }
 		}
 	    }
 	} else if(sender instanceof Avaview) {
