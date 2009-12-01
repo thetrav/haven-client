@@ -433,7 +433,6 @@ public class SlenHud extends Widget implements DTarget, DropTarget {
 				CustomConfig.activeCharacter.hudBelt[activeBelt][(Integer)args[0]] = belt[activeBelt][(Integer)args[0]].name;
 		    */}
 		}
-	    synchronized (CustomConfig.class){CustomConfig.saveSettings();}
 	} else {
 	    super.uimsg(msg, args);
 	}

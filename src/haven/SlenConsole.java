@@ -32,7 +32,7 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
     		CustomConfig.ircAltNick = ui.sess.username + "|C";
     	}
     	user = CustomConfig.ircDefNick;
-    	if(!CustomConfig.ircServerAddress.equals(""))
+    	if(!CustomConfig.ircServerAddress.equals("") && CustomConfig.isIRCOn)
     	{
 	    	IRC = new IRCConnection(CustomConfig.ircServerAddress, 6667,
 	    							CustomConfig.ircDefNick, CustomConfig.ircAltNick,
@@ -127,9 +127,11 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 	    	{
 	    		if(cArgs.length >= 2){
 		   			if(IRC != null)	IRC.close();
-		   			IRC = new IRCConnection(cArgs[1], 6667, user, user+"|C", user, user);
+		   			IRC = new IRCConnection(cArgs[1], 6667, CustomConfig.ircDefNick, CustomConfig.ircAltNick,
+		   													CustomConfig.ircDefNick, CustomConfig.ircDefNick);
 	    			IRC.setIRCConnectionListener(this);
 	    			IRC.open();
+	    			CustomConfig.isIRCOn = true;
 	    		} else {
 	    			src.out.append("FORMAT: /SERVER <SERVERADDRESS>");
 	    		}

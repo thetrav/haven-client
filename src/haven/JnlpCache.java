@@ -35,12 +35,12 @@ import java.util.*;
 public class JnlpCache implements ResCache {
     private PersistenceService back;
     private URL base;
-    
+
     private JnlpCache(PersistenceService back, URL base) {
 	this.back = back;
 	this.base = base;
     }
-    
+
     public static JnlpCache create() {
 	try {
 	    Class<? extends ServiceManager> cl = Class.forName("javax.jnlp.ServiceManager").asSubclass(ServiceManager.class);
@@ -52,7 +52,7 @@ public class JnlpCache implements ResCache {
 	    return(null);
 	}
     }
-    
+
     private static String mangle(String nm) {
 	StringBuilder buf = new StringBuilder();
 	for(int i = 0; i < nm.length(); i++) {
@@ -93,7 +93,7 @@ public class JnlpCache implements ResCache {
 	    return;
 	}
     }
-    
+
     private void put(final URL loc, final byte[] data) {
 	/*
 	 * Interestingly enough, it seems that the JNLP persistence
@@ -112,7 +112,7 @@ public class JnlpCache implements ResCache {
 		}
 	    });
     }
-    
+
     private InputStream get(URL loc) throws IOException {
 	FileContents file = back.get(loc);
 	return(file.getInputStream());
@@ -141,7 +141,7 @@ public class JnlpCache implements ResCache {
 	    };
 	return(ret);
     }
-    
+
     public InputStream fetch(String name) throws IOException {
 	try {
 	    URL loc = new URL(base, mangle(name));

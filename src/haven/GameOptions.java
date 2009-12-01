@@ -77,7 +77,10 @@ public class GameOptions extends Window{
     	musicToggle.a = CustomConfig.isMusicOn;
 
     	//	Ok button
+	//	okBtn = new Button(new Coord(50, 190), 50, this, "Ok");
 
+		//	Cancel button
+	//	cancelBtn = new Button(okBtn.c.add(okBtn.sz.x+10,0), okBtn.sz.x, this, "Cancel");
 
     	ui.bind(sfxVolBar, CustomConfig.wdgtID++);
     	ui.bind(musicVolBar, CustomConfig.wdgtID++);
@@ -117,6 +120,12 @@ public class GameOptions extends Window{
 		{
 			CustomConfig.isSoundOn = args[0] != null ? ((Boolean)args[0]).booleanValue() : CustomConfig.isSoundOn;
 			return;
+		}else if(sender == okBtn && msg == "activate")
+		{
+			return;
+		}else if (sender == cancelBtn && msg == "activate")
+		{
+			return;
 		}
 		super.wdgmsg(sender, msg, args);
 	}
@@ -124,6 +133,8 @@ public class GameOptions extends Window{
 	{
 		Listbox.Option channel = null;
 		CustomConfig.ircServerAddress = serverAddress.text;
+		CustomConfig.ircDefNick = defNick.text;
+		CustomConfig.ircAltNick = altNick.text;
 		if(this.visible)
 		{
 			String channelData[] = channelList.text.split(" ");
@@ -168,7 +179,7 @@ public class GameOptions extends Window{
 	    	}
 	    	channelList.settext(channels.trim());
 		}
-		CustomConfig.saveSettings();
+		if(CustomConfig.isSaveable)	CustomConfig.saveSettings();
 		return super.toggle();
 	}
 }

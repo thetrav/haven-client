@@ -124,6 +124,7 @@ public class CustomConfig {
 	public static boolean isSoundOn = true;
 	public static boolean isIRCOn = true;
 	public static boolean hasNightVision = false;
+	public static boolean isSaveable = false;
 
 	public static void setActiveCharacter(String name)
 	{

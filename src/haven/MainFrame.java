@@ -36,13 +36,13 @@ public class MainFrame extends Frame implements Runnable, FSMan {
     HavenPanel p;
     ThreadGroup g;
     DisplayMode fsmode = null, prefs = null;
-	
+
     static {
 	try {
 	    javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
 	} catch(Exception e) {}
     }
-	
+
     DisplayMode findmode(int w, int h) {
 	GraphicsDevice dev = getGraphicsConfiguration().getDevice();
 	if(!dev.isFullScreenSupported())
@@ -57,7 +57,7 @@ public class MainFrame extends Frame implements Runnable, FSMan {
 	}
 	return(b);
     }
-	
+
     public void setfs() {
 	GraphicsDevice dev = getGraphicsConfiguration().getDevice();
 	if(prefs != null)
@@ -70,12 +70,12 @@ public class MainFrame extends Frame implements Runnable, FSMan {
 	    setVisible(true);
 	    dev.setFullScreenWindow(this);
 	    dev.setDisplayMode(fsmode);
-			
+
 	} catch(Exception e) {
 	    throw(new RuntimeException(e));
 	}
     }
-	
+
     public void setwnd() {
 	GraphicsDevice dev = getGraphicsConfiguration().getDevice();
 	if(prefs == null)
@@ -128,7 +128,7 @@ public class MainFrame extends Frame implements Runnable, FSMan {
 	setVisible(true);
 	p.init();
     }
-	
+
     public void run() {
 	addWindowListener(new WindowAdapter() {
 		public void windowClosing(WindowEvent e) {
@@ -157,7 +157,7 @@ public class MainFrame extends Frame implements Runnable, FSMan {
 	    dispose();
 	}
     }
-    
+
     public static void setupres() {
 	if(ResCache.global != null)
 	    Resource.addcache(ResCache.global);
@@ -169,7 +169,7 @@ public class MainFrame extends Frame implements Runnable, FSMan {
 	    } catch(java.io.IOException e) {}
 	}
     }
-    
+
     static {
 	WebBrowser.self = JnlpBrowser.create();
     }
@@ -196,6 +196,22 @@ public class MainFrame extends Frame implements Runnable, FSMan {
 	Resource.loadergroup = g;
 	setupres();
 	MainFrame f = new MainFrame(CustomConfig.windowSize.x, CustomConfig.windowSize.y);
+	f.addWindowListener(new WindowListener(){
+		public void windowClosing(WindowEvent e)
+		{
+			if(CustomConfig.isSaveable)	CustomConfig.saveSettings();
+		}
+		public void windowOpened(WindowEvent e){}
+		public void windowClosed(WindowEvent e){}
+		public void windowIconified(WindowEvent e){}
+		public void windowDeiconified(WindowEvent e){}
+		public void windowActivated(WindowEvent e){}
+		public void windowDeactivated(WindowEvent e){}
+		public void windowGainedFocus(WindowEvent e){}
+		public void windowLostFocus(WindowEvent e){}
+		public void windowStateChanged(WindowEvent e){}
+	});
+	CustomConfig.isSaveable = true;
 	if(Config.fullscreen)
 	    f.setfs();
 	f.g = g;
@@ -221,7 +237,7 @@ public class MainFrame extends Frame implements Runnable, FSMan {
 	    } catch(java.io.IOException e) {}
 	}
     }
-    
+
     public static void main(final String[] args) {
 	/* Set up the error handler as early as humanly possible. */
 	ThreadGroup g;
@@ -255,7 +271,7 @@ public class MainFrame extends Frame implements Runnable, FSMan {
 	}
 	System.exit(0);
     }
-	
+
     private static void dumplist(Collection<Resource> list, String fn) {
 	try {
 	    if(fn != null)
@@ -264,7 +280,7 @@ public class MainFrame extends Frame implements Runnable, FSMan {
 	    throw(new RuntimeException(e));
 	}
     }
-    
+
     private static void dumplist(Collection<Resource> list, PrintWriter out) {
 	try {
 	    for(Resource res : list) {
