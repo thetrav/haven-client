@@ -34,7 +34,7 @@ import java.awt.Color;
 import java.util.*;
 
 public class MapView extends Widget implements DTarget {
-    public Coord mc, mousepos;
+    public Coord mc, mousepos, pmousepos;
     Camera cam;
     Map<Sprite.Part, Gob> clickable = new TreeMap<Sprite.Part, Gob>(clickcmp);
     List<Sprite.Part> obscured = Collections.emptyList();
@@ -332,6 +332,8 @@ public class MapView extends Widget implements DTarget {
     private Gob gobatpos(Coord c) {
 	for(Sprite.Part d : obscured) {
 	    Gob gob = clickable.get(d);
+	    if(gob == null)
+		continue;
 	    if(d.checkhit(c.add(gob.sc.inv())))
 		return(gob);
 	}
@@ -379,6 +381,7 @@ public class MapView extends Widget implements DTarget {
     }
 
     public void mousemove(Coord c) {
+	this.pmousepos = c;
 	Coord mc = s2m(c.add(viewoffset(sz, this.mc).inv()));
 	this.mousepos = mc;
 	Collection<Gob> plob = this.plob;
@@ -636,6 +639,7 @@ public class MapView extends Widget implements DTarget {
 	final List<Sprite.Part> sprites = new ArrayList<Sprite.Part>();
 	final Map<Sprite.Part,Gob> clickable = new TreeMap<Sprite.Part, Gob>(clickcmp);
 	ArrayList<Speaking> speaking = new ArrayList<Speaking>();
+	ArrayList<KinInfo> kin = new ArrayList<KinInfo>();
 	class GobMapper implements Sprite.Drawer {
 	    Gob cur = null;
 	    Sprite.Part.Effect fx = null;
@@ -677,9 +681,15 @@ public class MapView extends Widget implements DTarget {
 		Speaking s = gob.getattr(Speaking.class);
 		if(s != null)
 		    speaking.add(s);
+		KinInfo k = gob.getattr(KinInfo.class);
+		if(k != null)
+		    kin.add(k);
 	    }
 	    this.clickable = clickable;
 	    Collections.sort(sprites, Sprite.partcmp);
+	    Gob onmouse = null;
+	    if(pmousepos != null)
+		onmouse = gobatpos(pmousepos);
 	    obscured = findobsc();
 	    if(curf != null)
 		curf.tick("sort");
@@ -729,6 +739,25 @@ public class MapView extends Widget implements DTarget {
 	    if(curf != null)
 		curf.tick("draw");
 	    g.image(mask, Coord.z);
+	    long now = System.currentTimeMillis();
+	    for(KinInfo k : kin) {
+		Tex t = k.rendered();
+		Coord gc = k.gob.sc;
+		if(gc.isect(Coord.z, sz)) {
+		    if(k.seen == 0)
+			k.seen = now;
+		    int tm = (int)(now - k.seen);
+		    if(k.gob == onmouse) {
+			g.image(t, gc.add(-t.sz().x / 2, -40 - t.sz().y));
+		    } else if(tm < 7500) {
+			g.chcolor(255, 255, 255, 255 - ((255 * tm) / 7500));
+			g.image(t, gc.add(-t.sz().x / 2, -40 - t.sz().y));
+			g.chcolor();
+		    }
+		} else {
+		    k.seen = 0;
+		}
+	    }
 	    for(Speaking s : speaking) {
 		s.draw(g, s.gob.sc.add(s.off));
 	    }
