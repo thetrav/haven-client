@@ -58,6 +58,7 @@ public class Session {
     public static final int OD_OVERLAY = 12;
     public static final int OD_AUTH = 13;
     public static final int OD_HEALTH = 14;
+    public static final int OD_BUDDY = 15;
     public static final int OD_END = 255;
     public static final int SESSERR_AUTH = 1;
     public static final int SESSERR_BUSY = 2;
@@ -301,6 +302,14 @@ public class Session {
 			} else if(type == OD_HEALTH) {
 			    int hp = msg.uint8();
 			    oc.health(id, frame, hp);
+			} else if(type == OD_BUDDY) {
+				String name = msg.string();
+				if(name.length() > 0) {
+					int group = msg.uint8();
+					oc.buddy(id, frame, name, group);
+					} else {
+						oc.buddy(id, frame, null, 0);
+					}
 			} else if(type == OD_END) {
 			    break;
 			} else {
