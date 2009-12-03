@@ -356,7 +356,7 @@ public class SlenHud extends Widget implements DTarget, DropTarget {
 	vc.tick();
 	if(!ui.sess.alive())
 	{
-		ircConsole.IRC.close();
+		if(ircConsole.IRC != null) ircConsole.IRC.close();
 		for(SlenChat tSCWnd : ircChannels)
 		{
 			remwnd(tSCWnd);
@@ -573,6 +573,12 @@ public class SlenHud extends Widget implements DTarget, DropTarget {
     }
 
     public boolean mousewheel(Coord c, int amount) {
+    	 c = xlate(c, false);
+		if(c.isect(new Coord(134, 29), new Coord(100, 100))) {
+			woff += amount;
+			updbtns();
+		return(true);
+		}
 		return awnd.mousewheel(c, amount);
     }
 
