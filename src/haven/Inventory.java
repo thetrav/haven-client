@@ -48,21 +48,21 @@ public class Inventory extends Widget implements DTarget {
 	}
 	super.draw(g);
     }
-	
+
     public Inventory(Coord c, Coord sz, Widget parent) {
 	super(c, invsq.sz().add(new Coord(-1, -1)).mul(sz).add(new Coord(1, 1)), parent);
 	isz = sz;
     }
-	
+
     public boolean drop(Coord cc, Coord ul) {
 	wdgmsg("drop", ul.add(new Coord(15, 15)).div(invsq.sz()));
 	return(true);
     }
-	
+
     public boolean iteminteract(Coord cc, Coord ul) {
 	return(false);
     }
-	
+
     public void uimsg(String msg, Object... args) {
 	if(msg == "sz") {
 	    isz = (Coord)args[0];
