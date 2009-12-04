@@ -873,7 +873,7 @@ public class MapView extends Widget implements DTarget {
 	    drawarrows(g);
 	    g.chcolor(Color.WHITE);
 	    if(Config.dbtext)
-		g.atext(mc.toString(), new Coord(10, 560), 0, 1);
+		g.atext(mc.div(11).toString(), new Coord(10, 560), 0, 1);
 	} catch(Loading l) {
 	    String text = "Loading...";
 	    g.chcolor(Color.BLACK);

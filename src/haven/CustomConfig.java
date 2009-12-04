@@ -240,7 +240,11 @@ public class CustomConfig {
 			    	}
 			    }
 			});
-			xmlReader.parse("config.xml");
+			if(ResCache.global != null){
+				xmlReader.parse(new InputSource(ResCache.global.fetch("config.xml")));
+			}else {
+				xmlReader.parse("config.xml");
+			}
     		if(windowSize.x < 800 || windowSize.y < 600)
     		{
     			System.out.println("Window size must be at least 800x600");
@@ -276,8 +280,12 @@ public class CustomConfig {
     public static void saveSettings()
     {
     	try{
-    			File cfg = new File("config.xml");
-    			BufferedWriter writer = new BufferedWriter(new FileWriter(cfg));
+    			BufferedWriter writer;
+    			if(ResCache.global != null){
+    				writer = new BufferedWriter(new OutputStreamWriter(ResCache.global.store("config.xml")));
+    			}else {
+    				writer = new BufferedWriter(new FileWriter(new File("config.xml")));
+    			}
     			writer.write("<?xml version=\"1.0\" ?>\n");
     			writer.write("<CONFIG>\n");
     			writer.write("\t<SCREENSIZE width=\"" + windowSize.x + "\" height=\"" + windowSize.y + "\"/>\n");
