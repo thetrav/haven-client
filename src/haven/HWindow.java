@@ -37,6 +37,7 @@ public class HWindow extends Widget {
 	Resource.loadimg("gfx/hud/cbtnd"),
 	Resource.loadimg("gfx/hud/cbtnh")};
     SlenHud shp;
+    int urgent;
 
     static {
 	Widget.addtype("hwnd", new WidgetFactory() {
@@ -75,4 +76,7 @@ public class HWindow extends Widget {
 	super.destroy();
 	shp.remwnd(this);
     }
+    public void makeurgent(int level) {
+ 	shp.updurgency(this, level);
+     }
 }

@@ -40,6 +40,7 @@ public class SlenHud extends Widget implements DTarget, DropTarget {
     public static final Tex flarps = Resource.loadtex("gfx/hud/slen/flarps");
     public static final Tex mbg = Resource.loadtex("gfx/hud/slen/mcircle");
     public static final Tex dispbg = Resource.loadtex("gfx/hud/slen/dispbg");
+    public static final Tex uglow = Resource.loadtex("gfx/hud/slen/sbg");
     public static final Coord fc = new Coord(96, -29);
     public static final Coord mc = new Coord(316, -55);
     public static final Coord dispc = new Coord(0, 4 - dispbg.sz().y);
@@ -49,11 +50,20 @@ public class SlenHud extends Widget implements DTarget, DropTarget {
     public static int activeBelt = 0;
     public List<SlenChat> ircChannels = new ArrayList<SlenChat>();
     public SlenConsole ircConsole;
+
+    public static final Color urgcols[] = {
+	null,
+	new Color(0, 128, 255),
+	new Color(255, 128, 0),
+	new Color(255, 0, 0),
+    };
+
     int woff = 0;
     List<HWindow> wnds = new ArrayList<HWindow>();
     HWindow awnd;
     Map<HWindow, Button> btns = new HashMap<HWindow, Button>();
     IButton hb, invb, equb, chrb, budb;
+    FoldButton fb;
     Button sub, sdb;
     VC vc;
     String cmdline = null;
@@ -76,6 +86,23 @@ public class SlenHud extends Widget implements DTarget, DropTarget {
 	sz = new Coord(CustomConfig.windowSize.x, h);
 	sz.y = (h - fc.y > sz.y)?(h - fc.y):sz.y;
 	sz.y = (h - mc.y > sz.y)?(h - mc.y):sz.y;
+    }
+
+    static class FoldButton extends IButton {
+	int urgency;
+
+	public FoldButton(Coord c, Widget parent) {
+	    super(c, parent, Resource.loadimg("gfx/hud/slen/sbu"), Resource.loadimg("gfx/hud/slen/sbd"));
+	}
+
+	public void draw(GOut g) {
+	    super.draw(g);
+	    if(urgcols[urgency] != null) {
+		g.chcolor(urgcols[urgency]);
+		g.image(uglow, Coord.z);
+		g.chcolor();
+	    }
+	}
     }
 
     static class VC {
@@ -132,8 +159,11 @@ public class SlenHud extends Widget implements DTarget, DropTarget {
 		    sb.c.y = CustomConfig.windowSize.y;
 		}
 	    }
-	    if(ct >= ms)
+	    if(ct >= ms) {
 		c = w;
+		if(c && (m.awnd != null))
+		    m.updurgency(m.awnd, -1);
+	    }
 	}
     }
 
@@ -186,8 +216,7 @@ public class SlenHud extends Widget implements DTarget, DropTarget {
 		}
 	    };
 	}
-	vc = new VC(this, new IButton(new Coord(492, CustomConfig.windowSize.y), parent,
-				 Resource.loadimg("gfx/hud/slen/sbu"), Resource.loadimg("gfx/hud/slen/sbd")) {
+		vc = new VC(this, fb = new FoldButton(new Coord(492, CustomConfig.windowSize.y), parent) {
 		public void click() {
 		    vc.show();
 		}
@@ -231,6 +260,15 @@ public class SlenHud extends Widget implements DTarget, DropTarget {
 	try {
 	    if(cmd == "q") {
 		Utils.tg().interrupt();
+	    } else if(cmd == "nightvision"){
+	    	if(argv.length >= 2){
+	    		try{
+	    			CustomConfig.hasNightVision = Boolean.parseBoolean(argv[1]);
+	    		}catch(Exception e)
+	    		{
+	    			e.printStackTrace();
+	    		}
+	    	}
 	    } else if(cmd == "lo") {
 	    	Coord center = new Coord((CustomConfig.windowSize.x-125)/2, (CustomConfig.windowSize.y-50)/2);
 	    	new Logout(center, parent);
@@ -480,7 +518,7 @@ public class SlenHud extends Widget implements DTarget, DropTarget {
     }
 
 	//	Handles the switching of windows
-    private void setawnd(HWindow wnd) {
+    public void setawnd(HWindow wnd) {
     	//	Hide the current active window
     	if(awnd != null && awnd != wnd)
     	{
@@ -502,6 +540,7 @@ public class SlenHud extends Widget implements DTarget, DropTarget {
 		awnd.hudButton.isFlashing = false;
 
 		awnd.show();
+		updurgency(wnd, -1);
     }
 
     public void nextWindow()
@@ -530,6 +569,31 @@ public class SlenHud extends Widget implements DTarget, DropTarget {
 		    		setawnd(wnds.get(wnds.size()-1));
 		    	}
     	}
+    }
+
+    public void updurgency(HWindow wnd, int level) {
+	if((wnd == awnd) && vc.c)
+	    level = -1;
+	if(level == -1) {
+	    if(wnd.urgent == 0)
+		return;
+	    wnd.urgent = 0;
+	} else {
+	    if(wnd.urgent >= level)
+		return;
+	    wnd.urgent = level;
+	}
+	Button b = btns.get(wnd);
+	if(urgcols[wnd.urgent] != null)
+	    b.change(wnd.title, urgcols[wnd.urgent]);
+	else
+	    b.change(wnd.title);
+	int max = 0;
+	for(HWindow w : wnds) {
+	    if(w.urgent > max)
+		max = w.urgent;
+	}
+	fb.urgency = max;
     }
 
     public void addwnd(final HWindow wnd) {

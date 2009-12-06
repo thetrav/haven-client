@@ -96,7 +96,15 @@ public class Button extends SSWidget {
 	g.drawImage(cont, tc.x, tc.y, null);
 	update();
     }
+	public void change(String text, Color col) {
+	this.text = tf.render(text, col);
+	this.cont = this.text.img;
+	render();
+    }
 
+    public void change(String text) {
+	change(text, Color.YELLOW);
+    }
     public void click() {
 	wdgmsg("activate");
     }
