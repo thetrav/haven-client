@@ -443,13 +443,18 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 		if(tSCWnd == null)	return;
 		//	Splits up the users string into an array of strings containing the user names
 		//	then adds them to the temporary list
-		String tNick[] = users.split(" ");
-		for(int i = 0; i < tNick.length; i++)
-		{
-			tNick[i] = parseNick(tNick[i]);
-			tSCWnd.userList.addUser("", tNick[i]);
-			IRC.writeln("WHOIS " + tNick[i]);
-		}
+		final String tNick[] = users.split(" ");
+		new Thread(){
+			public void run()
+			{
+				for(int i = 0; i < tNick.length; i++)
+				{
+					tNick[i] = parseNick(tNick[i]);
+					tSCWnd.userList.addUser("", tNick[i]);
+					IRC.writeln("WHOIS " + tNick[i]);
+				}
+			}
+		}.start();
 	}
 	public void onReplyTopic(String channel, String topic)
 	{

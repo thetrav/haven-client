@@ -33,18 +33,18 @@ import javax.media.opengl.*;
 
 public abstract class Tex {
     protected Coord dim;
-    
+
     public Tex(Coord sz) {
 	dim = sz;
     }
-	
+
     public Coord sz() {
 	return(dim);
     }
 
     public static int nextp2(int in) {
 	int ret;
-	
+
 	for(ret = 1; ret < in; ret <<= 1);
 	return(ret);
     }
@@ -54,7 +54,7 @@ public abstract class Tex {
     public void render(GOut g, Coord c) {
 	render(g, c, Coord.z, dim, dim);
     }
-    
+
     public void crender(GOut g, Coord c, Coord ul, Coord sz, Coord tsz) {
 	if((tsz.x == 0) || (tsz.y == 0))
 	    return;
@@ -89,10 +89,10 @@ public abstract class Tex {
 	}
 	render(g, t, uld, brd, szd);
     }
-	
+
     public void crender(GOut g, Coord c, Coord ul, Coord sz) {
 	crender(g, c, ul, sz, dim);
     }
-		
+
     public void dispose() {}
 }
