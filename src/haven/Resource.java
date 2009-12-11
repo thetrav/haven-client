@@ -68,7 +68,7 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	     * aids. */
 	}
     }
-	
+
     private LoadException error;
     private Collection<? extends Layer> layers = new LinkedList<Layer>();
     public final String name;
@@ -84,7 +84,7 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	error = null;
 	loading = true;
     }
-	
+
     public static void addcache(ResCache cache) {
 	CacheSource src = new CacheSource(cache);
 	prscache = src;
@@ -103,7 +103,7 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	}
 	chainloader(new Loader(src));
     }
-    
+
     private static void chainloader(Loader nl) {
 	synchronized(Resource.class) {
 	    if(loader == null) {
@@ -115,7 +115,7 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	    }
 	}
     }
-    
+
     public static Resource load(String name, int ver, int prio) {
 	Resource res;
 	synchronized(cache) {
@@ -146,15 +146,15 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	loader.load(res);
 	return(res);
     }
-    
+
     public static int numloaded() {
 	return(cache.size());
     }
-    
+
     public static Collection<Resource> cached() {
 	return(cache.values());
     }
-	
+
     public static Resource load(String name, int ver) {
 	return(load(name, ver, 0));
     }
@@ -165,16 +165,16 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	    ret += l.queue.size();
 	return(ret);
     }
-    
+
     public static Resource load(String name) {
 	return(load(name, -1));
     }
-    
+
     public void boostprio(int newprio) {
 	if(prio < newprio)
 	    prio = newprio;
     }
-    
+
     public void loadwaitint() throws InterruptedException {
 	synchronized(this) {
 	    boostprio(10);
@@ -183,7 +183,7 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	    }
 	}
     }
-	
+
     public String basename() {
 	int p = name.lastIndexOf('/');
 	if(p < 0)
@@ -209,43 +209,43 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	if(i)
 	    Thread.currentThread().interrupt();
     }
-	
+
     public static interface ResSource {
 	public InputStream get(String name) throws IOException;
     }
-    
+
     public static abstract class TeeSource implements ResSource, Serializable {
 	public ResSource back;
-	
+
 	public TeeSource(ResSource back) {
 	    this.back = back;
 	}
-	
+
 	public InputStream get(String name) throws IOException {
 	    StreamTee tee = new StreamTee(back.get(name));
 	    tee.setncwe();
 	    tee.attach(fork(name));
 	    return(tee);
 	}
-	
+
 	public abstract OutputStream fork(String name) throws IOException;
-	
+
 	public String toString() {
 	    return("forking source backed by " + back);
 	}
     }
-    
+
     public static class CacheSource implements ResSource, Serializable {
 	public transient ResCache cache;
-	
+
 	public CacheSource(ResCache cache) {
 	    this.cache = cache;
 	}
-	
+
 	public InputStream get(String name) throws IOException {
 	    return(cache.fetch("res/" + name));
 	}
-	
+
 	public String toString() {
 	    return("cache source backed by " + cache);
 	}
@@ -253,11 +253,11 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 
     public static class FileSource implements ResSource, Serializable {
 	File base;
-	
+
 	public FileSource(File base) {
 	    this.base = base;
 	}
-	
+
 	public InputStream get(String name) {
 	    File cur = base;
 	    String[] parts = name.split("/");
@@ -270,7 +270,7 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 		throw((LoadException)(new LoadException("Could not find resource in filesystem: " + name, this).initCause(e)));
 	    }
 	}
-	
+
 	public String toString() {
 	    return("filesystem res source (" + base + ")");
 	}
@@ -283,16 +283,16 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 		throw(new LoadException("Could not find resource locally: " + name, JarSource.this));
 	    return(s);
 	}
-	
+
 	public String toString() {
 	    return("local res source");
 	}
     }
-    
+
     public static class HttpSource implements ResSource, Serializable {
 	private final transient SslHelper ssl;
 	public URL baseurl;
-	
+
 	{
 	    ssl = new SslHelper();
 	    try {
@@ -304,11 +304,11 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	    }
 	    ssl.ignoreName();
 	}
-	
+
 	public HttpSource(URL baseurl) {
 	    this.baseurl = baseurl;
 	}
-		
+
 	private URL encodeurl(URL raw) throws IOException {
 	    /* This is "kinda" ugly. It is, actually, how the Java
 	     * documentation recommend that it be done, though... */
@@ -340,15 +340,15 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	private Loader next = null;
 	private Queue<Resource> queue = new PrioQueue<Resource>();
 	private transient Thread th = null;
-	
+
 	public Loader(ResSource src) {
 	    this.src = src;
 	}
-	
+
 	public void chain(Loader next) {
 	    this.next = next;
 	}
-	
+
 	public void load(Resource res) {
 	    synchronized(queue) {
 		queue.add(res);
@@ -365,7 +365,7 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 		}
 	    }
 	}
-		
+
 	public void run() {
 	    try {
 		while(true) {
@@ -387,7 +387,7 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 		}
 	    }
 	}
-		
+
 	private void handle(Resource res) {
 	    InputStream in = null;
 	    try {
@@ -422,16 +422,16 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	    }
 	}
     }
-	
+
     public static class LoadException extends RuntimeException {
 	public Resource res;
 	public ResSource src;
-	    
+
 	public LoadException(String msg, ResSource src) {
 	    super(msg);
 	    this.src = src;
 	}
-	    
+
 	public LoadException(String msg, Resource res) {
 	    super(msg);
 	    this.res = res;
@@ -441,70 +441,19 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	    super(msg, cause);
 	    this.res = res;
 	}
-	    
+
 	public LoadException(Throwable cause, Resource res) {
 	    super("Load error in resource " + res.toString() + ", from " + res.source, cause);
 	    this.res = res;
 	}
     }
-	
+
     public static Coord cdec(byte[] buf, int off) {
 	return(new Coord(Utils.int16d(buf, off), Utils.int16d(buf, off + 2)));
     }
-	
+
     public abstract class Layer implements Serializable {
 	public abstract void init();
-    }
-	
-    /*
-     * Just a simple and naive box packing algorithm. At least, it
-     * shouldn't be scaling worse than O(n*log(n)).
-     */
-    private static void packlayers(Image[] layers) {
-	int mh = 0;
-	for(Image img : layers) {
-	    if(img.sz.y > mh)
-		mh = img.sz.y;
-	}
-	mh = Tex.nextp2((int)(mh * Math.sqrt(layers.length)));
-	Arrays.sort(layers, new Comparator<Image>() {
-		public int compare(Image a, Image b) {
-		    return(b.sz.x - a.sz.x);
-		}
-	    });
-	int[] cy = new int[layers.length];
-	int[] cx = new int[layers.length];
-	int[] ly = new int[layers.length];
-	int[] lx = new int[layers.length];
-	int nx = 0;
-	int my = 0;
-	for(int i = 0; i < layers.length; i++) {
-	    if(cy[i] + layers[i].sz.y <= mh) {
-		if(cy[i] == 0) {
-		    cx[i] = nx;
-		    nx += layers[i].sz.x;
-		}
-		lx[i] = cx[i];
-		ly[i] = cy[i];
-		cy[i] += layers[i].sz.y;
-		if(cy[i] > my)
-		    my = cy[i];
-		continue;
-	    }
-	}
-	BufferedImage buf = TexI.mkbuf(new Coord(nx, my));
-	Graphics g = buf.getGraphics();
-	for(int i = 0; i < layers.length; i++)
-	    g.drawImage(layers[i].img, lx[i], ly[i], null);
-	Tex packed = new TexI(buf);
-	for(int i = 0; i < layers.length; i++)
-	    layers[i].tex = new TexSI(packed, new Coord(lx[i], ly[i]), layers[i].sz);
-	/*
-	int sum = 0;
-	for(Image img : layers)
-	    sum += Tex.nextp2(img.sz.x) * Tex.nextp2(img.sz.y);
-	System.out.println((((TexGL)packed).tdim.x * ((TexGL)packed).tdim.y) + " / " + sum);
-	*/
     }
 
     public class Image extends Layer implements Comparable<Image> {
@@ -516,7 +465,7 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	private int gay = -1;
 	public Coord sz;
 	public Coord o;
-		
+
 	public Image(byte[] buf) {
 	    z = Utils.int16d(buf, 0);
 	    subz = Utils.int16d(buf, 2);
@@ -533,13 +482,14 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 		throw(new LoadException("Invalid image data in " + name, Resource.this));
 	    sz = Utils.imgsz(img);
 	}
-		
+
 	public synchronized Tex tex() {
-	    if(tex == null)
-		packlayers(layers(Image.class).toArray(new Image[0]));
-	    return(tex);
+	    if(tex != null)
+	    	return tex;
+	    tex = new TexI(img);
+	    return tex;
 	}
-		
+
 	private boolean detectgay() {
 	    for(int y = 0; y < sz.y; y++) {
 		for(int x = 0; x < sz.x; x++) {
@@ -549,7 +499,7 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	    }
 	    return(false);
 	}
-		
+
 	public boolean gayp() {
 	    if(gay == -1)
 		gay = detectgay()?1:0;
@@ -559,14 +509,14 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	public int compareTo(Image other) {
 	    return(z - other.z);
 	}
-		
+
 	public void init() {}
     }
     static {ltypes.put("image", Image.class);}
-        
+
     public class Tooltip extends Layer {
 	public final String t;
-                
+
 	public Tooltip(byte[] buf) {
 	    try {
 		t = new String(buf, "UTF-8");
@@ -574,18 +524,18 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 		throw(new LoadException(e, Resource.this));
 	    }
 	}
-                
+
 	public void init() {}
     }
     static {ltypes.put("tooltip", Tooltip.class);}
-	
+
     public class Tile extends Layer {
 	transient BufferedImage img;
 	transient private Tex tex;
 	int id;
 	int w;
 	char t;
-		
+
 	public Tile(byte[] buf) {
 	    t = (char)Utils.ub(buf[0]);
 	    id = Utils.ub(buf[1]);
@@ -604,20 +554,20 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 		tex = new TexI(img);
 	    return(tex);
 	}
-		
+
 	public void init() {}
     }
     static {ltypes.put("tile", Tile.class);}
-	
+
     public class Neg extends Layer {
 	public Coord cc;
 	public Coord bc, bs;
 	public Coord sz;
 	public Coord[][] ep;
-		
+
 	public Neg(byte[] buf) {
 	    int off;
-			
+
 	    cc = cdec(buf, 0);
 	    bc = cdec(buf, 4);
 	    bs = cdec(buf, 8);
@@ -638,16 +588,16 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 		}
 	    }
 	}
-		
+
 	public void init() {}
     }
     static {ltypes.put("neg", Neg.class);}
-	
+
     public class Anim extends Layer {
 	private int[] ids;
 	public int id, d;
 	public Image[][] f;
-		
+
 	public Anim(byte[] buf) {
 	    id = Utils.int16d(buf, 0);
 	    d = Utils.uint16d(buf, 2);
@@ -657,7 +607,7 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	    for(int i = 0; i < ids.length; i++)
 		ids[i] = Utils.int16d(buf, 6 + (i * 2));
 	}
-		
+
 	public void init() {
 	    f = new Image[ids.length][];
 	    Image[] typeinfo = new Image[0];
@@ -672,7 +622,7 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	}
     }
     static {ltypes.put("anim", Anim.class);}
-	
+
     public class Tileset extends Layer {
 	private int fl;
 	private String[] fln;
@@ -682,7 +632,7 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	WeightList<Tile> ground;
 	WeightList<Tile>[] ctrans, btrans;
 	int flavprob;
-		
+
 	public Tileset(byte[] buf) {
 	    int[] off = new int[1];
 	    off[0] = 0;
@@ -701,7 +651,7 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 		flw[i] = Utils.ub(buf[off[0]++]);
 	    }
 	}
-		
+
 	private void packtiles(Collection<Tile> tiles, Coord tsz) {
 	    int min = -1, minw = -1, minh = -1;
 	    int nt = tiles.size();
@@ -734,7 +684,7 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	    }
 	    packbuf.update();
 	}
-		
+
 	@SuppressWarnings("unchecked")
 	public void init() {
 	    flavobjs = new WeightList<Resource>();
@@ -772,10 +722,10 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	}
     }
     static {ltypes.put("tileset", Tileset.class);}
-	
+
     public class Pagina extends Layer {
 	public final String text;
-		
+
 	public Pagina(byte[] buf) {
 	    try {
 		text = new String(buf, "UTF-8");
@@ -783,17 +733,17 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 		throw(new LoadException(e, Resource.this));
 	    }
 	}
-		
+
 	public void init() {}
     }
     static {ltypes.put("pagina", Pagina.class);}
-	
+
     public class AButton extends Layer {
 	public final String name;
 	public final Resource parent;
 	public final char hk;
 	public final String[] ad;
-		
+
 	public AButton(byte[] buf) {
 	    int[] off = new int[1];
 	    off[0] = 0;
@@ -813,11 +763,11 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	    for(int i = 0; i < ad.length; i++)
 		ad[i] = Utils.strd(buf, off);
 	}
-		
+
 	public void init() {}
     }
     static {ltypes.put("action", AButton.class);}
-    
+
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
     public @interface PublishedCode {
@@ -831,7 +781,7 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
     public class Code extends Layer {
 	public final String name;
 	transient public final byte[] data;
-		
+
 	public Code(byte[] buf) {
 	    int[] off = new int[1];
 	    off[0] = 0;
@@ -839,16 +789,16 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	    data = new byte[buf.length - off[0]];
 	    System.arraycopy(buf, off[0], data, 0, data.length);
 	}
-		
+
 	public void init() {}
     }
     static {ltypes.put("code", Code.class);}
-	
+
     public class ResClassLoader extends ClassLoader {
 	public ResClassLoader(ClassLoader parent) {
 	    super(parent);
 	}
-		
+
 	public Resource getres() {
 	    return(Resource.this);
 	}
@@ -861,7 +811,7 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	transient private ClassLoader loader;
 	transient private Map<String, Class<?>> lpe = new TreeMap<String, Class<?>>();
 	transient private Map<Class<?>, Object> ipe = new HashMap<Class<?>, Object>();
-		
+
 	public CodeEntry(byte[] buf) {
 	    int[] off = new int[1];
 	    off[0] = 0;
@@ -869,7 +819,7 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 		pe.put(Utils.strd(buf, off), Utils.strd(buf, off));
 	    }
 	}
-		
+
 	public void init() {
 	    for(Code c : layers(Code.class))
 		clmap.put(c.name, c);
@@ -892,7 +842,7 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 		throw(new LoadException(e, Resource.this));
 	    }
 	}
-	
+
 	public <T> T get(Class<T> cl) {
 	    PublishedCode entry = cl.getAnnotation(PublishedCode.class);
 	    if(entry == null)
@@ -927,10 +877,10 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	}
     }
     static {ltypes.put("codeentry", CodeEntry.class);}
-	
+
     public class Audio extends Layer {
 	transient public byte[] clip;
-	    
+
 	public Audio(byte[] buf) {
 	    try {
 		clip = Utils.readall(new VorbisDecoder(new ByteArrayInputStream(buf)));
@@ -938,14 +888,14 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 		throw(new LoadException(e, Resource.this));
 	    }
 	}
-	    
+
 	public void init() {}
     }
     static {ltypes.put("audio", Audio.class);}
-	
+
     public class Music extends Resource.Layer {
 	transient javax.sound.midi.Sequence seq;
-	
+
 	public Music(byte[] buf) {
 	    try {
 		seq = javax.sound.midi.MidiSystem.getSequence(new ByteArrayInputStream(buf));
@@ -955,7 +905,7 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 		throw(new LoadException(e, Resource.this));
 	    }
 	}
-	
+
 	public void init() {}
     }
     static {ltypes.put("midi", Music.class);}
@@ -969,7 +919,7 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	    off += ret;
 	}
     }
-	
+
     public <L extends Layer> Collection<L> layers(Class<L> cl) {
 	checkerr();
 	Collection<L> ret = new LinkedList<L>();
@@ -979,7 +929,7 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	}
 	return(ret);
     }
-	
+
     public <L extends Layer> L layer(Class<L> cl) {
 	checkerr();
 	for(Layer l : layers) {
@@ -988,7 +938,7 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	}
 	return(null);
     }
-	
+
     public int compareTo(Resource other) {
 	checkerr();
 	int nc = name.compareTo(other.name);
@@ -1000,13 +950,13 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	    throw(new RuntimeException("Resource identity crisis!"));
 	return(0);
     }
-	
+
     public boolean equals(Object other) {
 	if(!(other instanceof Resource) || (other == null))
 	    return(false);
 	return(compareTo((Resource)other) == 0);
     }
-	
+
     private void load(InputStream in) throws IOException {
 	String sig = "Haven Resource 1";
 	byte buf[] = new byte[sig.length()];
@@ -1059,7 +1009,7 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 		throw(new LoadException(e, Resource.this));
 	    } catch(InvocationTargetException e) {
 		Throwable c = e.getCause();
-		if(c instanceof RuntimeException) 
+		if(c instanceof RuntimeException)
 		    throw((RuntimeException)c);
 		else
 		    throw(new LoadException(c, Resource.this));
@@ -1072,35 +1022,35 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	for(Layer l : layers)
 	    l.init();
     }
-	
+
     public Indir<Resource> indir() {
 	if(indir != null)
 	    return(indir);
 	indir = new Indir<Resource>() {
 	    public Resource res = Resource.this;
-			
+
 	    public Resource get() {
 		if(loading)
 		    return(null);
 		return(Resource.this);
 	    }
-			
+
 	    public void set(Resource r) {
 		throw(new RuntimeException());
 	    }
-			
+
 	    public int compareTo(Indir<Resource> x) {
 		return(Resource.this.compareTo(this.getClass().cast(x).res));
 	    }
 	};
 	return(indir);
     }
-	
+
     private void checkerr() {
 	if(error != null)
 	    throw(new RuntimeException("Delayed error in resource " + name + " (v" + ver + "), from " + source, error));
     }
-	
+
     public int priority() {
 	return(prio);
     }
@@ -1110,17 +1060,17 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	res.loadwait();
 	return(res.layer(imgc).img);
     }
-	
+
     public static Tex loadtex(String name) {
 	Resource res = load(name);
 	res.loadwait();
 	return(res.layer(imgc).tex());
     }
-	
+
     public String toString() {
 	return(name + "(v" + ver + ")");
     }
-	
+
     public static void loadlist(InputStream list, int prio) throws IOException {
 	BufferedReader in = new BufferedReader(new InputStreamReader(list, "us-ascii"));
 	String ln;

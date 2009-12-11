@@ -55,18 +55,18 @@ public class RemoteUI implements UI.Receiver {
 		    Coord c = msg.coord();
 		    int parent = msg.uint16();
 		    Object[] args = msg.list();
-		    System.out.print("\n" + type + " " + c + " " + parent + "\t");
+	/*	    System.out.print("\n" + type + " " + c + " " + parent + "\t");
 		    for(int i = 0; i < args.length; i++)
 		    	System.out.print(args[i] + " ");
-		    ui.newwidget(id, type, c, parent, args);
+	*/	    ui.newwidget(id, type, c, parent, args);
 		} else if(msg.type == Message.RMSG_WDGMSG) {
 		    int id = msg.uint16();
 		    String type = msg.string();
 		    Object[] args = msg.list();
-		    System.out.print("\n" + type + "\t");
+	/*   System.out.print("\n" + type + "\t");
 		    for(int i = 0; i < args.length; i++)
 		    	System.out.print(args[i] + " ");
-		    ui.uimsg(id, type, args);
+	*/   ui.uimsg(id, type, args);
 		} else if(msg.type == Message.RMSG_DSTWDG) {
 		    int id = msg.uint16();
 		    ui.destroy(id);
