@@ -31,7 +31,6 @@ import java.awt.image.BufferedImage;
 public class HWindow extends Widget {
     public String title;
     public IButton cbtn;
-    public Button hudButton;
     static BufferedImage[] cbtni = new BufferedImage[] {
 	Resource.loadimg("gfx/hud/cbtn"),
 	Resource.loadimg("gfx/hud/cbtnd"),
@@ -66,10 +65,6 @@ public class HWindow extends Widget {
 	} else {
 	    super.wdgmsg(sender, msg, args);
 	}
-    }
-    public void setButton(Button hudButton)
-    {
-    	this.hudButton = hudButton;
     }
 
     public void destroy() {

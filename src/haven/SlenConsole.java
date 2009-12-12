@@ -13,6 +13,7 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 	public SlenHud parent;
 	private static SlenChat tSCWnd;
 	private boolean initialized = false;
+	public List<SlenChat> wndList = new ArrayList<SlenChat>();
 
 	static {
     	Widget.addtype("ircconsole", new WidgetFactory() {
@@ -24,7 +25,7 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 
     public SlenConsole(SlenHud parent)
     {
-    	super(parent, "IRC Console", false);
+    	super(parent, "Console", false);
     	this.parent = parent;
     	if(CustomConfig.ircDefNick == null || CustomConfig.ircDefNick.equals(""))
     	{
@@ -83,10 +84,8 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 		    			if(tSCWnd != null)	return;
 		    			IRC.writeln("JOIN " + tChanInfo.name + " " + tChanInfo.disp);
 		    			tSCWnd = new SlenChat(this, tChanInfo.name, tChanInfo.disp);
-		    			if(!parent.ircChannels.contains(tSCWnd))
-		    			{
-		    				parent.ircChannels.add(tSCWnd);
-		    			}
+		    			if(!wndList.contains(tSCWnd))
+		    				wndList.add(tSCWnd);
 		   			}
 	    		} else {
     				src.out.append("FORMAT: /JOIN <#CHANNEL1> [PASSWORD1] [#CHANNEL2 [PASSWORD2]...]");
@@ -174,7 +173,7 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 		   			tSCWnd = findWindow(cArgs[1].trim());
 		   			if(tSCWnd == null) {
 		   				tSCWnd = new SlenChat(this, cArgs[1].trim(), null, false);
-		   				parent.ircChannels.add(tSCWnd);
+		   				wndList.add(tSCWnd);
 		   			}
 		   			tSCWnd.out.append(user + ": " + msg);
 	    		} else {
@@ -203,7 +202,7 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 	    	}
 	    }
 	    if(tSCWnd == null)	return;
-	    if(src.getClass().getName().equalsIgnoreCase(tSCWnd.getClass().getName()))
+	    if(src instanceof SlenChat)
 	    {
 	    	IRC.writeln("PRIVMSG " + ((SlenChat)src).getChannel() + " :" + input);
 	    	src.out.append(user + ": " + input, Color.RED.darker());
@@ -232,7 +231,7 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 		{
 			handleInput("/JOIN " + channel.name + " " + channel.disp, this);
 		}
-		for(SlenChat tSCWnd : parent.ircChannels)
+		for(SlenChat tSCWnd : wndList)
 		{
 			if(tSCWnd.getChannel().charAt(0) == '#')
 			{
@@ -243,8 +242,8 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 	public void onDisconnect()
 	{
 		out.append("Disconnected", Color.GREEN.darker());
-		if(parent == null || parent.ircChannels == null)	return;
-		for(SlenChat tSCWnd : parent.ircChannels)
+		if(wndList == null)	return;
+		for(SlenChat tSCWnd : wndList)
 		{
 			tSCWnd.out.append("Disconnected from server");
 		}
@@ -260,7 +259,7 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 			tSCWnd.out.append(orgin + ": " + orgnick + " invited " + invitee + " into the channel.");
 			return;
 		}
-		for(SlenChat tSCWnd : parent.ircChannels)
+		for(SlenChat tSCWnd : wndList)
 		{
 			if(tSCWnd.visible)
 			{
@@ -315,21 +314,24 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 				tSCWnd.out.append(orgnick + ": " + txt);
 
 				//	Changes the button color if the window isn't visible
-				tSCWnd.flashWindow();
+				int urgency = tSCWnd.urgent;
+				urgency += urgency >= 0 && urgency < 3 ? 1 : 0;
+				tSCWnd.makeurgent(urgency);
 				return;
 			}
 
 			//	Window doesn't exist because its a PM with no channel, so a new one is created
 			tSCWnd = findWindow(orgnick);
-			tSCWnd = tSCWnd == null ? new SlenChat(this, orgnick, null, false) : tSCWnd;
-			parent.ircChannels.add(tSCWnd);
+			if(tSCWnd == null)
+				tSCWnd = new SlenChat(this, orgnick, null, false);
+			wndList.add(tSCWnd);
 	   		tSCWnd.out.append(orgnick + ": " + txt);
 		}
 	public void onNick( String user, String oldnick, String newnick )
 	{
 		oldnick = parseNick(oldnick);
 		newnick = parseNick(newnick);
-		for(SlenChat tSCWnd : parent.ircChannels)
+		for(SlenChat tSCWnd : wndList)
 		{
 			//	Changes the links in the appropriate windows so all private messages are still
 			//	directed to the correct window
@@ -390,7 +392,7 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 		out.append(nick + " quit. Reason: " + txt, Color.GREEN.darker());
 
 		//	Checks all windows for this nick and removes it when found
-		for(SlenChat SC : parent.ircChannels)
+		for(SlenChat SC : wndList)
 		{
 			if(SC.userList != null)
 			{
@@ -413,7 +415,7 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 								String name, String host)
 	{
 		nick = parseNick(nick);
-		for(SlenChat tSCWnd : parent.ircChannels)
+		for(SlenChat tSCWnd : wndList)
 		{
 			if(tSCWnd.userList != null)
 				if(tSCWnd.userList.containsNick(nick))
@@ -515,9 +517,9 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 	//	Attempts to find a window of the same title; returns null if no windows match.
 	public SlenChat findWindow(String wndTitle)
 	{
-		if(parent == null || parent.ircChannels == null)	return null;
+		if(wndList == null)	return null;
 		//	Searches for existing windows
-		for(SlenChat tSCWnd : parent.ircChannels)
+		for(SlenChat tSCWnd : wndList)
 		{
 			//	There are no windows in the list
 			if(tSCWnd == null)	break;
@@ -539,9 +541,10 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 	public void destroy()
 	{
 		IRC.close();
-		for(SlenChat tSCWnd : parent.ircChannels)
+		for(SlenChat tSCWnd : wndList)
 		{
 			parent.remwnd(tSCWnd);
 		}
+		wndList.clear();
 	}
 }

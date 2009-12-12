@@ -128,6 +128,10 @@ public class Listbox extends Widget {
 
 		return(false);
     }
+    public boolean mousewheel(Coord c, int amount)
+    {
+    	return false;
+    }
 
     public void changed(Option changed)
     {}

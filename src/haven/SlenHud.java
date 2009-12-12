@@ -48,7 +48,6 @@ public class SlenHud extends Widget implements DTarget, DropTarget {
     public static final Coord bc2 = new Coord(485, -8); //	Belt 2 location start
     public static final Coord sz;
     public static int activeBelt = 0;
-    public List<SlenChat> ircChannels = new ArrayList<SlenChat>();
     public SlenConsole ircConsole;
 
     public static final Color urgcols[] = {
@@ -395,11 +394,7 @@ public class SlenHud extends Widget implements DTarget, DropTarget {
 	if(!ui.sess.alive())
 	{
 		if(ircConsole.IRC != null) ircConsole.IRC.close();
-		for(SlenChat tSCWnd : ircChannels)
-		{
-			remwnd(tSCWnd);
-		}
-		ircChannels.clear();
+		ircConsole.destroy();
 	}
 	Coord bgc = sz.add(bg.sz().inv());
 	g.image(bg, bgc);
@@ -536,8 +531,6 @@ public class SlenHud extends Widget implements DTarget, DropTarget {
 		}
 		//	Make the specified window be the active window, set the appropriate coloring, and show
 		awnd = wnd;
-		awnd.hudButton.changeText(awnd.hudButton.text.text, Color.YELLOW);
-		awnd.hudButton.isFlashing = false;
 
 		awnd.show();
 		updurgency(wnd, -1);
@@ -603,7 +596,6 @@ public class SlenHud extends Widget implements DTarget, DropTarget {
 			setawnd(wnd);
 		}
 	};
-	wnd.setButton(wndButton);
 	btns.put(wnd, wndButton);
 	updbtns();
 	setawnd(wnd);

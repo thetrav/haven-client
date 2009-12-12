@@ -60,12 +60,10 @@ public class ChatHW extends HWindow {
 	    if(args.length > 2)
 		makeurgent((Integer)args[2]);
 	    out.append((String)args[0], col);
-	    flashWindow();
 	} else if(msg == "focusme") {
 	    shp.setawnd(this);
 	    shp.vc.show();
 	    setfocus(in);
-	    flashWindow();
 	} else {
 	    super.uimsg(msg, args);
 	}
@@ -85,16 +83,4 @@ public class ChatHW extends HWindow {
     {
     	return(out.mousewheel(c, amount));
     }
-    //	Changes the button text color to red if the window is not currently visible
-	protected boolean flashWindow()
-	{
-		//	Searches for an inactive window to flash
-		if(!visible)
-		{
-			hudButton.startFlashing();
-			return true;
-		}
-		//	No inactive window found
-		return false;
-	}
 }

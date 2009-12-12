@@ -113,7 +113,7 @@ public class SlenChat extends ChatHW
 	    				&& out.hasfocus
 	    				&& ((SlenChat)owner).handler.findWindow(out.chosen.disp) == null)
 			    	{
-			    		((SlenHud)owner.parent).ircChannels.add(new SlenChat(owner.handler, out.chosen.disp, null, false));
+			    		((SlenChat)owner).handler.wndList.add(new SlenChat(owner.handler, out.chosen.disp, null, false));
 			    	}
 			    	return true;
 	    		}
@@ -194,7 +194,6 @@ public class SlenChat extends ChatHW
 		public void destroy()
 		{
 			handler.IRC.writeln("PART " + channel + " " + handler.user + " closed this window.");
-			((SlenHud)((SlenHud)parent)).ircChannels.remove(this);
 			if(userList != null)	userList.destroy();
 			channel = null;
 			initialized = false;
