@@ -41,10 +41,8 @@ public class Button extends SSWidget {
     public Text text;
     public BufferedImage cont;
     static Text.Foundry tf = new Text.Foundry(new Font("Serif", Font.PLAIN, 12), Color.YELLOW);
-    static Text.Foundry newFoundry;
     boolean a = false;
-    boolean isFlashing = false;
-
+	
     static {
 	Widget.addtype("btn", new WidgetFactory() {
 		public Widget create(Coord c, Widget parent, Object[] args) {
@@ -57,58 +55,69 @@ public class Button extends SSWidget {
 		}
 	    });
     }
-
+	
     public static Button wrapped(Coord c, int w, Widget parent, String text) {
 	Button ret = new Button(c, w, parent, tf.renderwrap(text, w - 10));
 	return(ret);
     }
-
+        
     public Button(Coord c, Integer w, Widget parent, String text) {
 	super(c, new Coord(w, 19), parent);
 	this.text = tf.render(text);
 	this.cont = this.text.img;
 	render();
     }
-
+        
     public Button(Coord c, Integer w, Widget parent, Text text) {
 	super(c, new Coord(w, 19), parent);
 	this.text = text;
 	this.cont = text.img;
 	render();
     }
-
+	
     public Button(Coord c, Integer w, Widget parent, BufferedImage cont) {
 	super(c, new Coord(w, 19), parent);
 	this.cont = cont;
 	render();
     }
-
+	
     public void render() {
 	Graphics g = graphics();
-		g.drawImage(a?dt:ut, 3, 3, sz.x - 6, 13, null);
-		g.drawImage(bl, 0, 0, null);
-		g.drawImage(br, sz.x - br.getWidth(), 0, null);
-		g.drawImage(bt, 3, 0, sz.x - 6, bt.getHeight(), null);
-		g.drawImage(bb, 3, sz.y - bb.getHeight(), sz.x - 6, bb.getHeight(), null);
+	g.drawImage(a?dt:ut, 3, 3, sz.x - 6, 13, null);
+	g.drawImage(bl, 0, 0, null);
+	g.drawImage(br, sz.x - br.getWidth(), 0, null);
+	g.drawImage(bt, 3, 0, sz.x - 6, bt.getHeight(), null);
+	g.drawImage(bb, 3, sz.y - bb.getHeight(), sz.x - 6, bb.getHeight(), null);
 	Coord tc = sz.div(2).add(Utils.imgsz(cont).div(2).inv());
 	if(a)
 	    tc = tc.add(1, 1);
 	g.drawImage(cont, tc.x, tc.y, null);
 	update();
     }
-	public void change(String text, Color col) {
+	
+    public void change(String text, Color col) {
 	this.text = tf.render(text, col);
 	this.cont = this.text.img;
 	render();
     }
-
+    
     public void change(String text) {
 	change(text, Color.YELLOW);
     }
+
     public void click() {
 	wdgmsg("activate");
     }
-
+    
+    public void uimsg(String msg, Object... args) {
+	if(msg == "ch") {
+	    if(args.length > 1)
+		change((String)args[0], (Color)args[1]);
+	    else
+		change((String)args[0]);
+	}
+    }
+    
     public boolean mousedown(Coord c, int button) {
 	if(button != 1)
 	    return(false);
@@ -117,7 +126,7 @@ public class Button extends SSWidget {
 	ui.grabmouse(this);
 	return(true);
     }
-
+	
     public boolean mouseup(Coord c, int button) {
 	if(a && button == 1) {
 	    a = false;
@@ -128,22 +137,5 @@ public class Button extends SSWidget {
 	    return(true);
 	}
 	return(false);
-    }
-    public void changeText(String newText, Color newColor)
-    {
-    	newFoundry = new Text.Foundry(new Font("Serif", Font.PLAIN, 12), newColor);
-    	text = newFoundry.render(newText);
-    	cont = text.img;
-    	render();
-    }
-    public void startFlashing()
-    {
-    	changeText(text.text, Color.RED.darker());
-    	isFlashing = true;
-    }
-    public void stopFlashing()
-    {
-    	changeText(text.text, Color.YELLOW);
-    	isFlashing = false;
     }
 }
