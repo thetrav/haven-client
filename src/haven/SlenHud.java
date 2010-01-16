@@ -731,6 +731,7 @@ public class SlenHud extends Widget implements DTarget, DropTarget {
 			belt[activeBelt][slot] = res;
 			CustomConfig.activeCharacter.hudBelt[activeBelt][slot] = belt[activeBelt][slot].name;
 		    wdgmsg("setbelt", slot, res.name);
+		    if(ResCache.global != null)	CustomConfig.saveSettings();
 		    return(true);
 		}
 	    }

@@ -125,7 +125,7 @@ public class CustomConfig {
 	public static boolean isIRCOn = true;
 	public static boolean hasNightVision = false;
 	public static boolean isSaveable = false;
-	public static String consoleText;
+	public static String consoleText = "";
 
 	public static void setActiveCharacter(String name)
 	{
@@ -171,7 +171,12 @@ public class CustomConfig {
 			    {
 			    	String value;
 			    	String key = qName.toUpperCase().trim();
-			    	consoleText += "|| " + key + "\t" + atts + "\n";
+			    	consoleText += "|| " + key + " \t ";
+			    	for(int i = 0; i < atts.getLength(); i++)
+			    	{
+			    		consoleText += " \t " + atts.getQName(i) + " \t " + atts.getValue(i);
+			    	}
+			    	consoleText += "\n";
 			    	if(key.equals("SCREENSIZE")){
 			    		value = atts.getValue("width") == null ? "1024" : atts.getValue("width");
 			    		windowSize.x = Integer.parseInt(value);
