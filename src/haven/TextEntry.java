@@ -32,7 +32,11 @@ import java.awt.event.KeyEvent;
 import java.awt.datatransfer.*;
 import java.io.IOException;
 
-public class TextEntry extends SSWidget  implements ClipboardOwner{
+public class TextEntry extends Widget {
+    LineEdit buf;
+    int sx;
+    static Text.Foundry fnd = new Text.Foundry(new Font("SansSerif", Font.PLAIN, 12), Color.BLACK);
+    Text tcache = null;
     public String text;
     public String badchars = "";
     public boolean noNumbers = false;
@@ -50,164 +54,87 @@ public class TextEntry extends SSWidget  implements ClipboardOwner{
     }
 
     public void settext(String text) {
-	this.text = text;
-	if(pos > text.length())
-	    pos = text.length();
-	render();
+	buf.setline(text);
     }
 
     public void uimsg(String name, Object... args) {
 	if(name == "settext") {
 	    settext((String)args[0]);
 	} else if(name == "get") {
-	    wdgmsg("text", text);
-	} else if(name == "limit") {
-	    limit = (Integer)args[0];
+	    wdgmsg("text", buf.line);
 	} else if(name == "pw") {
 	    pw = ((Integer)args[0]) == 1;
-	    render();
 	} else {
 	    super.uimsg(name, args);
 	}
     }
-
-    private void render() {
+	
+    public void draw(GOut g) {
+	super.draw(g);
 	String dtext;
 	if(pw) {		//	Replace the text with stars if its a password
 	    dtext = "";
-	    for(int i = 0; i < text.length(); i++)
+	    for(int i = 0; i < buf.line.length(); i++)
 		dtext += "*";
 	} else {
-	    dtext = text;
+	    dtext = buf.line;
 	}
-	synchronized(ui) {
-	    Graphics g = graphics();
-	    int tPos = pos;
-	    //	Draw the white background and black text
-	    g.setColor(Color.WHITE);
-	    g.fillRect(0, 0, sz.x, sz.y);
-	    g.setColor(Color.BLACK);
-	    FontMetrics m = g.getFontMetrics();
-
-	    while(m.getStringBounds(dtext.substring(0, tPos), g).getWidth() > sz.x)
-	    {
-	    	dtext = dtext.substring(1);
-	    	tPos--;
-	    }
-	    g.drawString(dtext, 0, m.getAscent());
-
-	    //	Draw the vertical line symbolizing the prompt
-	    if(hasfocus && prompt) {
-		Rectangle2D tm = m.getStringBounds(dtext.substring(0, tPos), g);
-		g.drawLine((int)tm.getWidth(), 1, (int)tm.getWidth(), m.getHeight() - 1);
-	    }
-	    Rectangle2D tm = m.getStringBounds(dtext, g);
-	    cw = (int)tm.getWidth();
-	    update();
+	g.frect(Coord.z, sz);
+	if((tcache == null) || !tcache.text.equals(dtext))
+	    tcache = fnd.render(dtext);
+	int cx = tcache.advance(buf.point);
+	if(cx < sx) sx = cx;
+	if(cx > sx + (sz.x - 1)) sx = cx - (sz.x - 1);
+	g.image(tcache.tex(), new Coord(-sx, 0));
+	if(hasfocus && ((System.currentTimeMillis() % 1000) > 500)) {
+	    int lx = cx - sx + 1;
+	    g.chcolor(0, 0, 0, 255);
+	    g.line(new Coord(lx, 1), new Coord(lx, tcache.sz().y - 1), 1);
+	    g.chcolor();
 	}
     }
-
-    public void gotfocus() {
-	render();
-    }
-
-    public void lostfocus() {
-	render();
-    }
-
+	
     public TextEntry(Coord c, Coord sz, Widget parent, String deftext) {
 	super(c, sz, parent);
-	text = deftext;
-	pos = text.length();
-	render();
+	buf = new LineEdit(text = deftext) {
+		protected void done(String line) {
+		    activate(line);
+		}
+		
+		protected void changed() {
+		    TextEntry.this.text = line;
+		}
+	    };
 	setcanfocus(true);
+    }
+	
+    public void activate(String text) {
+	if(canactivate)
+	    wdgmsg("activate", text);
     }
 
     public boolean type(char c, KeyEvent ev) {
-	try {
-	    if(c == 8) {		//	BACKSPACE
-			if(pos > 0) {
-			    if(pos < text.length())
-					text = text.substring(0, pos - 1) + text.substring(pos);
-			    else
-					text = text.substring(0, pos - 1);
-			    pos--;
-			}
-			return true;
-	    }
-	    if(c == 10) {	//	ENTER
-			if(!canactivate)
-			    return(false);
-			wdgmsg("activate", text);
-			return true;
-	    }
-	    if(c == 127) {	//	DELETE
-			if(pos < text.length())
-			{
-				text = text.substring(0, pos) + text.substring(pos + 1);
-			}
-			return true;
-	    }
-	    if(c+96 == 'v' && ev.isControlDown()) {
-	    	String clipboardContents = getClipboardContents();
-	    	text = text.substring(0, pos) + clipboardContents + text.substring(pos);
-	    	pos += clipboardContents.length();
-	    	return true;
-	    }
-
-	    	if(Character.isDigit(c) && noNumbers && !ev.isAltDown() || badchars.indexOf(c) > -1)
+	if(Character.isDigit(c) && noNumbers && !ev.isAltDown() || badchars.indexOf(c) > -1)
 	        {
 	            ev.consume();
 	            return true;
 	        }
-	        if(Character.isLetter(c) && noLetters && !ev.isAltDown() || badchars.indexOf(c) > -1)
+        if(Character.isLetter(c) && noLetters && !ev.isAltDown() || badchars.indexOf(c) > -1)
 	        {
 	        	ev.consume();
 	        	return true;
 	        }
-	    if(c >= 32) {
-			String nt = text.substring(0, pos) + c + text.substring(pos);
-			if((limit == 0) || ((limit > 0) && (nt.length() <= limit)) || ((limit == -1) && (cw < sz.x))) {
-			    text = nt;
-			    pos++;
-			}
-			return(true);
-	    }
-	} finally {
-	    render();
-	}
-	return(false);
+	return(buf.key(ev));
     }
 
     public boolean keydown(KeyEvent e) {
-	if(e.getKeyCode() == KeyEvent.VK_LEFT) {
-	    if(pos > 0)
-		pos--;
-	} else if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
-	    if(pos < text.length())
-		pos++;
-	} else if(e.getKeyCode() == KeyEvent.VK_HOME) {
-	    pos = 0;
-	} else if(e.getKeyCode() == KeyEvent.VK_END) {
-	    pos = text.length();
-	}
-	render();
+	buf.key(e);
 	return(true);
     }
 
     public boolean mousedown(Coord c, int button) {
 	parent.setfocus(this);
-	render();
 	return(true);
-    }
-
-    public void draw(GOut g) {
-	boolean prompt = System.currentTimeMillis() % 1000 > 500;
-	if(prompt != this.prompt) {
-	    this.prompt = prompt;
-	    render();
-	}
-	super.draw(g);
     }
 
 	/**
