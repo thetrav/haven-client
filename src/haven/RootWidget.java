@@ -71,7 +71,16 @@ public class RootWidget extends Widget {
 	   	    	ui.bind(opts, CustomConfig.wdgtID++);
 	   	    }
 	    	else opts.toggle();
-	    } else if(key != 0) {
+	    } else if (key == '~'){
+	    	Window cnslWnd = new Window(Coord.z, new Coord(CustomConfig.windowSize.x-20,200),this, "Console");
+	    	ExtTextlog cnslOut = new ExtTextlog(Coord.z, cnslWnd.sz.add(-40,-40), cnslWnd);
+	    	String[] lines = CustomConfig.consoleText.trim().split("\n");
+	    	for(int i = 0; i < lines.length; i++)
+	    	{
+	    		System.out.println(i);
+	    		cnslOut.append(lines[i]);
+	    	}
+	    }else if(key != 0) {
 		wdgmsg("gk", (int)key);
 	    }
 	}

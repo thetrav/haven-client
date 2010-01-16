@@ -66,6 +66,15 @@ public class ExtTextlog extends Widget implements ClipboardOwner{
 
     public synchronized void append(String line, Color col) {
     	if(line == null || line == "") line = ".";
+    	if(line.contains("\n"))
+    	{
+    		String[] lines = line.trim().split("\n");
+    		for(int i = 0; i < lines.length; i++)
+    		{
+    			append(lines[i], col);
+    		}
+    		return;
+    	}
     	GLCharacter tGLChar;
     	String[] words = line.trim().split(" ");
     	nextCharLoc.x = 3;
