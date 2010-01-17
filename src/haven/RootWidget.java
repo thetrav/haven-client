@@ -35,10 +35,10 @@ public class RootWidget extends ConsoleHost {
     boolean afk = false;
 
     public RootWidget(UI ui, Coord sz) {
-	super(ui, new Coord(0, 0), sz);
-	setfocusctl(true);
-	cursor = Resource.load("gfx/hud/curs/arw");
-    }
+		super(ui, new Coord(0, 0), sz);
+		setfocusctl(true);
+		cursor = Resource.load("gfx/hud/curs/arw");
+	}
 
     public boolean globtype(char key, KeyEvent ev) {
 	if(!super.globtype(key, ev)) {
@@ -56,14 +56,21 @@ public class RootWidget extends ConsoleHost {
 	   	    	ui.bind(opts, CustomConfig.wdgtID++);
 	   	    }
 	    	else opts.toggle();
-	    } else if (key == '~'){
-	    	Window cnslWnd = new Window(Coord.z, new Coord(CustomConfig.windowSize.x-20,200),this, "Console");
-	    	ExtTextlog cnslOut = new ExtTextlog(Coord.z, cnslWnd.sz.add(-40,-40), cnslWnd);
-	    	String[] lines = CustomConfig.consoleText.trim().split("\n");
-	    	for(int i = 0; i < lines.length; i++)
+	    } else if (key == '`'){
+	    	if(CustomConfig.console == null)
 	    	{
-	    		System.out.println(i);
-	    		cnslOut.append(lines[i]);
+	    		CustomConfig.console = new Window(Coord.z, new Coord(CustomConfig.windowSize.x-20,200),this, "Console");
+			   	ui.bind(CustomConfig.console, CustomConfig.wdgtID++);
+			    CustomConfig.consoleOut = new ExtTextlog(Coord.z, CustomConfig.console.sz.add(-40,-40), CustomConfig.console);
+			    String[] lines = CustomConfig.consoleText.trim().split("\n");
+			    CustomConfig.consoleText = "";
+			    for(int i = 0; i < lines.length; i++)
+			    {
+			    	CustomConfig.consoleOut.append(lines[i]);
+			    }
+	    	}else{
+	    		CustomConfig.console.toggle();
+	    		CustomConfig.console.raise();
 	    	}
 	    }else if(key != 0) {
 		wdgmsg("gk", (int)key);
@@ -84,7 +91,7 @@ public class RootWidget extends ConsoleHost {
 	    afk = false;
 	}
     }
-    
+
     public void error(String msg) {
     }
 }

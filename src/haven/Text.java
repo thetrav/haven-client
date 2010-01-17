@@ -62,6 +62,7 @@ public class Text {
 	Font font;
 	Color defcol;
 	public boolean aa = false;
+	Graphics tmpl;
 
 	public Foundry(Font f, Color defcol) {
 	    font = f;
@@ -78,8 +79,8 @@ public class Text {
 	public Foundry(String font, int psz) {
 	    this(new Font(font, Font.PLAIN, psz));
 	}
-		
-	private Coord strsize(String text) {
+
+	public Coord strsize(String text) {
 	    Rectangle2D b = m.getStringBounds(text, tmpl);
 	    return(new Coord((int)b.getWidth(), (int)b.getHeight()));
 	}
@@ -176,11 +177,11 @@ public class Text {
     public Coord base() {
 	return(new Coord(0, m.getAscent()));
     }
-    
+
     public int advance(int pos) {
 	return(m.stringWidth(text.substring(0, pos)));
     }
-	
+
     public static Text render(String text, Color c) {
 	return(std.render(text, c));
     }

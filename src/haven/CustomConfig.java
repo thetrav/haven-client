@@ -126,6 +126,8 @@ public class CustomConfig {
 	public static boolean hasNightVision = false;
 	public static boolean isSaveable = false;
 	public static String consoleText = "";
+	public static Window console;
+	public static ExtTextlog consoleOut;
 
 	public static void setActiveCharacter(String name)
 	{
@@ -176,7 +178,12 @@ public class CustomConfig {
 			    	{
 			    		consoleText += " \t " + atts.getQName(i) + " \t " + atts.getValue(i);
 			    	}
-			    	consoleText += "\n";
+			    	if(consoleOut != null){
+			    		consoleOut.append(consoleText);
+			    		consoleText = "";
+			    	} else {
+			    		consoleText += "\n";
+			    	}
 			    	if(key.equals("SCREENSIZE")){
 			    		value = atts.getValue("width") == null ? "1024" : atts.getValue("width");
 			    		windowSize.x = Integer.parseInt(value);
@@ -264,7 +271,8 @@ public class CustomConfig {
     		IOExcep.printStackTrace();
     	}catch (NullPointerException NPExcep)
     	{
-    		System.out.println("Wrong config file format, creating a new one");
+    		System.out.println("File format corrupted, creating a new one");
+    		NPExcep.printStackTrace();
     	}catch (NumberFormatException NFExcep)
     	{
     		System.out.println("Wrong config file format, creating a new one");
@@ -284,7 +292,7 @@ public class CustomConfig {
     {
     	return (double)sfxVol/100;
     }
-    public static void saveSettings()
+    public static synchronized void saveSettings()
     {
     	try{
     			BufferedWriter writer;

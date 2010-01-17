@@ -244,7 +244,7 @@ public class SlenHud extends ConsoleHost implements DTarget, DropTarget, Console
 	else
 	    return(c.add(bgc.inv()));
     }
-	
+
     public void error(String err) {
 	lasterr = errfoundry.render(err);
 	errtime = System.currentTimeMillis();
@@ -486,7 +486,7 @@ public class SlenHud extends ConsoleHost implements DTarget, DropTarget, Console
 	if(wnd.title.equals("Messages")) {
 	    ui.cons.out = new java.io.PrintWriter(new java.io.Writer() {
 		    StringBuilder buf = new StringBuilder();
-		    
+
 		    public void write(char[] src, int off, int len) {
 			buf.append(src, off, len);
 			int p;
@@ -495,7 +495,7 @@ public class SlenHud extends ConsoleHost implements DTarget, DropTarget, Console
 			    buf.delete(0, p + 1);
 			}
 		    }
-		    
+
 		    public void close() {}
 		    public void flush() {}
 		});
@@ -572,7 +572,7 @@ public class SlenHud extends ConsoleHost implements DTarget, DropTarget, Console
 	}
 	return(super.globtype(ch, ev));
     }
-	
+
     public int foldheight() {
 	return(CustomConfig.windowSize.y - c.y);
     }
@@ -638,6 +638,5 @@ public class SlenHud extends ConsoleHost implements DTarget, DropTarget, Console
     public Map<String, Console.Command> findcmds() {
 	return(cmdmap);
     }
-}
 }
 
