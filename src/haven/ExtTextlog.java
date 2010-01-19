@@ -26,7 +26,7 @@ public class ExtTextlog extends Widget implements ClipboardOwner{
 	static Color transparent = new Color(Color.WHITE.getRed(), Color.WHITE.getGreen(), Color.WHITE.getBlue(), Color.TRANSLUCENT);
 	static Color alphaBlue = new Color(Color.BLUE.darker().getRed(),Color.BLUE.darker().getGreen(),Color.BLUE.darker().getBlue(),100);
     static Tex texpap = Resource.loadtex("gfx/hud/texpap");
-    static Text.Foundry fnd = new Text.Foundry(new Font("SansSerif", Font.PLAIN, 9), Color.BLACK);
+    private Text.Foundry fnd = new Text.Foundry(new Font("SansSerif", Font.PLAIN, 9), Color.BLACK);
 
 	static {
 	Widget.addtype("log", new WidgetFactory() {

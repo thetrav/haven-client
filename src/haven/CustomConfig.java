@@ -129,6 +129,7 @@ public class CustomConfig {
 
 	public static boolean logLoad = false;
 	public static boolean logSave = false;
+	public static boolean logIRC = false;
 
 	public static void setActiveCharacter(String name)
 	{
