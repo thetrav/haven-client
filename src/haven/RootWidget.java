@@ -55,19 +55,15 @@ public class RootWidget extends ConsoleHost {
 	   	    	opts = new GameOptions(this);
 	   	    	ui.bind(opts, CustomConfig.wdgtID++);
 	   	    }
-	    	else opts.toggle();
+	    	else{
+	    		opts.toggle();
+	    		opts.raise();
+	    	}
 	    } else if (key == '`'){
 	    	if(CustomConfig.console == null)
 	    	{
-	    		CustomConfig.console = new Window(Coord.z, new Coord(CustomConfig.windowSize.x-20,200),this, "Console");
-			   	ui.bind(CustomConfig.console, CustomConfig.wdgtID++);
-			    CustomConfig.consoleOut = new ExtTextlog(Coord.z, CustomConfig.console.sz.add(-40,-40), CustomConfig.console);
-			    String[] lines = CustomConfig.consoleText.trim().split("\n");
-			    CustomConfig.consoleText = "";
-			    for(int i = 0; i < lines.length; i++)
-			    {
-			    	CustomConfig.consoleOut.append(lines[i]);
-			    }
+	    		CustomConfig.console = new CustomConsole(Coord.z, new Coord(CustomConfig.windowSize.x-30,220),this,
+	    									"Console");
 	    	}else{
 	    		CustomConfig.console.toggle();
 	    		CustomConfig.console.raise();

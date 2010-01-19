@@ -42,10 +42,10 @@ public class ErrorHandler extends ThreadGroup {
     private final ThreadGroup initial;
     private Map<String, Object> props = new HashMap<String, Object>();
     private Reporter reporter;
-	
+
     static {
 	try {
-	    errordest = new URL("http://www.havenandhearth.com/java/error");
+	    errordest = new URL("http://github.com/Pacho/IRC-Extended/issues");
 	} catch(MalformedURLException e) {
 	    throw(new Error(e));
 	}
@@ -56,7 +56,7 @@ public class ErrorHandler extends ThreadGroup {
 	if(tg instanceof ErrorHandler)
 	    ((ErrorHandler)tg).lsetprop(key, val);
     }
-    
+
     public void lsetprop(String key, Object val) {
 	props.put(key, val);
     }
@@ -64,13 +64,13 @@ public class ErrorHandler extends ThreadGroup {
     private class Reporter extends Thread {
 	private Queue<Report> errors = new LinkedList<Report>();
 	private ErrorStatus status;
-	
+
 	public Reporter(ErrorStatus status) {
 	    super(initial, "Error reporter");
 	    setDaemon(true);
 	    this.status = status;
 	}
-	
+
 	public void run() {
 	    while(true) {
 		synchronized(errors) {
@@ -90,7 +90,7 @@ public class ErrorHandler extends ThreadGroup {
 		}
 	    }
 	}
-	
+
 	private void doreport(Report r) throws IOException {
 	    if(!status.goterror(r.t))
 		return;
@@ -109,7 +109,7 @@ public class ErrorHandler extends ThreadGroup {
 	    i.close();
 	    status.done();
 	}
-    
+
 	public void report(Thread th, Throwable t) {
 	    Report r = new Report(t);
 	    r.props.putAll(props);
@@ -154,15 +154,15 @@ public class ErrorHandler extends ThreadGroup {
 	reporter.start();
 	defprops();
     }
-    
+
     public ErrorHandler() {
 	this(new ErrorStatus.Simple());
     }
-    
+
     public void sethandler(ErrorStatus handler) {
 	reporter.status = handler;
     }
-    
+
     public void uncaughtException(Thread t, Throwable e) {
 	reporter.report(t, e);
     }

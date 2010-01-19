@@ -166,10 +166,10 @@ public class Widget {
 		focused = w;
 		if(last != null)
 		    last.hasfocus = false;
-		w.hasfocus = true;
+		if(w != null)	w.hasfocus = true;
 		if(last != null)
 		    last.lostfocus();
-		w.gotfocus();
+		if(w != null)	w.gotfocus();
 		if((ui != null) && ui.rwidgets.containsKey(w))
 		    wdgmsg("focus", ui.rwidgets.get(w));
 	    }
@@ -465,11 +465,14 @@ public class Widget {
     public void hide()
     {
     	visible = false;
+    	setfocus(null);
     }
     public boolean toggle()
     {
-    	visible = !visible;
-    	lostfocus();
+    	if(visible)
+    		hide();
+    	else
+    		show();
     	return visible;
     }
 }

@@ -59,9 +59,7 @@ public class ExtTextlog extends Widget implements ClipboardOwner{
 	super(c, sz, parent);
 	characterMap = new LinkedList<GLCharacter>();
 	setcanfocus(true);
-	scrollBar = new Scrollbar(Coord.z.add(sz.x,15), sz.y-15, this,0,0){
-		public void changed(){}
-	};
+	scrollBar = new Scrollbar(Coord.z.add(sz.x,5), sz.y-10, this,0,0);
     }
 
     public synchronized void append(String line, Color col) {

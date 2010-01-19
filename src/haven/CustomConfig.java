@@ -125,9 +125,10 @@ public class CustomConfig {
 	public static boolean isIRCOn = true;
 	public static boolean hasNightVision = false;
 	public static boolean isSaveable = false;
-	public static String consoleText = "";
-	public static Window console;
-	public static ExtTextlog consoleOut;
+	public static CustomConsole console;
+
+	public static boolean logLoad = false;
+	public static boolean logSave = false;
 
 	public static void setActiveCharacter(String name)
 	{
@@ -173,17 +174,22 @@ public class CustomConfig {
 			    {
 			    	String value;
 			    	String key = qName.toUpperCase().trim();
-			    	consoleText += "|| " + key + " \t ";
-			    	for(int i = 0; i < atts.getLength(); i++)
-			    	{
-			    		consoleText += " \t " + atts.getQName(i) + " \t " + atts.getValue(i);
+
+			    	//	Logs the loading sequence on the console
+			    	if(logLoad){
+			    		CustomConsole.log += "|| " + key + " \t ";
+				    	for(int i = 0; i < atts.getLength(); i++)
+				    	{
+				    		CustomConsole.log += " \t " + atts.getQName(i) + " \t " + atts.getValue(i);
+				    	}
+				    	if(console != null){
+				    		console.out.append(CustomConsole.log);
+				    		CustomConsole.log = "";
+				    	} else {
+				    		CustomConsole.log += "\n";
+				    	}
 			    	}
-			    	if(consoleOut != null){
-			    		consoleOut.append(consoleText);
-			    		consoleText = "";
-			    	} else {
-			    		consoleText += "\n";
-			    	}
+
 			    	if(key.equals("SCREENSIZE")){
 			    		value = atts.getValue("width") == null ? "1024" : atts.getValue("width");
 			    		windowSize.x = Integer.parseInt(value);

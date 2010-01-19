@@ -87,9 +87,7 @@ public class Listbox extends Widget {
 	super(c, sz, parent);
 	this.opts = opts;
 	height = sz.y / 10;
-	scrollBar = new Scrollbar(Coord.z.add(sz.x,0), sz.y, this, 0, 50) {
-		public void changed() {}
-	};
+	scrollBar = new Scrollbar(Coord.z.add(sz.x,0), sz.y, this, 0, 50);
 	chosen = !opts.isEmpty() ? opts.get(0) : null;
 	setcanfocus(true);
     }
@@ -124,13 +122,12 @@ public class Listbox extends Widget {
 		    changed(chosen);
 		    return(true);
 		}
-		if(scrollBar.mousedown(c, button))	return true;
+		return scrollBar.mousedown(c, button);
 
-		return(false);
     }
     public boolean mousewheel(Coord c, int amount)
     {
-    	return false;
+    	return scrollBar.mousewheel(c, amount);
     }
 
     public void changed(Option changed)
