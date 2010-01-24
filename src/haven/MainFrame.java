@@ -134,7 +134,7 @@ public class MainFrame extends Frame implements Runnable, FSMan {
 		    g.interrupt();
 		}
 	    });
-	Thread ui = new Thread(Utils.tg(), p, "Haven UI thread");
+	Thread ui = new HackThread(p, "Haven UI thread");
 	p.setfsm(this);
 	ui.start();
 	try {
@@ -191,7 +191,7 @@ public class MainFrame extends Frame implements Runnable, FSMan {
 
     private static void main2(String[] args) {
 	Config.cmdline(args);
-	ThreadGroup g = Utils.tg();
+	ThreadGroup g = HackThread.tg();
 	setupres();
 	MainFrame f = new MainFrame(CustomConfig.windowSize.x, CustomConfig.windowSize.y);
 	f.addWindowListener(new WindowListener(){
@@ -250,7 +250,7 @@ public class MainFrame extends Frame implements Runnable, FSMan {
 	} else {
 	    g = new ThreadGroup("Haven client");
 	}
-	Thread main = new Thread(g, new Runnable() {
+	Thread main = new HackThread(g, new Runnable() {
 		public void run() {
 		    try {
 			javabughack();

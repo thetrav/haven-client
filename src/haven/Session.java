@@ -33,7 +33,7 @@ import org.relayirc.core.IRCConnection;
 
 public class Session {
     public static final int PVER = 30;
-
+    
     public static final int MSG_SESS = 0;
     public static final int MSG_REL = 1;
     public static final int MSG_ACK = 2;
@@ -65,7 +65,7 @@ public class Session {
     public static final int SESSERR_CONN = 3;
     public static final int SESSERR_PVER = 4;
     public static final int SESSERR_EXPR = 5;
-
+    
     static final int ackthresh = 30;
     static IRCConnection IRC;
 
@@ -85,17 +85,17 @@ public class Session {
     byte[] cookie;
     final Map<Integer, Indir<Resource>> rescache = new TreeMap<Integer, Indir<Resource>>();
     public final Glob glob;
-
+	
     @SuppressWarnings("serial")
 	public class MessageException extends RuntimeException {
 	    public Message msg;
-
+		
 	    public MessageException(String text, Message msg) {
 		super(text);
 		this.msg = msg;
 	    }
 	}
-
+	
     public Indir<Resource> getres(final int id) {
 	synchronized(rescache) {
 	    Indir<Resource> ret = rescache.get(id);
@@ -104,7 +104,7 @@ public class Session {
 	    ret = new Indir<Resource>() {
 		public int resid = id;
 		Resource res;
-
+					
 		public Resource get() {
 		    if(res == null)
 			return(null);
@@ -114,11 +114,11 @@ public class Session {
 		    }
 		    return(res);
 		}
-
+					
 		public void set(Resource r) {
 		    res = r;
 		}
-
+				
 		public int compareTo(Indir<Resource> x) {
 		    return((this.getClass().cast(x)).resid - resid);
 		}
@@ -152,10 +152,10 @@ public class Session {
 	    this.sent = 0;
 	}
     }
-
-    private class Ticker extends Thread {
+    
+    private class Ticker extends HackThread {
 	public Ticker() {
-	    super(Utils.tg(), "Server time ticker");
+	    super("Server time ticker");
 	    setDaemon(true);
 	}
 
@@ -172,12 +172,12 @@ public class Session {
 	    } catch(InterruptedException e) {}
 	}
     }
-
-    private class RWorker extends Thread {
+	
+    private class RWorker extends HackThread {
 	boolean alive;
 
 	public RWorker() {
-	    super(Utils.tg(), "Session reader");
+	    super("Session reader");
 	    setDaemon(true);
 	}
 
@@ -303,13 +303,13 @@ public class Session {
 			    int hp = msg.uint8();
 			    oc.health(id, frame, hp);
 			} else if(type == OD_BUDDY) {
-				String name = msg.string();
-				if(name.length() > 0) {
-					int group = msg.uint8();
-					oc.buddy(id, frame, name, group);
-					} else {
-						oc.buddy(id, frame, null, 0);
-					}
+			    String name = msg.string();
+			    if(name.length() > 0) {
+				int group = msg.uint8();
+				oc.buddy(id, frame, name, group);
+			    } else {
+				oc.buddy(id, frame, null, 0);
+			    }
 			} else if(type == OD_END) {
 			    break;
 			} else {
@@ -495,11 +495,11 @@ public class Session {
 	    super.interrupt();
 	}
     }
-
-    private class SWorker extends Thread {
-
+	
+    private class SWorker extends HackThread {
+		
 	public SWorker() {
-	    super(Utils.tg(), "Session writer");
+	    super("Session writer");
 	    setDaemon(true);
 	}
 
