@@ -28,7 +28,7 @@ package haven;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.*;
 
 public class MainFrame extends Frame implements Runnable, FSMan {
@@ -106,10 +106,10 @@ public class MainFrame extends Frame implements Runnable, FSMan {
     private void seticon() {
 	Image icon;
 	try {
-	    java.io.InputStream data = MainFrame.class.getResourceAsStream("icon.png");
+	    InputStream data = MainFrame.class.getResourceAsStream("icon.png");
 	    icon = javax.imageio.ImageIO.read(data);
 	    data.close();
-	} catch(java.io.IOException e) {
+	} catch(IOException e) {
 	    throw(new Error(e));
 	}
 	setIconImage(icon);
@@ -165,7 +165,20 @@ public class MainFrame extends Frame implements Runnable, FSMan {
 	if(ResCache.global != null) {
 	    try {
 		Resource.loadlist(ResCache.global.fetch("tmp/allused"), -10);
-	    } catch(java.io.IOException e) {}
+	    } catch(IOException e) {}
+	}
+	if(!Config.nopreload) {
+	    try {
+		InputStream pls;
+		pls = Resource.class.getResourceAsStream("res-preload");
+		if(pls != null)
+		    Resource.loadlist(pls, -5);
+		pls = Resource.class.getResourceAsStream("res-bgload");
+		if(pls != null)
+		    Resource.loadlist(pls, -10);
+	    } catch(IOException e) {
+		throw(new Error(e));
+	    }
 	}
     }
 
@@ -231,8 +244,8 @@ public class MainFrame extends Frame implements Runnable, FSMan {
 		    if(res.prio >= 0)
 			used.add(res);
 		}
-		dumplist(used, new PrintWriter(ResCache.global.store("tmp/allused")));
-	    } catch(java.io.IOException e) {}
+		Resource.dumplist(used, new OutputStreamWriter(ResCache.global.store("tmp/allused"), "UTF-8"));
+	    } catch(IOException e) {}
 	}
     }
 
@@ -272,22 +285,15 @@ public class MainFrame extends Frame implements Runnable, FSMan {
 
     private static void dumplist(Collection<Resource> list, String fn) {
 	try {
-	    if(fn != null)
-		dumplist(list, new PrintWriter(fn));
-	} catch(Exception e) {
-	    throw(new RuntimeException(e));
-	}
-    }
-
-    private static void dumplist(Collection<Resource> list, PrintWriter out) {
-	try {
-	    for(Resource res : list) {
-		if(res.loading)
-		    continue;
-		out.println(res.name + ":" + res.ver);
+	    if(fn != null) {
+		Writer w = new OutputStreamWriter(new FileOutputStream(fn), "UTF-8");
+		try {
+		    Resource.dumplist(list, w);
+		} finally {
+		    w.close();
+		}
 	    }
-	    out.close();
-	} catch(Exception e) {
+	} catch(IOException e) {
 	    throw(new RuntimeException(e));
 	}
     }
