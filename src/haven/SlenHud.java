@@ -231,10 +231,6 @@ public class SlenHud extends ConsoleHost implements DTarget, DropTarget, Console
 
 	//	Load the current belt
 	initBelt();
-
-	//	Global Chat
-	ircConsole = new SlenConsole(this);
-	ui.bind(ircConsole, CustomConfig.wdgtID++);
     }
 
     public Coord xlate(Coord c, boolean in) {
@@ -483,7 +479,7 @@ public class SlenHud extends ConsoleHost implements DTarget, DropTarget, Console
 	btns.put(wnd, wndButton);
 	updbtns();
 	setawnd(wnd);
-	if(wnd.title.equals("Messages")) {
+	if(wnd.title.equals("Console")) {
 	    ui.cons.out = new java.io.PrintWriter(new java.io.Writer() {
 		    StringBuilder buf = new StringBuilder();
 
@@ -491,7 +487,7 @@ public class SlenHud extends ConsoleHost implements DTarget, DropTarget, Console
 			buf.append(src, off, len);
 			int p;
 			while((p = buf.indexOf("\n")) >= 0) {
-			    ((Logwindow)wnd).log.append(buf.substring(0, p));
+			    ((SlenConsole)wnd).out.append(buf.substring(0, p));
 			    buf.delete(0, p + 1);
 			}
 		    }

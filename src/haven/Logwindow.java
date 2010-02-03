@@ -30,7 +30,7 @@ public class Logwindow extends HWindow {
     ExtTextlog log;
 
     static {
-	Widget.addtype("slenlog", new WidgetFactory() {
+	Widget.addtype("outdated-slenlog", new WidgetFactory() {
 		public Widget create(Coord c, Widget parent, Object[] args) {
 		    String t = (String)args[0];
 		    boolean cl = false;

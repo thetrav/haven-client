@@ -46,7 +46,7 @@ public class SlenChat extends ChatHW
 	    			ui.bind(this, CustomConfig.wdgtID++);
 	    			ui.bind(out, CustomConfig.wdgtID++);
 	    		}
-	    		public void addUser(String user, String nick)
+	    		synchronized public void addUser(String user, String nick)
 	    		{
 	    			if(user != null && !containsNick(nick))
 	    			{

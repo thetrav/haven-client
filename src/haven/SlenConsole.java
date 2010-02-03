@@ -16,9 +16,12 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 	public List<SlenChat> wndList = new ArrayList<SlenChat>();
 
 	static {
-    	Widget.addtype("ircconsole", new WidgetFactory() {
+    	Widget.addtype("slenlog", new WidgetFactory() {
 	    	public Widget create(Coord c, Widget parent, Object[] args) {
-			    return(new SlenConsole(((SlenHud)parent)));
+	    		String t = (String)args[0];
+	    		SlenConsole wnd = new SlenConsole((SlenHud)parent);
+	    		wnd.out.append(t);
+			    return(wnd);
 	    	}
     	});
     }
@@ -44,6 +47,7 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
     	Debug.setDebug(false);
     	ui.sess.IRC = IRC;
     	initialized = true;
+    	out.append("Press ` to bring down the console");
     }
 	public void handleInput(String input, ChatHW src)
 	{
@@ -377,7 +381,7 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 	}
 	public void onStatus(String msg)
 	{
-		out.append(msg);
+		out.append(msg, Color.GRAY);
 	}
 	public void onTopic(String chanName, String newTopic)
 	{
@@ -437,7 +441,8 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 	}
 	public void onReplyMOTDEnd()
 	{
-		out.append("MOTD Received.", Color.CYAN);
+		out.append("MOTD Received.", Color.CYAN.darker());
+		out.append("Press ` to bring down the console");
 	}
 	public void onReplyNameReply(String channel, String users)
 	{
@@ -498,12 +503,20 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 	}
 	public void onErrorUnknown(String message)
 	{
-		out.append(message);
+	//	out.append("ERROR: " + message);
 	}
 	public void onErrorUnsupported(String message)
 	{
-		out.append(message);
+	//	out.append("ERROR: " + message);
 	}
+
+	public void uimsg(String name, Object... args) {
+		if(name == "log") {
+		    out.append((String)args[0]);
+		} else {
+		    super.uimsg(name, args);
+		}
+    }
 
 	public void wdgmsg(Widget sender, String msg, Object... args) {
 		if(sender == in)

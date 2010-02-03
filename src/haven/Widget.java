@@ -41,7 +41,7 @@ public class Widget {
     public Resource cursor = null;
     public Object tooltip = null;
     static Map<String, WidgetFactory> types = new TreeMap<String, WidgetFactory>();
-    static Class<?>[] barda = {Img.class, TextEntry.class, MapView.class, FlowerMenu.class,
+    static Class<?>[] barda = {Img.class, SlenConsole.class, MapView.class, FlowerMenu.class,
 			       Window.class, Button.class, Inventory.class, Item.class, Listbox.class,
 			       Makewindow.class, Chatwindow.class, Textlog.class, Equipory.class, IButton.class,
 			       Cal.class, Avaview.class, NpcChat.class,

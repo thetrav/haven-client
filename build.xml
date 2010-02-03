@@ -20,6 +20,7 @@
     <echo file="build/classes/buildinfo" xml:space="default">
       git-rev = ${gitrev}
     </echo>
+    <copy todir="dist" file="lib/haven-res.jar" />
   </target>
 
   <target name="haven-client" depends="build-env">

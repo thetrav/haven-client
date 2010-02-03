@@ -55,7 +55,7 @@ public class UI {
     public interface AfterDraw {
 	public void draw(GOut g);
     }
-	
+
     private class WidgetConsole extends Console {
 	{
 	    setcmd("q", new Command() {
@@ -79,7 +79,7 @@ public class UI {
 		    }
 		});
 	}
-	
+
 	private void findcmds(Map<String, Command> map, Widget wdg) {
 	    if(wdg instanceof Directory) {
 		Map<String, Command> cmds = ((Directory)wdg).findcmds();
