@@ -29,17 +29,18 @@ package haven;
 import java.awt.event.KeyEvent;
 
 public class RootWidget extends ConsoleHost {
+    public static Resource defcurs = Resource.load("gfx/hud/curs/arw");
     Logout logout = null;
     Profile gprof;
     GameOptions opts;
     boolean afk = false;
 
     public RootWidget(UI ui, Coord sz) {
-		super(ui, new Coord(0, 0), sz);
-		setfocusctl(true);
-		cursor = Resource.load("gfx/hud/curs/arw");
-	}
-
+	super(ui, new Coord(0, 0), sz);
+	setfocusctl(true);
+	cursor = defcurs;
+    }
+	
     public boolean globtype(char key, KeyEvent ev) {
 	if(!super.globtype(key, ev)) {
 	    if(Config.profile && (key == '`')) {
@@ -48,6 +49,8 @@ public class RootWidget extends ConsoleHost {
 		new Profwnd(findchild(SlenHud.class), gprof, "Glob prof");
 	    } else if(Config.profile && (key == '!')) {
 		new Profwnd(findchild(SlenHud.class), findchild(MapView.class).mask.prof, "ILM prof");
+	    } else if(key == ':') {
+		entercmd();
 	    } else if(key+96 == 'o' && ev.isControlDown())
 	    {
 	   	    if(opts == null)

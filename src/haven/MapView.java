@@ -180,6 +180,40 @@ public class MapView extends Widget implements DTarget, Console.Directory {
     }
     static {camtypes.put("orig", OrigCam.class);}
 
+    static class OrigCam2 extends DragCam {
+	public final Coord border = new Coord(250, 125);
+	private final double v = -5.268; /* ln(0.9) / 0.02 (1 / 50 FPS = 0.02 s) */
+	private Coord tgt = null;
+	private long lmv;
+	
+	public void setpos(MapView mv, Gob player, Coord sz) {
+	    if(tgt != null) {
+		if(mv.mc.dist(tgt) < 10) {
+		    tgt = null;
+		} else {
+		    long now = System.currentTimeMillis();
+		    double dt = (now - lmv) / 1000.0;
+		    lmv = now;
+		    mv.mc = tgt.add(mv.mc.add(tgt.inv()).mul(Math.exp(v * dt)));
+		}
+	    }
+	    borderize(mv, player, sz, border);
+	}
+	
+	public boolean click(MapView mv, Coord sc, Coord mc, int button) {
+	    if((button == 1) && (mv.ui.root.cursor == RootWidget.defcurs)) {
+		tgt = mc;
+		lmv = System.currentTimeMillis();
+	    }
+	    return(super.click(mv, sc, mc, button));
+	}
+	
+	public void moved(MapView mv) {
+	    tgt = null;
+	}
+    }
+    static {camtypes.put("clicktgt", OrigCam2.class);}
+
     static class WrapCam extends Camera {
 	public final Coord region = new Coord(200, 150);
 
