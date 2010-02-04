@@ -47,7 +47,8 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
     	Debug.setDebug(false);
     	ui.sess.IRC = IRC;
     	initialized = true;
-    	out.append("Press ` to bring down the console");
+    	out.append("Press ` to bring down the console.");
+    	out.append("Press CTRL + O to open the options menu.");
     }
 	public void handleInput(String input, ChatHW src)
 	{
@@ -442,7 +443,8 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 	public void onReplyMOTDEnd()
 	{
 		out.append("MOTD Received.", Color.CYAN.darker());
-		out.append("Press ` to bring down the console");
+		out.append("Press ` to bring down the console.");
+		out.append("Press CTRL + O to open the options menu.");
 	}
 	public void onReplyNameReply(String channel, String users)
 	{
@@ -549,7 +551,7 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 
 	public static String parseNick(String nickname)
 	{
-		return nickname.replace('~',' ').replace('@',' ').replace('%', ' ').trim();
+		return nickname.replace('~',' ').replace('@',' ').replace('%', ' ').replace('+', ' ').trim();
 	}
 	public void destroy()
 	{

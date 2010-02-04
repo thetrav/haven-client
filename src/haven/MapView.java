@@ -306,14 +306,14 @@ public class MapView extends Widget implements DTarget, Console.Directory {
 	super(c, sz, parent);
 	this.mc = mc;
 	this.playergob = playergob;
+	try {
 	    Class<? extends Camera> ct = camtypes.get(Utils.getpref("defcam", "border"));
 	    if(ct == null)
 		ct = BorderCam.class;
-	    try {
-		this.cam = ct.newInstance();
-	    } catch(Exception e) {
-		throw(new Error(e));
-	    }
+	    this.cam = ct.newInstance();
+	} catch(Exception e) {
+	    throw(new Error(e));
+	}
 	setcanfocus(true);
 	glob = ui.sess.glob;
 	map = glob.map;
@@ -720,9 +720,16 @@ public class MapView extends Widget implements DTarget, Console.Directory {
 		else
 		    part.draw(g);
 	    }
-	    for(Sprite.Part part : obscured)
-		part.drawol(g);
-
+	    for(Sprite.Part part : obscured) {
+		GOut g2 = new GOut(g);
+		GobHealth hlt;
+		if((part.owner != null) && (part.owner instanceof Gob) && ((hlt = ((Gob)part.owner).getattr(GobHealth.class)) != null))
+		    g2.chcolor(255, (int)(hlt.asfloat() * 255), 0, 255);
+		else
+		    g2.chcolor(255, 255, 0, 255);
+		part.drawol(g2);
+	    }
+	    
 	    if(Config.bounddb && ui.modshift) {
 		g.chcolor(255, 0, 0, 128);
 		synchronized(glob.oc) {
