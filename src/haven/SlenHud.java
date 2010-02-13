@@ -242,7 +242,7 @@ public class SlenHud extends ConsoleHost implements DTarget, DropTarget, Console
     }
 
     public void error(String err) {
-	lasterr = errfoundry.render(err);
+	lasterr = (Text)errfoundry.render(err);
 	errtime = System.currentTimeMillis();
     }
 
