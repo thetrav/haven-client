@@ -115,6 +115,8 @@
   </target>
   
   <target name="update-zips" depends="signer">
+  	<zip destfile="dist\update-patch-current.zip" basedir="dist" includes="haven.jar"
+  		update="true" whenempty="create"/>
   	<zip destfile="dist\update-patch-${tstamp.date}.zip" basedir="dist" includes="haven.jar"
   		update="true" whenempty="create"/>
   	<zip destfile="dist\haven-32bit-windows-full.zip" filesonly="true" update="true" whenempty="create">
