@@ -74,7 +74,7 @@ public class Window extends Widget implements DTarget {
 	this.rbo = rbo;
 	cbtn = new IButton(Coord.z, this, cbtni[0], cbtni[1], cbtni[2]);
 	if(cap != null)
-	    this.cap = cf.render(cap, cc);
+	    this.cap = Text.render(cap, cc);
 	sz = sz.add(tlo).add(rbo).add(wbox.bisz()).add(mrgn.mul(2));
 	this.sz = sz;
 	atl = new Coord(wbox.bl.sz().x, wbox.bt.sz().y).add(tlo);

@@ -28,19 +28,13 @@ package haven;
 
 import java.util.*;
 import java.awt.Color;
-import java.awt.Font;
-import java.awt.image.BufferedImage;
-import java.awt.Graphics;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.awt.event.KeyEvent;
-import java.awt.datatransfer.*;
+import java.awt.font.TextAttribute;
 
 public class Textlog extends Widget {
     static Tex texpap = Resource.loadtex("gfx/hud/texpap");
     static Tex schain = Resource.loadtex("gfx/hud/schain");
     static Tex sflarp = Resource.loadtex("gfx/hud/sflarp");
-    static Text.Foundry fnd = new Text.Foundry(new Font("SansSerif", Font.PLAIN, 9), Color.BLACK);
+    static RichText.Foundry fnd = new RichText.Foundry(TextAttribute.FAMILY, "SansSerif", TextAttribute.SIZE, 9, TextAttribute.FOREGROUND, Color.BLACK);
     List<Text> lines;
     int maxy, cury;
     int margin = 3;
@@ -91,8 +85,10 @@ public class Textlog extends Widget {
 
     public void append(String line, Color col) {
 	Text rl;
-	if(line == null)	line = "";
-    rl = fnd.renderwrap(line, col, sz.x - (margin * 2) - sflarp.sz().x);
+	if(col == null)
+	    rl = fnd.render(RichText.Parser.quote(line), sz.x - (margin * 2) - sflarp.sz().x);
+	else
+	    rl = fnd.render(RichText.Parser.quote(line), sz.x - (margin * 2) - sflarp.sz().x, TextAttribute.FOREGROUND, col);
 	synchronized(lines) {
 	    lines.add(rl);
 	}
@@ -102,7 +98,7 @@ public class Textlog extends Widget {
     }
 
     public void append(String line) {
-	append(line, Color.BLACK);
+	append(line, null);
     }
 
     public void uimsg(String msg, Object... args) {

@@ -150,7 +150,7 @@ public class LoginScreen extends Widget {
 	    if(progress != null)
 		progress = null;
 	    if(p != null)
-		progress = textf.render(p, java.awt.Color.WHITE);
+		progress = Text.render(p, java.awt.Color.WHITE);
 	}
     }
     

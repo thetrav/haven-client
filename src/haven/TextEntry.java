@@ -36,7 +36,7 @@ public class TextEntry extends Widget {
     LineEdit buf;
     int sx;
     static Text.Foundry fnd = new Text.Foundry(new Font("SansSerif", Font.PLAIN, 12), Color.BLACK);
-    Text tcache = null;
+    Text.Line tcache = null;
     public String text;
     public String badchars = "";
     public boolean noNumbers = false;
@@ -134,6 +134,9 @@ public class TextEntry extends Widget {
 
     public boolean mousedown(Coord c, int button) {
 	parent.setfocus(this);
+	if(tcache != null) {
+	    buf.point = tcache.charat(c.x + sx);
+	}
 	return(true);
     }
 

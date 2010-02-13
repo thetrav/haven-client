@@ -162,7 +162,7 @@ public class GOut {
     }
 	
     public void atext(String text, Coord c, double ax, double ay) {
-	Text t = Text.render(text);
+	Text t = Text.render(text, null);
 	Tex T = t.tex();
 	Coord sz = t.sz();
 	image(T, c.add((int)((double)sz.x * -ax), (int)((double)sz.y * -ay)));

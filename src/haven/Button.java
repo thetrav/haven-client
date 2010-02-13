@@ -63,7 +63,7 @@ public class Button extends SSWidget {
         
     public Button(Coord c, Integer w, Widget parent, String text) {
 	super(c, new Coord(w, 19), parent);
-	this.text = tf.render(text);
+	this.text = Text.render(text, Color.YELLOW);
 	this.cont = this.text.img;
 	render();
     }

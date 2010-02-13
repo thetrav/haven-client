@@ -280,7 +280,7 @@ public class HavenPanel extends GLCanvas implements Runnable {
 		tt = (Tex)tooltip;
 	    } else if(tooltip instanceof String) {
 		if(((String)tooltip).length() > 0)
-		    tt = (Text.render((String)tooltip)).tex();
+		    tt = ((Text)Text.render((String)tooltip)).tex();
 	    }
 	}
 	if(tt != null) {

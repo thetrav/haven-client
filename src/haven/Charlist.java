@@ -44,7 +44,7 @@ public class Charlist extends Widget {
 
 	public Char(String name) {
 	    this.name = name;
-	    nt = tf.render(name);
+	    nt = Text.render(name);
 	}
     }
 

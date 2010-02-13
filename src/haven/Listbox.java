@@ -78,8 +78,10 @@ public class Listbox extends Widget {
 		    else {
 				c = Color.BLACK;
 		    }
-			g.image((Text.render(b.disp, c)).tex(), new Coord(0,i*10));
+		    g.chcolor(c);
+			g.text(b.disp, new Coord(0,i*10));
 		}
+		g.chcolor();
 		super.draw(g);
     }
 

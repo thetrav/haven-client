@@ -20,12 +20,12 @@ public class GameOptions extends Window{
 	    });
 	    wbox = new IBox("gfx/hud", "tl", "tr", "bl", "br", "extvl", "extvr", "extht", "exthb");
     }
-	Text sfxVol = Text.render("SFX Vol:", Color.WHITE);
-	Text musicVol = Text.render("Music Vol:", Color.WHITE);
-	Text serverLabel = Text.render("Server:", Color.WHITE);
-	Text chnlLabel = Text.render("Channels:", Color.WHITE);
-	Text defIRCNickLabel = Text.render("IRC Nick:", Color.WHITE);
-	Text altIRCNickLabel = Text.render("Alt Nick:", Color.WHITE);
+	Label sfxVol;
+	Label musicVol;
+	Label serverLabel;
+	Label chnlLabel;
+	Label defIRCNickLabel;
+	Label altIRCNickLabel;
 	TextEntry serverAddress;
 	TextEntry channelList;
 	TextEntry defNick;
@@ -41,30 +41,39 @@ public class GameOptions extends Window{
     public GameOptions(Widget parent) {
     	super (CustomConfig.windowSize.div(2).add(-200,-200), Coord.z.add(200,200), parent, "Game Options", true);
 
-    	//	SFX volume bar
-    	sfxVolBar = new FillBox(Coord.z.add(sfxVol.sz().x + 5, 0), Coord.z.add(120,20), CustomConfig.sfxVol, this);
+    	//	SFX volume
+    	sfxVol = new Label(new Coord(0,0), this, "SFX Vol:");
+    	sfxVolBar = new FillBox(Coord.z.add(sfxVol.sz.x + 5, 0), Coord.z.add(120,20), CustomConfig.sfxVol, this);
 
     	//	Music volume bar
-    	musicVolBar = new FillBox(Coord.z.add(sfxVol.sz().x + 5, 30), Coord.z.add(120, 20), CustomConfig.musicVol, this);
+    	musicVol = new Label(new Coord(0, 30), this, "Music Vol:");
+    	musicVolBar = new FillBox(Coord.z.add(sfxVol.sz.x + 5, 30), Coord.z.add(120, 20), CustomConfig.musicVol, this);
 
     	//	Server entry
-    	serverAddress = new TextEntry(Coord.z.add(sfxVol.sz().x + 5, 60), Coord.z.add(120, 15),
+    	serverLabel = new Label(new Coord(0,60), this, "Server:");
+    	serverAddress = new TextEntry(Coord.z.add(sfxVol.sz.x + 5, 60), Coord.z.add(120, 15),
     					 this, CustomConfig.ircServerAddress);
     	serverAddress.badchars = " ";
+    	
     	//	Channel list entry
+    	chnlLabel = new Label(new Coord(0,80), this, "Channels:");
     	String channels = "";
     	for(Listbox.Option channel : CustomConfig.ircChannelList)
     	{
     		channels += channel.name + " " + channel.disp;
     		channels = channels.trim() + " ";
     	}
-    	channelList = new TextEntry(Coord.z.add(sfxVol.sz().x + 5, 80), Coord.z.add(120, 15),
+    	channelList = new TextEntry(Coord.z.add(sfxVol.sz.x + 5, 80), Coord.z.add(120, 15),
     					 this, channels.trim());
+    					 
     	//	Nickname entries
-    	defNick = new TextEntry(Coord.z.add(sfxVol.sz().x + 5, 100), Coord.z.add(120, 15),
+    	defIRCNickLabel = new Label(new Coord(0,100), this, "IRC Nick:");
+    	defNick = new TextEntry(Coord.z.add(sfxVol.sz.x + 5, 100), Coord.z.add(120, 15),
     					 this, CustomConfig.ircDefNick);
     	defNick.badchars = "~@#$%^& ";
-    	altNick = new TextEntry(Coord.z.add(sfxVol.sz().x + 5, 120), Coord.z.add(120, 15),
+    	
+    	altIRCNickLabel = new Label(new Coord(0, 120), this, "Alt Nick:");
+    	altNick = new TextEntry(Coord.z.add(sfxVol.sz.x + 5, 120), Coord.z.add(120, 15),
     					 this, CustomConfig.ircAltNick);
     	altNick.badchars = defNick.badchars;
 
@@ -88,16 +97,6 @@ public class GameOptions extends Window{
     	ui.bind(soundToggle, CustomConfig.wdgtID++);
     	ui.bind(okBtn, CustomConfig.wdgtID++);
     	ui.bind(cancelBtn, CustomConfig.wdgtID++);
-    }
-    public void draw(GOut g)
-    {
-    	super.draw(g);
-    	g.image(sfxVol.img ,Coord.z.add(10,20));	//	SFX Volume
-    	g.image(musicVol.img, Coord.z.add(10,50));
-    	g.image(serverLabel.img, Coord.z.add(10,80));	//	Server Address
-    	g.image(chnlLabel.img, Coord.z.add(10,100));	//	Channel List
-    	g.image(defIRCNickLabel.img, Coord.z.add(10,120));
-    	g.image(altIRCNickLabel.img, Coord.z.add(10,140));
     }
     public void wdgmsg(Widget sender, String msg, Object... args) {
 		if(sender == cbtn)
