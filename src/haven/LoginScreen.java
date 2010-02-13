@@ -141,7 +141,7 @@ public class LoginScreen extends Widget {
 	    if(this.error != null)
 		this.error = null;
 	    if(error != null)
-		this.error = textf.render(error, java.awt.Color.RED);
+		this.error = (Text)textf.render(error, java.awt.Color.RED);
 	}
     }
     
@@ -150,7 +150,7 @@ public class LoginScreen extends Widget {
 	    if(progress != null)
 		progress = null;
 	    if(p != null)
-		progress = Text.render(p, java.awt.Color.WHITE);
+		progress = (Text)textfs.render(p, java.awt.Color.WHITE);
 	}
     }
     

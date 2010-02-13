@@ -64,7 +64,7 @@ public class FlowerMenu extends Widget {
 	public Petal(String name) {
 	    super(Coord.z, Coord.z, FlowerMenu.this);
 	    this.name = name;
-	    text = Text.render(name, ptc);
+	    text = (Text)ptf.render(name, ptc);
 	    sz = new Coord(text.sz().x + 25, ph);
 	}
 		
