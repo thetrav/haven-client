@@ -41,11 +41,11 @@ public class Speaking extends GAttrib {
 	    sb = new IBox("gfx/hud/emote", "tl", "tr", "bl", "br", "el", "er", "et", "eb");
 	svans = Resource.loadtex("gfx/hud/emote/svans");
 	this.off = off;
-	this.text = Text.render(text, Color.BLACK);
+	this.text = (Text)Text.render(text, Color.BLACK);
     }
 	
     public void update(String text) {
-	this.text = Text.render(text, Color.BLACK);
+	this.text = (Text)Text.render(text, Color.BLACK);
     }
 	
     public void draw(GOut g, Coord c) {
