@@ -183,7 +183,7 @@ public class BuddyWnd extends Window {
 		am = atime;
 		unit = "second";
 	    }
-	    this.atime = Text.render("Last seen: " + am + " " + unit + ((am > 1)?"s":"") + " ago");
+	    this.atime = (Text)Text.render("Last seen: " + am + " " + unit + ((am > 1)?"s":"") + " ago");
 	}
 
 	public void uimsg(String msg, Object... args) {

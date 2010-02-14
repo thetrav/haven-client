@@ -39,7 +39,7 @@ public class Progress extends Widget {
 	
     public Progress(Coord c, Widget parent, int p) {
 	super(c, new Coord(75, 20), parent);
-	text = Text.renderf(FlowerMenu.pink, "%d%%", p);
+	text = (Text)Text.renderf(FlowerMenu.pink, "%d%%", p);
     }
 	
     public void draw(GOut g) {
