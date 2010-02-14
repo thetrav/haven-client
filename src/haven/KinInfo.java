@@ -47,7 +47,7 @@ public class KinInfo extends GAttrib {
     
     public Tex rendered() {
 	if(rnm == null)
-	    rnm = new TexI(Utils.outline2(nfnd.render(name, BuddyWnd.gc[group]).img, Utils.contrast(BuddyWnd.gc[group])));
+	    rnm = new TexI(Utils.outline2(((Text)nfnd.render(name, BuddyWnd.gc[group])).img, Utils.contrast(BuddyWnd.gc[group])));
 	return(rnm);
     }
 }
