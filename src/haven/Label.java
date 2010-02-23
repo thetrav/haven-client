@@ -49,7 +49,7 @@ public class Label extends Widget {
     public Label(Coord c, Widget parent, String text, Text.Foundry f) {
 	super(c, Coord.z, parent);
 	this.f = f;
-	this.text = f.render(texts = text, this.col);
+	this.text = (Text)f.render(texts = text, this.col);
 	sz = this.text.sz();
     }
 

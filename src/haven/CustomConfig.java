@@ -111,6 +111,8 @@ public class CustomConfig {
 		}
 	}
 	public static Coord windowSize = new Coord(800, 600);
+	public static Coord windowCenter = windowSize.div(2);
+	public static Coord invCoord = Coord.z;
 	public static int sfxVol = 100;
 	public static int musicVol = 100;
 	public static String ircServerAddress = "irc.synirc.net";
@@ -125,6 +127,7 @@ public class CustomConfig {
 	public static boolean isIRCOn = true;
 	public static boolean hasNightVision = false;
 	public static boolean isSaveable = false;
+	public static boolean noChars = true;
 	public static CustomConsole console;
 
 	public static boolean logLoad = false;
@@ -143,9 +146,19 @@ public class CustomConfig {
 		activeCharacter = new CharData(name);
 		characterList.add(activeCharacter);
 	}
+	public static void setWindowSize(int x, int y)
+	{
+		setWindowSize(new Coord(x, y));
+	}
+	public static void setWindowSize(Coord size)
+	{
+		windowSize = new Coord(size);
+		windowCenter = windowSize.div(2);
+	}
 	public static void setDefaults()
 	{
-		windowSize = new Coord(800,600);
+		setWindowSize(800, 600);
+		
 		sfxVol = 100;
 		musicVol = 100;
 		ircServerAddress = "irc.synirc.net";
@@ -197,6 +210,7 @@ public class CustomConfig {
 
 			    		value = atts.getValue("height") == null ? "1024" : atts.getValue("height");
 			    		windowSize.y = Integer.parseInt(value);
+			    		setWindowSize(windowSize);
 			    	}else if(key.equals("SOUND")){
 			    		value = atts.getValue("enabled") == null ? "true" : atts.getValue("enabled");
 			    		isSoundOn = Boolean.parseBoolean(value);
@@ -234,6 +248,7 @@ public class CustomConfig {
 			    		beltListElementActive = true;
 			    		activeCharacter = new CharData(atts.getValue("name"));
 			    		activeCharacter.hudActiveBelt = Integer.parseInt(atts.getValue("active-belt"));
+			    		noChars = false;
 			    	}else if(key.equals("BELT")	&& !(beltElementActive || ircElementActive)
 			    								&& beltListElementActive){
 			    		beltElementActive = true;
@@ -269,7 +284,7 @@ public class CustomConfig {
     		if(windowSize.x < 800 || windowSize.y < 600)
     		{
     			System.out.println("Window size must be at least 800x600");
-    			windowSize = new Coord(800,600);
+    			setWindowSize(800, 600);
     		}
     		return true;
     	}catch (FileNotFoundException fileNotFound){
@@ -327,6 +342,7 @@ public class CustomConfig {
 
 	    		for(CharData cData : characterList)
 	    		{
+	    			if(noChars) break;
 	    			if(cData.name.equals(activeCharacter.name))	cData.hudActiveBelt = activeCharacter.hudActiveBelt;
 	    			writer.write("\t<BELT-LIST name=\"" + cData.name
 	    					+ "\" active-belt=\"" + Integer.toString(cData.hudActiveBelt) + "\">\n");
@@ -563,6 +579,7 @@ public class CustomConfig {
     												  : Integer.parseInt(xField.getText());
     				windowSize.y = stdRes.isEnabled() ? ((Coord)stdRes.getSelectedItem()).y
     												  : Integer.parseInt(yField.getText());
+    				setWindowSize(windowSize);
     				saveSettings();
     				Thread mainThread = new Thread(){
     					public void run()
@@ -581,6 +598,7 @@ public class CustomConfig {
     		configFrame.setVisible(true);
     	} else
     	{
+    		saveSettings();
     		MainFrame.main(args);
     	}
     }

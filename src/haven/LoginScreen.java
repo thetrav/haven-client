@@ -41,11 +41,11 @@ public class LoginScreen extends Widget {
     }
 	
     public LoginScreen(Widget parent) {
-	super(Coord.z, new Coord(800, 600), parent);
+	super(Coord.z, CustomConfig.windowSize, parent);
 	setfocustab(true);
 	parent.setfocus(this);
-	new Img(Coord.z, bg, this);
-	new Img(new Coord(420, 215).add(logo.sz().div(2).inv()), logo, this);
+	new Img(CustomConfig.windowCenter.add(bg.sz().div(2).inv()), bg, this);
+	new Img(CustomConfig.windowCenter.add(20, -85).add(logo.sz().div(2).inv()), logo, this); 
     }
 
     private static abstract class Login extends Widget {
@@ -62,7 +62,7 @@ public class LoginScreen extends Widget {
 	CheckBox savepass;
 		
 	private Pwbox(String username, boolean save) {
-	    super(new Coord(345, 310), new Coord(150, 150), LoginScreen.this);
+	    super(CustomConfig.windowCenter.add(-55, 10), new Coord(150, 150), LoginScreen.this);
 	    setfocustab(true);
 	    new Label(new Coord(0, 0), this, "User name", textf);
 	    user = new TextEntry(new Coord(0, 20), new Coord(150, 20), this, username);
@@ -102,7 +102,7 @@ public class LoginScreen extends Widget {
 	Button btn;
 		
 	private Tokenbox(String username) {
-	    super(new Coord(295, 310), new Coord(250, 100), LoginScreen.this);
+	    super(CustomConfig.windowCenter.add(-105, 10), new Coord(250, 100), LoginScreen.this);
 	    label = textfs.render("Identity is saved for " + username, java.awt.Color.WHITE);
 	    btn = new Button(new Coord(75, 30), 100, this, "Forget me");
 	}
@@ -131,7 +131,7 @@ public class LoginScreen extends Widget {
 
     private void mklogin() {
 	synchronized(ui) {
-	    btn = new IButton(new Coord(373, 460), this, Resource.loadimg("gfx/hud/buttons/loginu"), Resource.loadimg("gfx/hud/buttons/logind"));
+	    btn = new IButton(CustomConfig.windowCenter.add(-27, 160), this, Resource.loadimg("gfx/hud/buttons/loginu"), Resource.loadimg("gfx/hud/buttons/logind"));
 	    progress(null);
 	}
     }
@@ -196,9 +196,9 @@ public class LoginScreen extends Widget {
     public void draw(GOut g) {
 	super.draw(g);
 	if(error != null)
-	    g.image(error.tex(), new Coord(420 - (error.sz().x / 2), 500));
+	    g.image(error.tex(), new Coord(CustomConfig.windowCenter.x - (error.sz().x / 2), CustomConfig.windowCenter.y + 200));
 	if(progress != null)
-	    g.image(progress.tex(), new Coord(420 - (progress.sz().x / 2), 350));
+	    g.image(progress.tex(), new Coord(CustomConfig.windowCenter.x + 20 - (progress.sz().x / 2), CustomConfig.windowCenter.y + 50));
     }
 	
     public boolean type(char k, java.awt.event.KeyEvent ev) {

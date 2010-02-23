@@ -576,7 +576,10 @@ public class SlenHud extends ConsoleHost implements DTarget, DropTarget, Console
 	public boolean drop(Coord cc, Coord ul) {
 		int slot = beltslot(cc);
 		if(slot != -1) {
-			wdgmsg("setbelt", slot, 0);
+			if(CustomConfig.noChars)
+				error("You must restart the client to set and save your hotkeys");
+			else
+				wdgmsg("setbelt", slot, 0);
 			return(true);
 		}
 		return(false);
@@ -588,6 +591,10 @@ public class SlenHud extends ConsoleHost implements DTarget, DropTarget, Console
     public boolean dropthing(Coord c, Object thing) {
 	int slot = beltslot(c);
 	if(slot != -1) {
+		if(CustomConfig.noChars){
+			error("You must restart the client to set and save your hotkeys");
+			return true;
+		}
 	    if(thing instanceof Resource) {
 		Resource res = (Resource)thing;
 		if(res.layer(Resource.action) != null) {
@@ -603,6 +610,8 @@ public class SlenHud extends ConsoleHost implements DTarget, DropTarget, Console
     }
     public void initBelt()
     {
+    	if(CustomConfig.noChars)
+    		return;
     	activeBelt = CustomConfig.activeCharacter.hudActiveBelt;
 		synchronized(belt)
 		{
