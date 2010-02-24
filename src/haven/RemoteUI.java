@@ -81,7 +81,7 @@ public class RemoteUI implements UI.Receiver {
 		    for(int i = 0; i < args.length; i++)
 		    	System.out.print("|" + i + "| " + args[i] + "\t");
 	*/	    ui.newwidget(id, type, c, parent, args);
-			if(CustomConfig.noChars){
+			if(false && CustomConfig.noChars){
 			    Window warning = new Window(CustomConfig.windowCenter.add(0, -20), new Coord(200,40), ui.root, "WARNING!", false){
 			    		public boolean mousedown(Coord c, int btn){return true;}
 			    		public boolean mouseup(Coord c, int btn){return true;}
