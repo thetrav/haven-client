@@ -629,7 +629,7 @@ public class SlenHud extends ConsoleHost implements DTarget, DropTarget, Console
     }
     public void destroy()
     {
-    	ircConsole.IRC.close();
+    	if(ircConsole.IRC != null)	ircConsole.IRC.close();
     	super.destroy();
     }
     private Map<String, Console.Command> cmdmap = new TreeMap<String, Console.Command>();

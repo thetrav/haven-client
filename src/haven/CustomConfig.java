@@ -16,6 +16,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JCheckBox;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.Container;
@@ -128,6 +129,7 @@ public class CustomConfig {
 	public static boolean hasNightVision = false;
 	public static boolean isSaveable = false;
 	public static boolean noChars = true;
+	public static boolean warningCreated = false;
 	public static CustomConsole console;
 
 	public static boolean logLoad = false;
@@ -374,6 +376,7 @@ public class CustomConfig {
     		final JPanel ircSettingsPanel = new JPanel(new GridBagLayout(), true);
     		JButton startBtn = new JButton("Start!");
     		GridBagConstraints constraints;
+    		final JCheckBox ircOn = new JCheckBox("IRC Enabled", true);
     		final FilteredTextField xField = new FilteredTextField();
     		final FilteredTextField yField = new FilteredTextField();
     		final FilteredTextField ircDefNickField = new FilteredTextField();
@@ -463,6 +466,11 @@ public class CustomConfig {
     		constraints.gridy = 2;
     		constraints.insets.top = 10;
     		clientSettingsPanel.add(startBtn, constraints);
+    		
+    		constraints.gridx = 1;
+    		constraints.gridy = 3;
+    		constraints.insets.top = 0;
+    		clientSettingsPanel.add(ircOn, constraints);
 
     		typeStandard.addChangeListener(new ChangeListener(){
     			public void stateChanged(ChangeEvent e)

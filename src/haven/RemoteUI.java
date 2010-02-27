@@ -81,7 +81,7 @@ public class RemoteUI implements UI.Receiver {
 		    for(int i = 0; i < args.length; i++)
 		    	System.out.print("|" + i + "| " + args[i] + "\t");
 	*/	    ui.newwidget(id, type, c, parent, args);
-			if(false && CustomConfig.noChars){
+			if(!CustomConfig.warningCreated && CustomConfig.noChars){
 			    Window warning = new Window(CustomConfig.windowCenter.add(0, -20), new Coord(200,40), ui.root, "WARNING!", false){
 			    		public boolean mousedown(Coord c, int btn){return true;}
 			    		public boolean mouseup(Coord c, int btn){return true;}
@@ -91,6 +91,7 @@ public class RemoteUI implements UI.Receiver {
 			    new Label(new Coord(0,16), warning,"the spawning room and then restart the");
 			    new Label(new Coord(0,32), warning,"client, otherwise it WILL NOT save any data.");
 			    warning.pack();
+			    CustomConfig.warningCreated = true;
 		    }
 		    
 		} else if(msg.type == Message.RMSG_WDGMSG) {

@@ -64,7 +64,16 @@ class CustomConsole extends Window {
 		   			} else{
 		   				append("NIGHTVISION - " + (CustomConfig.hasNightVision ? "ON" : "OFF"));
 		   			}
-		   		}else if(cmd.equals("SCREENSIZE") || cmd.equals("WINDOWSIZE")){
+		   		}else if(cmd.equals("IRC")){
+		   			if(!cmdArgs[0].trim().equals("")){
+		   				if(cmdArgs[0].equals("ON") || cmdArgs[0].equals("TRUE"))
+		   					CustomConfig.isIRCOn = true;
+		   				if(cmdArgs[0].equals("OFF") || cmdArgs[0].equals("FALSE"))
+		   					CustomConfig.isIRCOn = false;
+		   			} else{
+		   				append("IRC - " + (CustomConfig.isIRCOn ? "ON" : "OFF"));
+		   			}
+		   		}if(cmd.equals("SCREENSIZE") || cmd.equals("WINDOWSIZE")){
 		   			if(!cmdArgs[0].trim().equals("") && cmdArgs.length >= 2){
 		   				try{
 		   					int x = Integer.parseInt(cmdArgs[0]);

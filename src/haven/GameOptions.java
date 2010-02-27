@@ -34,6 +34,7 @@ public class GameOptions extends Window{
 	FillBox musicVolBar;
 	CheckBox musicToggle;
 	CheckBox soundToggle;
+	CheckBox ircToggle;
 	Listbox channelListbox;
 	Button okBtn;
 	Button cancelBtn;
@@ -84,6 +85,10 @@ public class GameOptions extends Window{
 		//	Music toggle
     	musicToggle = new CheckBox(Coord.z.add(soundToggle.sz.x,140), this, "Music On/Off");
     	musicToggle.a = CustomConfig.isMusicOn;
+    	
+    	//	IRC toggle
+    	ircToggle = new CheckBox(Coord.z.add(0,160), this, "IRC On/Off");
+    	ircToggle.a = CustomConfig.isIRCOn;
 
     	//	Ok button
 	//	okBtn = new Button(new Coord(50, 190), 50, this, "Ok");
@@ -97,6 +102,7 @@ public class GameOptions extends Window{
     	ui.bind(soundToggle, CustomConfig.wdgtID++);
     	ui.bind(okBtn, CustomConfig.wdgtID++);
     	ui.bind(cancelBtn, CustomConfig.wdgtID++);
+    	pack();
     }
     public void wdgmsg(Widget sender, String msg, Object... args) {
 		if(sender == cbtn)
