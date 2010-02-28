@@ -125,6 +125,9 @@ public class GameOptions extends Window{
 		{
 			CustomConfig.isSoundOn = args[0] != null ? ((Boolean)args[0]).booleanValue() : CustomConfig.isSoundOn;
 			return;
+		}else if(sender == ircToggle && msg == "ch"){
+			CustomConfig.isIRCOn = args[0] != null ? ((Boolean)args[0]).booleanValue() : CustomConfig.isIRCOn;
+			return;
 		}else if(sender == okBtn && msg == "activate")
 		{
 			return;
