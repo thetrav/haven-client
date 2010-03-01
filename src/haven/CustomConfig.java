@@ -142,11 +142,15 @@ public class CustomConfig {
 		{
 			if(cData.name.equalsIgnoreCase(name)){
 				activeCharacter = cData;
+				CustomConfig.isSaveable = true;
+				CustomConfig.noChars = false;
 				return;
 			}
 		}
 		activeCharacter = new CharData(name);
 		characterList.add(activeCharacter);
+		CustomConfig.isSaveable = true;
+		CustomConfig.noChars = false;
 	}
 	public static void setWindowSize(int x, int y)
 	{
