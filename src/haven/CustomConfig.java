@@ -129,12 +129,12 @@ public class CustomConfig {
 	public static boolean hasNightVision = false;
 	public static boolean isSaveable = false;
 	public static boolean noChars = true;
-	public static boolean warningCreated = false;
 	public static CustomConsole console;
 
 	public static boolean logLoad = false;
 	public static boolean logSave = false;
 	public static boolean logIRC = false;
+	public static boolean logServerMessages = false;
 
 	public static void setActiveCharacter(String name)
 	{

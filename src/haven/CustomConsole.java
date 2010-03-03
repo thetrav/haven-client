@@ -5,6 +5,29 @@ class CustomConsole extends Window {
 	public static ExtTextlog out;
 	public TextEntry in;
 	public static String log = "IRC-Extended Client Console - Type HELP for a list of commands";
+	public static String newText = "";
+	public static boolean logChanged = false;
+	public static void log(String text)
+	{
+		newText += "\n" + text;
+		logChanged = true;
+	}
+	public void draw(GOut g)
+	{
+		if(logChanged){
+			append(newText);
+			newText = "";
+			logChanged = false;
+		}
+		super.draw(g);
+	}
+	public CustomConsole(CustomConsole oldConsole, Widget newParent)
+	{
+		super(oldConsole.c, oldConsole.sz, newParent, oldConsole.cap.text);
+		out = oldConsole.out;
+		in = oldConsole.in;
+		setfocus(in);
+	}
 	public CustomConsole(Coord c, Coord sz, Widget parent, String title)
 	{
 		super(c, sz, parent, title);
@@ -146,7 +169,18 @@ class CustomConsole extends Window {
 		   						append("DEBUG LOGS",Color.BLUE.darker());
 		   						append("IRC - " + (CustomConfig.logIRC ? "ON" : "OFF"), Color.GREEN.darker());
 		   					}
-		   				}else if(cmdArgs[0].equals("LOAD")){
+		   				}else if(cmdArgs[0].equals("SRVMSG")){
+		   					if(cmdArgs.length >= 2){
+		   						if(cmdArgs[1].equals("ON") || cmdArgs[1].equals("TRUE")){
+		   							CustomConfig.logServerMessages = true;
+		   						}else if(cmdArgs[1].equals("OFF") || cmdArgs[1].equals("FALSE")){
+		   							CustomConfig.logServerMessages = false;
+		   						}
+		   					}else{
+		   						append("DEBUG LOGS",Color.BLUE.darker());
+		   						append("SRVMSG - " + (CustomConfig.logServerMessages ? "ON" : "OFF"), Color.GREEN.darker());
+		   					}
+		   				}if(cmdArgs[0].equals("LOAD")){
 		   					if(cmdArgs.length >= 2){
 		   						if(cmdArgs[1].equals("ON") || cmdArgs[1].equals("TRUE")){
 		   							CustomConfig.logLoad = true;
@@ -162,6 +196,7 @@ class CustomConsole extends Window {
 		   				append("DEBUG LOGS", Color.BLUE.darker());
 		   				append("IRC - " + (CustomConfig.logIRC ? "ON" : "OFF"), Color.GREEN.darker());
 		   				append("LOAD - " + (CustomConfig.logLoad ? "ON" : "OFF"), Color.GREEN.darker());
+		   				append("SRVMSG - " + (CustomConfig.logServerMessages ? "ON" : "OFF"), Color.GREEN.darker());
 		   			}
 		   		}else if(cmd.equals("HELP")){
 		   			append("You can check the current status of each variable by "

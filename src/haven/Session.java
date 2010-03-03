@@ -336,25 +336,71 @@ public class Session {
 	}
 
 	private void handlerel(Message msg) {
+		//	New Widget
+		Message msgClone;
+		int id = -1;
+		String type = "";
+		Coord c = Coord.z;
+		int parent = -1;
+		Object[] args = null;
+		
+		if(CustomConfig.logServerMessages){
+			 msgClone = msg.clone();
+			try{
+				id = msgClone.uint16();
+				type = msgClone.string();
+				c = msgClone.coord();
+				parent = msgClone.uint16();
+				args = msgClone.list();
+			}catch(Exception e){}
+		}
+		if(msg.type != Message.RMSG_TILES)
+			if(CustomConfig.logServerMessages)
+				CustomConsole.log("\nMESSAGE TYPE - " + msg.type);
 	    if(msg.type == Message.RMSG_NEWWDG) {
+		    //	Message Logging
+		    if(CustomConfig.logServerMessages){
+		    	CustomConsole.log("\nCREATE\tID: " + id + "\tType: " + type + "\tCoord:" + c + "\tParent: " + parent + "\tArgs: ");
+			    for(int i = 0; i < args.length; i++)
+			    	CustomConsole.log("|" + i + "| " + args[i] + "\t");
+		    }
 		synchronized(uimsgs) {
 		    uimsgs.add(msg);
 		}
 	    } else if(msg.type == Message.RMSG_WDGMSG) {
+	    	//	Message Logging
+	    	if(CustomConfig.logServerMessages){
+	    		CustomConsole.log("\nMSG\tID: " + id + " " /*+ ui.widgets.get(new Integer(id))*/ + "\tType: " + type + "\tArgs: ");
+			    if(args != null)
+			    	for(int i = 0; i < args.length; i++)
+			    		CustomConsole.log("|" + i + "| " + args[i] + "\t");
+	    	}
 		synchronized(uimsgs) {
 		    uimsgs.add(msg);
 		}
 	    } else if(msg.type == Message.RMSG_DSTWDG) {
+	    	//	Message Logging
+	    	if(CustomConfig.logServerMessages)
+	    		CustomConsole.log("DESTROY" + '\t' + id + " " /*+ ui.widgets.get(new Integer(id))*/);
 		synchronized(uimsgs) {
 		    uimsgs.add(msg);
 		}
 	    } else if(msg.type == Message.RMSG_MAPIV) {
 		glob.map.invalblob(msg);
 	    } else if(msg.type == Message.RMSG_GLOBLOB) {
+	    	//Message Logging
+	    	if(CustomConfig.logServerMessages){
+	    		CustomConsole.log("\nGLOBLOB\tID: " + id + " " /*+ ui.widgets.get(new Integer(id))*/ + "\tType: " + type + "\tArgs: ");
+		    	if(args != null)
+		    		for(int i = 0; i < args.length; i++)
+			    		CustomConsole.log("|" + i + "| " + args[i] + "\t");
+	    	}
 		glob.blob(msg);
 	    } else if(msg.type == Message.RMSG_PAGINAE) {
 		glob.paginae(msg);
 	    } else if(msg.type == Message.RMSG_RESID) {
+	    	if(CustomConfig.logServerMessages)
+	    		CustomConsole.log("\nRESID\tID: " + id + "\tName: " + type + "\tVer: " + parent);
 		int resid = msg.uint16();
 		String resname = msg.string();
 		int resver = msg.uint16();
@@ -372,6 +418,9 @@ public class Session {
 	    } else if(msg.type == Message.RMSG_CATTR) {
 		glob.cattr(msg);
 	    } else if(msg.type == Message.RMSG_MUSIC) {
+	    	if(CustomConfig.logServerMessages){
+	    		CustomConsole.log("\nMUSIC\tName: " + type + "\tVer: " + id);
+	    	}
 		String resnm = msg.string();
 		int resver = msg.uint16();
 		boolean loop = !msg.eom() && (msg.uint8() != 0);

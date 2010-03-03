@@ -276,8 +276,10 @@ public class SlenHud extends ConsoleHost implements DTarget, DropTarget, Console
 	vc.tick();
 	if(!ui.sess.alive())
 	{
-		if(ircConsole.IRC != null) ircConsole.IRC.close();
-		ircConsole.destroy();
+		if(ircConsole != null){
+			if(ircConsole.IRC != null) ircConsole.IRC.close();
+			ircConsole.destroy();
+		}
 	}
 	Coord bgc = sz.add(bg.sz().inv());
 	g.image(bg, bgc);
@@ -629,7 +631,8 @@ public class SlenHud extends ConsoleHost implements DTarget, DropTarget, Console
     }
     public void destroy()
     {
-    	if(ircConsole.IRC != null)	ircConsole.IRC.close();
+    	if(ircConsole != null)
+    		if(ircConsole.IRC != null)	ircConsole.IRC.close();
     	super.destroy();
     }
     private Map<String, Console.Command> cmdmap = new TreeMap<String, Console.Command>();

@@ -77,35 +77,16 @@ public class RemoteUI implements UI.Receiver {
 		    		&&	((String)args[1]).equals("Inventory")
 		    		?	CustomConfig.invCoord   : c;
 		    }
-	/*	    System.out.print("\nCREATE\tID: " + id + "\tType: " + type + "\tCoord:" + c + "\tParent: " + parent + "\tArgs: ");
-		    for(int i = 0; i < args.length; i++)
-		    	System.out.print("|" + i + "| " + args[i] + "\t");
-	*/	    ui.newwidget(id, type, c, parent, args);
-			if(!CustomConfig.warningCreated && CustomConfig.noChars){
-			    Window warning = new Window(CustomConfig.windowCenter.add(0, -20), new Coord(200,40), ui.root, "WARNING!", false){
-			    		public boolean mousedown(Coord c, int btn){return true;}
-			    		public boolean mouseup(Coord c, int btn){return true;}
-			    		public boolean type(char key, java.awt.event.KeyEvent e){return true;}
-			    	};
-			    new Label(new Coord(0,0), warning,"If you are creating your first character, exit");
-			    new Label(new Coord(0,16), warning,"the spawning room and then restart the");
-			    new Label(new Coord(0,32), warning,"client, otherwise it WILL NOT save any data.");
-			    warning.pack();
-			    CustomConfig.warningCreated = true;
-		    }
+		    ui.newwidget(id, type, c, parent, args);
 		    
 		} else if(msg.type == Message.RMSG_WDGMSG) {
 		    int id = msg.uint16();
 		    String type = msg.string();
 		    Object[] args = msg.list();
-	/*  		System.out.print("\nMSG\tID: " + id + " " + ui.widgets.get(new Integer(id)) + "\tType: " + type + "\tArgs: ");
-		    for(int i = 0; i < args.length; i++)
-		    	System.out.print("|" + i + "| " + args[i] + "\t");
-	*/	    ui.uimsg(id, type, args);
+		    ui.uimsg(id, type, args);
 	   
 		} else if(msg.type == Message.RMSG_DSTWDG) {
 		    int id = msg.uint16();
-	//	    System.out.println("DESTROY" + '\t' + id + " " + ui.widgets.get(new Integer(id)));
 		    if(ui.widgets.get(new Integer(id)) instanceof Window){
 		    	Window wnd = (Window)ui.widgets.get(new Integer(id));
 		    	if(wnd.cap.text.equals("Inventory"))
