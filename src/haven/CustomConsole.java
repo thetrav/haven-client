@@ -26,6 +26,8 @@ class CustomConsole extends Window {
 		super(oldConsole.c, oldConsole.sz, newParent, oldConsole.cap.text);
 		out = oldConsole.out;
 		in = oldConsole.in;
+		out.parent = this;
+		in.parent = this;
 		setfocus(in);
 	}
 	public CustomConsole(Coord c, Coord sz, Widget parent, String title)
