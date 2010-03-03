@@ -32,7 +32,7 @@ class CustomConsole extends Window {
 	}
 	public CustomConsole(Coord c, Coord sz, Widget parent, String title)
 	{
-		super(c, sz, parent, title);
+		super(c, sz, parent, title, false);
 		ui.bind(this, CustomConfig.wdgtID++);
 		out = new ExtTextlog(Coord.z, sz.add(0,-20), this);
 		in = new TextEntry(new Coord(0, 200), new Coord(sz.x, 20), this, ""){
@@ -50,7 +50,6 @@ class CustomConsole extends Window {
 
 		if(log != null){
 			final String[] lines = log.trim().split("\n");
-			log = "";
 			Thread consoleThread = new Thread(HackThread.tg(), "Console starter thread"){
 				public void run(){
 					for(int i = 0; i < lines.length; i++)
