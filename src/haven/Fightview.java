@@ -86,7 +86,6 @@ public class Fightview extends Widget {
     
     public Fightview(Coord c, Widget parent) {
         super(c.add(-bg.sz().x, 0), new Coord(bg.sz().x, (bg.sz().y + ymarg) * height), parent);
-        System.out.println(c);
 	SlenHud s = ui.root.findchild(SlenHud.class);
 	curgive = new GiveButton(cgivec, ui.root, 0) {
 		public void wdgmsg(String name, Object... args) {
@@ -199,6 +198,7 @@ public class Fightview extends Widget {
 	    Relation rel = getrel((Integer)args[0]);
 	    rel.off = (Integer)args[1];
 	    rel.def = (Integer)args[2];
+	    return;
         } else if(msg == "cur") {
             try {
                 Relation rel = getrel((Integer)args[0]);

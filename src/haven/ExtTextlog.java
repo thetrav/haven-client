@@ -19,6 +19,7 @@ public class ExtTextlog extends Widget implements ClipboardOwner{
 	private Coord nextCharLoc = new Coord(3,0);
 	private int lineHeight = 0;
 	private Scrollbar scrollBar;
+	private boolean scrollLocked;
 	private boolean dragging = false;
 	private boolean ctrlPressed = false;
 	private Rectangle selectedArea = new Rectangle(0,0,0,0);
@@ -83,14 +84,17 @@ public class ExtTextlog extends Widget implements ClipboardOwner{
     	{
     		BufferedImage tDrawnCharacters = drawnCharacters;
     		drawnCharacters = new BufferedImage(drawnCharacters.getWidth(),
-    											drawnCharacters.getHeight() + sz.y*20,
+    											drawnCharacters.getHeight(),
     											BufferedImage.TYPE_INT_ARGB);
     		g = drawnCharacters.getGraphics();
+    		tDrawnCharacters = tDrawnCharacters.getSubimage(0,lineHeight,tDrawnCharacters.getWidth(),tDrawnCharacters.getHeight()-lineHeight);
     		g.drawImage(tDrawnCharacters,0,0, null);
+    		nextCharLoc.y -= lineHeight;
+    		scrollLocked = true;
     	}
 
     	fnd.defcol = col;
-    	if(nextCharLoc.y+lineHeight > sz.y)
+    	if(nextCharLoc.y+lineHeight > sz.y && !scrollLocked)
     	{
     		scrollBar.max++;
     	}
@@ -268,7 +272,6 @@ public class ExtTextlog extends Widget implements ClipboardOwner{
 	    		if(selectedArea.intersects(charArea) && tGLChar.isLink())
 	    		{
 	    			selectedArea.setBounds(0,0,0,0);
-	    			System.out.println(tGLChar.address);
 	    			return tGLChar.activate();
 	    		}
 	    	}

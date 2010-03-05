@@ -117,7 +117,6 @@ public class Charlist extends Widget {
 		    if(sender == c.plb)
 		    {
 		    	wdgmsg("play", c.name);
-		    	System.out.println(c.name + " is selected.");
 		    	CustomConfig.setActiveCharacter(c.name);
 		    	if(parent.findchild(SlenHud.class) != null)
 		    	{
