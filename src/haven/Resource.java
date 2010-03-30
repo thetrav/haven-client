@@ -61,7 +61,11 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	    if(dir == null)
 		dir = System.getenv("HAVEN_RESDIR");
 	    if(dir != null)
-		chainloader(new Loader(new FileSource(new File(dir))));
+        {
+            final File fileSource = new File(dir);
+            System.out.println("file source:"+fileSource.getAbsolutePath());
+            chainloader(new Loader(new FileSource(fileSource)));
+        }
 	} catch(Exception e) {
 	    /* Ignore these. We don't want to be crashing the client
 	     * for users just because of errors in development
@@ -392,15 +396,18 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 		res.source = src;
 		try {
 		    try {
+		        System.out.println("attemptingto load " + res.name + " from "+res.source);
 			in = src.get(res.name);
 			res.load(in);
 			res.loading = false;
 			res.notifyAll();
 			return;
 		    } catch(IOException e) {
+		        e.printStackTrace();
 			throw(new LoadException(e, res));
 		    }
 		} catch(LoadException e) {
+		    e.printStackTrace();
 		    if(next == null) {
 			res.error = e;
 			res.loading = false;
@@ -409,13 +416,14 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 			next.load(res);
 		    }
 		} catch(RuntimeException e) {
+		    e.printStackTrace();
 		    throw(new LoadException(e, res));
 		}
 	    } finally {
 		try {
 		    if(in != null)
 			in.close();
-		} catch(IOException e) {}
+		} catch(IOException e) {e.printStackTrace();}
 	    }
 	}
     }
@@ -973,6 +981,7 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	buf = new byte[2];
 	readall(in, buf);
 	int ver = Utils.uint16d(buf, 0);
+	System.out.println("ver="+ver);
 	List<Layer> layers = new LinkedList<Layer>();
 	if(this.ver == -1) {
 	    this.ver = ver;

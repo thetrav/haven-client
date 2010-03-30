@@ -1,16 +1,20 @@
 package haven;
-import java.util.*;
-import java.awt.event.KeyEvent;
+import haven.trav.TravSlenHud;
+
 import java.awt.Color;
-import org.relayirc.util.*;
-import org.relayirc.core.*;
-import org.relayirc.chatengine.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.relayirc.core.IRCConnection;
+import org.relayirc.core.IRCConnectionListener;
+import org.relayirc.util.Debug;
 
 public class SlenConsole extends ChatHW implements IRCConnectionListener
 {
 	public IRCConnection IRC;
 	public String user;
-	public SlenHud parent;
+	public TravSlenHud parent;
 	private static SlenChat tSCWnd;
 	private boolean initialized = false;
 	public List<SlenChat> wndList = new ArrayList<SlenChat>();
@@ -19,14 +23,14 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
     	Widget.addtype("slenlog", new WidgetFactory() {
 	    	public Widget create(Coord c, Widget parent, Object[] args) {
 	    		String t = (String)args[0];
-	    		SlenConsole wnd = new SlenConsole((SlenHud)parent);
+	    		SlenConsole wnd = new SlenConsole((TravSlenHud)parent);
 	    		wnd.out.append(t);
 			    return(wnd);
 	    	}
     	});
     }
 
-    public SlenConsole(SlenHud parent)
+    public SlenConsole(TravSlenHud parent)
     {
     	super(parent, "Console", false);
     	this.parent = parent;

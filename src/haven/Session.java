@@ -32,6 +32,11 @@ import java.io.*;
 import org.relayirc.core.IRCConnection;
 
 public class Session {
+    
+    public Session()
+    {
+        glob = null;
+    };
     public static final int PVER = 31;
     
     public static final int MSG_SESS = 0;
@@ -84,7 +89,7 @@ public class Session {
     String username;
     byte[] cookie;
     final Map<Integer, Indir<Resource>> rescache = new TreeMap<Integer, Indir<Resource>>();
-    public final Glob glob;
+    public Glob glob;
 	
     @SuppressWarnings("serial")
 	public class MessageException extends RuntimeException {

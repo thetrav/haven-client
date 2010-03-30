@@ -156,9 +156,14 @@ public class UI {
 	    f = res.layer(Resource.CodeEntry.class).get(WidgetFactory.class);
 	} else {
 	    f = Widget.gettype(type);
+	    if(f == null)
+	    {
+	        System.err.println("could not find factory for widget of type: "+type+" in: "+Widget.types);
+	    }
 	}
 	synchronized(this) {
 	    Widget pwdg = widgets.get(parent);
+	    System.out.println("widgets="+widgets);
 	    if(pwdg == null)
 		throw(new UIException("Null parent widget " + parent + " for " + id, type, args));
 	    Widget wdg = f.create(c, pwdg, args);
@@ -169,6 +174,7 @@ public class UI {
     }
 
     public void grabmouse(Widget wdg) {
+        System.out.println("grabbing"+wdg);
 	mousegrab = wdg;
     }
 

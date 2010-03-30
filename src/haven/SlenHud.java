@@ -72,11 +72,11 @@ public class SlenHud extends ConsoleHost implements DTarget, DropTarget, Console
     Resource[][] belt = new Resource[_BELTSIZE][_BELTSIZE];
 
     static {
-	Widget.addtype("slen", new WidgetFactory() {
-		public Widget create(Coord c, Widget parent, Object[] args) {
-		    return(new SlenHud(c, parent));
-		}
-	    });
+//	Widget.addtype("slen", new WidgetFactory() {
+//		public Widget create(Coord c, Widget parent, Object[] args) {
+//		    return(new SlenHud(c, parent));
+//		}
+//	    });
 	int h = bg.sz().y;
 	sz = new Coord(800, h);
 	sz.y = (h - fc.y > sz.y)?(h - fc.y):sz.y;

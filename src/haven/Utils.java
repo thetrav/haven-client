@@ -134,7 +134,7 @@ public class Utils {
 	}
     }
 	
-    static synchronized void setpref(String prefname, String val) {
+    public static synchronized void setpref(String prefname, String val) {
 	try {
 	    if(prefs == null)
 		prefs = Preferences.userNodeForPackage(Utils.class);

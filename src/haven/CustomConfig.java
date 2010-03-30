@@ -96,11 +96,11 @@ public class CustomConfig {
 	    	noLetters = state;
 	    }
 	}
-	static class CharData
+	public static class CharData
 	{
-		String name;
-		int hudActiveBelt = 1;
-		String[][]hudBelt = new String[SlenHud._BELTSIZE][SlenHud._BELTSIZE];
+		public String name;
+		public int hudActiveBelt = 1;
+		public String[][]hudBelt = new String[SlenHud._BELTSIZE][SlenHud._BELTSIZE];
 
 		public CharData(String name)
 		{

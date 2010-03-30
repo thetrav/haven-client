@@ -36,7 +36,7 @@ import javax.media.opengl.*;
 import javax.media.opengl.glu.GLU;
 
 public class HavenPanel extends GLCanvas implements Runnable {
-    UI ui;
+    public static UI ui;
     boolean inited = false, rdr = false;
     int w, h;
     long fd = 20, fps = 0;

@@ -26,6 +26,8 @@
 
 package haven;
 
+import haven.trav.MockSession;
+
 import java.net.*;
 import java.util.*;
 
@@ -36,6 +38,7 @@ public class Bootstrap implements UI.Receiver {
     Queue<Message> msgs = new LinkedList<Message>();
     String inituser = null;
     byte[] initcookie = null;
+    final static boolean STUBBED = false;
 	
     public static class Message {
 	int id;
@@ -63,6 +66,7 @@ public class Bootstrap implements UI.Receiver {
     }
 	
     public Session run(HavenPanel hp) throws InterruptedException {
+    if(STUBBED) return new MockSession();
 	ui = hp.newui(null);
 	ui.setreceiver(this);
 	ui.bind(new LoginScreen(ui.root), 1);

@@ -119,6 +119,7 @@ public class Button extends SSWidget {
     }
     
     public boolean mousedown(Coord c, int button) {
+        System.out.println("mouseDown on button");
 	if(button != 1)
 	    return(false);
 	a = true;

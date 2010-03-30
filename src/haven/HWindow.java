@@ -26,6 +26,8 @@
 
 package haven;
 
+import haven.trav.TravSlenHud;
+
 import java.awt.image.BufferedImage;
 
 public class HWindow extends Widget {
@@ -35,8 +37,8 @@ public class HWindow extends Widget {
 	Resource.loadimg("gfx/hud/cbtn"),
 	Resource.loadimg("gfx/hud/cbtnd"),
 	Resource.loadimg("gfx/hud/cbtnh")};
-    SlenHud shp;
-    int urgent;
+    TravSlenHud shp;
+    public int urgent;
 
     static {
 	Widget.addtype("hwnd", new WidgetFactory() {
@@ -51,9 +53,9 @@ public class HWindow extends Widget {
     }
 
     public HWindow(Widget parent, String title, boolean closable) {
-	super(new Coord(234, 29), new Coord(430, 100), parent);
+	super(new Coord(40, 60), new Coord(430, 100), parent);
 	this.title = title;
-	shp = (SlenHud)parent;
+	shp = (TravSlenHud)parent;
 	shp.addwnd(this);
 	if(closable)
 	    cbtn = new IButton(new Coord(sz.x - cbtni[0].getWidth(), 0), this, cbtni[0], cbtni[1], cbtni[2]);

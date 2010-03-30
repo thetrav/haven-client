@@ -161,6 +161,7 @@ public class MiniMap extends Widget {
     }
 
     public void draw(GOut g) {
+        g.image(Resource.loadtex("gfx/tiles/grass/grass"), c, sz);
 	Coord tc = mv.mc.div(tilesz);
 	Coord ulg = tc.div(cmaps);
 	while((ulg.x * cmaps.x) - tc.x + (sz.x / 2) > 0)

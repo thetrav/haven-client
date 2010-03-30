@@ -30,7 +30,7 @@ import java.awt.Color;
 
 public class ChatHW extends HWindow {
     TextEntry in;
-    ExtTextlog out;
+    public ExtTextlog out;
 
     static {
 	Widget.addtype("slenchat", new WidgetFactory() {
@@ -62,7 +62,7 @@ public class ChatHW extends HWindow {
 	    out.append((String)args[0], col);
 	} else if(msg == "focusme") {
 	    shp.setawnd(this);
-	    shp.vc.show();
+//	    shp.vc.show();
 	    setfocus(in);
 	} else {
 	    super.uimsg(msg, args);

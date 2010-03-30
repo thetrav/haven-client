@@ -26,15 +26,18 @@
 
 package haven;
 
-import java.util.*;
+import haven.trav.TravSlenHud;
+
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class Widget {
     public UI ui;
     public Coord c, sz;
     public Widget next, prev, child, lchild, parent;
-    boolean focustab = false, focusctl = false, hasfocus = false, visible = true;
+    public boolean focustab = false, focusctl = false, hasfocus = false, visible = true;
     private boolean canfocus = false, autofocus = false;
     boolean canactivate = false, cancancel = false;
     Widget focused;
@@ -46,7 +49,7 @@ public class Widget {
 			       Makewindow.class, Chatwindow.class, Textlog.class, Equipory.class, IButton.class,
 			       Cal.class, Avaview.class, NpcChat.class,
 			       Label.class, Progress.class, VMeter.class, Partyview.class,
-			       MenuGrid.class, SlenHud.class, HWindow.class, CheckBox.class, Logwindow.class,
+			       MenuGrid.class, TravSlenHud.class, HWindow.class, CheckBox.class, Logwindow.class,
 			       MapMod.class, ISBox.class, ComMeter.class, Fightview.class, IMeter.class,
 			       GiveButton.class, Charlist.class, ComWin.class, CharWnd.class, BuddyWnd.class,
 			       ChatHW.class, Speedget.class, Bufflist.class};
@@ -284,6 +287,7 @@ public class Widget {
     }
 
     public boolean mousedown(Coord c, int button) {
+        System.out.println("mouse down on widget"+this+"button:"+button);
 	for(Widget wdg = lchild; wdg != null; wdg = wdg.prev) {
 	    if(!wdg.visible)
 		continue;

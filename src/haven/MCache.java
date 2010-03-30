@@ -29,6 +29,8 @@ package haven;
 import java.util.*;
 import haven.Resource.Tileset;
 import haven.Resource.Tile;
+import haven.trav.MapData;
+
 import java.util.zip.Inflater;
 
 public class MCache {
@@ -365,6 +367,7 @@ public class MCache {
 			grids.get(c).remove();
 			replace(grids.remove(c));
 		    }
+		    MapData.mapData(c, g.ol, g.tiles);
 		    grids.put(c, g);
 		}
 	    }
@@ -404,6 +407,7 @@ public class MCache {
 	    int id = msg.uint8();
 	    String resnm = msg.string();
 	    int resver = msg.uint16();
+	    System.out.println("tileid,"+id+",resnm,"+resnm);
 	    sets[id] = loadset(resnm, resver);
 	}
     }
