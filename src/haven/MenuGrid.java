@@ -30,6 +30,8 @@ import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.font.TextAttribute;
 import haven.Resource.AButton;
+import haven.trav.TravSlenHud;
+
 import java.util.*;
 
 public class MenuGrid extends Widget {
@@ -97,8 +99,9 @@ public class MenuGrid extends Widget {
     }
 
     public MenuGrid(Coord c, Widget parent) {
-	super(c, bgsz.mul(gsz).add(1, 1), parent);
+	super(TravSlenHud.MENU_GRID_COORD, bgsz.mul(gsz).add(1, 1), parent);
 	cons(null);
+	hide();
     }
 
     private static Comparator<Resource> sorter = new Comparator<Resource>() {
@@ -226,7 +229,7 @@ public class MenuGrid extends Widget {
 	}
     }
 
-    private void use(Resource r) {
+    public void use(Resource r) {
 	if(cons(r).length > 0) {
 	    cur = r;
 	    curoff = 0;

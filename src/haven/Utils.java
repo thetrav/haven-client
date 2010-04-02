@@ -184,7 +184,7 @@ public class Utils {
 	    return((byte)b);
     }
 	
-    static int uint16d(byte[] buf, int off) {
+    public static int uint16d(byte[] buf, int off) {
 	return(ub(buf[off]) + (ub(buf[off + 1]) * 256));
     }
 	
@@ -207,7 +207,7 @@ public class Utils {
 	buf[off + 3] = sb((int)((num & 0xff000000) >> 24));
     }
 	
-    static int int32d(byte[] buf, int off) {
+    public static int int32d(byte[] buf, int off) {
 	long u = uint32d(buf, off);
 	if(u > Integer.MAX_VALUE)
 	    return((int)((((long)Integer.MIN_VALUE) * 2) - u));
@@ -227,7 +227,7 @@ public class Utils {
 	buf[off + 1] = sb((num & 0xff00) >> 8);
     }
 	
-    static String strd(byte[] buf, int[] off) {
+    public static String strd(byte[] buf, int[] off) {
 	int i;
 	for(i = off[0]; buf[i] != 0; i++);
 	String ret;

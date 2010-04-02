@@ -367,7 +367,7 @@ public class MCache {
 			grids.get(c).remove();
 			replace(grids.remove(c));
 		    }
-		    MapData.mapData(c, g.ol, g.tiles);
+//		    MapData.mapData(c, g.ol, g.tiles);
 		    grids.put(c, g);
 		}
 	    }

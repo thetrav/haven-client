@@ -396,7 +396,6 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 		res.source = src;
 		try {
 		    try {
-		        System.out.println("attemptingto load " + res.name + " from "+res.source);
 			in = src.get(res.name);
 			res.load(in);
 			res.loading = false;
@@ -981,13 +980,12 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	buf = new byte[2];
 	readall(in, buf);
 	int ver = Utils.uint16d(buf, 0);
-	System.out.println("ver="+ver);
 	List<Layer> layers = new LinkedList<Layer>();
 	if(this.ver == -1) {
 	    this.ver = ver;
 	} else {
-	    if(ver != this.ver)
-		throw(new LoadException("Wrong res version (" + ver + " != " + this.ver + ")", this));
+//	    if(ver != this.ver)
+//		throw(new LoadException("Wrong res version (" + ver + " != " + this.ver + ")", this));
 	}
 	outer: while(true) {
 	    StringBuilder tbuf = new StringBuilder();

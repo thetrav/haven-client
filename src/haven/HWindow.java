@@ -31,6 +31,8 @@ import haven.trav.TravSlenHud;
 import java.awt.image.BufferedImage;
 
 public class HWindow extends Widget {
+    private static final Coord WINDOW_COORD = new Coord(103,40);
+    private static final Coord WINDOW_SIZE = new Coord(432,125);
     public String title;
     public IButton cbtn;
     static BufferedImage[] cbtni = new BufferedImage[] {
@@ -53,7 +55,7 @@ public class HWindow extends Widget {
     }
 
     public HWindow(Widget parent, String title, boolean closable) {
-	super(new Coord(40, 60), new Coord(430, 100), parent);
+	super(WINDOW_COORD, WINDOW_SIZE, parent);
 	this.title = title;
 	shp = (TravSlenHud)parent;
 	shp.addwnd(this);
