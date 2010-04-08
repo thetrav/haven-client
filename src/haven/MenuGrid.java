@@ -231,18 +231,23 @@ public class MenuGrid extends Widget {
 
     public void use(Resource r) {
 	if(cons(r).length > 0) {
+	    //sub-menu selected
 	    cur = r;
 	    curoff = 0;
 	} else if(r == bk) {
+	    //parent menu selected
 	    cur = cur.layer(Resource.action).parent;
 	    curoff = 0;
 	} else if(r == next) {
+	    //next button pressed
 	    if((curoff + 14) >= cons(cur).length)
 		curoff = 0;
 	    else
 		curoff += 14;
 	} else {
+	    //action button pressed
 	    wdgmsg("act", (Object[])r.layer(Resource.action).ad);
+	    ui.root.findchild(TravSlenHud.class).hideGridMenu();
 	}
     }
 
