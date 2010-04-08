@@ -32,13 +32,7 @@ import java.io.*;
 import org.relayirc.core.IRCConnection;
 
 public class Session {
-    
-    public Session()
-    {
-        glob = null;
-    };
-    public static final int PVER = 31;
-    
+    public static final int PVER = 32;
     public static final int MSG_SESS = 0;
     public static final int MSG_REL = 1;
     public static final int MSG_ACK = 2;
@@ -91,6 +85,11 @@ public class Session {
     final Map<Integer, Indir<Resource>> rescache = new TreeMap<Integer, Indir<Resource>>();
     public Glob glob;
 	
+    public Session()
+    {
+        glob = null;
+    };
+    
     @SuppressWarnings("serial")
 	public class MessageException extends RuntimeException {
 	    public Message msg;
@@ -610,8 +609,20 @@ public class Session {
 			synchronized(pending) {
 			    if(pending.size() > 0) {
 				for(Message msg : pending) {
-				    if(now - msg.last > 60) { /* XXX */
+				    int txtime;
+				    if(msg.retx == 0)
+					txtime = 0;
+				    else if(msg.retx == 1)
+					txtime = 80;
+				    else if(msg.retx < 4)
+					txtime = 200;
+				    else if(msg.retx < 10)
+					txtime = 620;
+				    else
+					txtime = 2000;
+				    if(now - msg.last > txtime) { /* XXX */
 					msg.last = now;
+					msg.retx++;
 					Message rmsg = new Message(MSG_REL);
 					rmsg.adduint16(msg.seq);
 					rmsg.adduint8(msg.type);

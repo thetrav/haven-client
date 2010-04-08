@@ -138,13 +138,23 @@ public class TravSlenHud extends ConsoleHost implements DTarget, DropTarget, Con
         // Village claims button
         new IButton(villageButtonCoord, this, Resource.loadimg("jlay/flagButtonLight"), Resource.loadimg("jlay/flagButtonDark"))
         {
+            boolean v = false;
+
             public void click()
             {
                 if (!Bootstrap.STUBBED)
                 {
                     MapView mv = findMapView();
-                    mv.authdraw = !mv.authdraw;
-                    Utils.setpref("authdraw", mv.authdraw ? "on" : "off");
+                    if (v)
+                    {
+                        mv.disol(2, 3);
+                        v = false;
+                    }
+                    else
+                    {
+                        mv.enol(2, 3);
+                        v = true;
+                    }
                 }
                 else
                 {
@@ -192,7 +202,7 @@ public class TravSlenHud extends ConsoleHost implements DTarget, DropTarget, Con
         slenBelt = new SlenBelt();
         slenBelt.initBelt();
     }
-    
+
     private MapView findMapView()
     {
         return ui.root.findchild(MapView.class);
@@ -225,7 +235,7 @@ public class TravSlenHud extends ConsoleHost implements DTarget, DropTarget, Con
         findMenuGrid().show();
         selectedMenu = menu;
     }
-    
+
     public void hideGridMenu()
     {
         findMenuGrid().hide();
@@ -467,7 +477,7 @@ public class TravSlenHud extends ConsoleHost implements DTarget, DropTarget, Con
             }
         });
     }
-    
+
     @Override
     public Map<String, Console.Command> findcmds()
     {
