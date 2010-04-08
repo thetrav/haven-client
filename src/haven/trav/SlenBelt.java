@@ -148,7 +148,7 @@ public class SlenBelt
         {
             if (CustomConfig.noChars)
             {
-                travSlenHud.error("You must restart the client to set and save your hotkeys");
+//                travSlenHud.error("You must restart the client to set and save your hotkeys");
                 return true;
             }
             if (thing instanceof Resource)
@@ -174,7 +174,8 @@ public class SlenBelt
         if (slot != -1)
         {
             if (CustomConfig.noChars)
-                travSlenHud.error("You must restart the client to set and save your hotkeys");
+                System.out.println("bah");
+//                travSlenHud.error("You must restart the client to set and save your hotkeys");
             else
                 travSlenHud.wdgmsg("setbelt", slot, 0);
             return (true);

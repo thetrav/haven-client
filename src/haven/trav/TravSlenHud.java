@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class TravSlenHud extends ConsoleHost implements DTarget, DropTarget, Console.Directory
+public class TravSlenHud extends Widget //ConsoleHost implements DTarget, DropTarget, Console.Directory
 {
     private static final int TAB_Y = 50;
     private static final int TAB_X = 5;
@@ -58,7 +58,9 @@ public class TravSlenHud extends ConsoleHost implements DTarget, DropTarget, Con
     private HWindow activeWindow;
 
     private Resource selectedMenu = null;
-    private final SlenBelt slenBelt;
+    
+//    private static final boolean USE_BELT = false;
+//    private final SlenBelt slenBelt;
 
     public static final Color urgcols[] = { null, new Color(0, 128, 255), new Color(255, 128, 0), new Color(255, 0, 0), };
 
@@ -197,10 +199,17 @@ public class TravSlenHud extends ConsoleHost implements DTarget, DropTarget, Con
         {
             new MiniMap(MINI_MAP_COORD, new Coord(125, 125), this, ui.mainview);
         }
-
-        // belt
-        slenBelt = new SlenBelt();
-        slenBelt.initBelt();
+//
+//        // belt
+//        if (USE_BELT)
+//        {
+//            slenBelt = new SlenBelt();
+//            slenBelt.initBelt();
+//        }
+//        else
+//        {
+//            slenBelt = null;
+//        }
     }
 
     private MapView findMapView()
@@ -220,7 +229,7 @@ public class TravSlenHud extends ConsoleHost implements DTarget, DropTarget, Con
             }
             else
             {
-                menuGrid.use(menu);
+                useGridMenu(menu);
             }
         }
     }
@@ -232,12 +241,16 @@ public class TravSlenHud extends ConsoleHost implements DTarget, DropTarget, Con
 
     public void useGridMenu(Resource menu)
     {
-        findMenuGrid().show();
+        System.out.println("showing menu");
+        final MenuGrid menuGrid = findMenuGrid();
+        menuGrid.use(menu);
+        menuGrid.show();
         selectedMenu = menu;
     }
 
     public void hideGridMenu()
     {
+        System.out.println("hiding menu");
         findMenuGrid().hide();
         selectedMenu = null;
     }
@@ -280,15 +293,23 @@ public class TravSlenHud extends ConsoleHost implements DTarget, DropTarget, Con
     public void draw(final GOut g)
     {
         g.image(bg, new Coord(0, 0));
-        slenBelt.draw(g);
+//        if (USE_BELT)
+//            slenBelt.draw(g);
         super.draw(g);
     }
 
-    @Override
-    public boolean globtype(char ch, KeyEvent ev)
-    {
-        return slenBelt.globType(ch, ev, this) ? true : super.globtype(ch, ev);
-    }
+//    @Override
+//    public boolean globtype(char ch, KeyEvent ev)
+//    {
+//        if (USE_BELT)
+//        {
+//            return slenBelt.globType(ch, ev, this) ? true : super.globtype(ch, ev);
+//        }
+//        else
+//        {
+//            return super.globtype(ch, ev);
+//        }
+//    }
 
     @Override
     public void wdgmsg(Widget sender, String msg, Object... args)
@@ -440,48 +461,58 @@ public class TravSlenHud extends ConsoleHost implements DTarget, DropTarget, Con
         updurgency(window, -1);
     }
 
-    public boolean mousedown(Coord c, int button)
-    {
-        return slenBelt.mouseDown(c, button, this) ? true : super.mousedown(c, button);
-    }
-
-    public boolean dropthing(Coord c, Object thing)
-    {
-        return slenBelt.dropthing(c, thing, this);
-    }
-
-    public boolean drop(Coord cc, Coord ul)
-    {
-        return slenBelt.drop(cc, ul, this);
-    }
-
-    @Override
-    public void error(String msg)
-    {
-        System.out.println("error:" + msg);
-    }
-
-    @Override
-    public boolean iteminteract(Coord cc, Coord ul)
-    {
-        return (false);
-    }
-
-    private Map<String, Console.Command> cmdmap = new TreeMap<String, Console.Command>();
-    {
-        cmdmap.put("afk", new Console.Command()
-        {
-            public void run(Console cons, String[] args)
-            {
-                wdgmsg("afk");
-            }
-        });
-    }
-
-    @Override
-    public Map<String, Console.Command> findcmds()
-    {
-        return (cmdmap);
-    }
+//    public boolean mousedown(Coord c, int button)
+//    {
+//        if (USE_BELT)
+//            return slenBelt.mouseDown(c, button, this) ? true : super.mousedown(c, button);
+//        else
+//            return false;
+//    }
+//
+//    public boolean dropthing(Coord c, Object thing)
+//    {
+//
+//        if (USE_BELT)
+//            return slenBelt.dropthing(c, thing, this);
+//        else
+//            return false;
+//    }
+//
+//    public boolean drop(Coord cc, Coord ul)
+//    {
+//        if (USE_BELT)
+//            return slenBelt.drop(cc, ul, this);
+//        else
+//            return false;
+//    }
+//
+//    @Override
+//    public void error(String msg)
+//    {
+//        System.out.println("error:" + msg);
+//    }
+//
+//    @Override
+//    public boolean iteminteract(Coord cc, Coord ul)
+//    {
+//        return (false);
+//    }
+//
+//    private Map<String, Console.Command> cmdmap = new TreeMap<String, Console.Command>();
+//    {
+//        cmdmap.put("afk", new Console.Command()
+//        {
+//            public void run(Console cons, String[] args)
+//            {
+//                wdgmsg("afk");
+//            }
+//        });
+//    }
+//
+//    @Override
+//    public Map<String, Console.Command> findcmds()
+//    {
+//        return (cmdmap);
+//    }
 
 }
