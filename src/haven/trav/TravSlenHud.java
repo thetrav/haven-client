@@ -131,7 +131,18 @@ public class TravSlenHud extends Widget //ConsoleHost implements DTarget, DropTa
             @Override
             public void click()
             {
-                selectMenu("Travel");
+                //                selectMenu("Travel");
+                try
+                {
+                ui.newwidget(100, "im", new Coord(0,0), 1, "gfx/hud/meter/hp", Color.GREEN, new Integer(30));
+                ui.newwidget(101, "im", new Coord(0,0), 1, "gfx/hud/meter/hngr", Color.RED, new Integer(35));
+                ui.newwidget(102, "im", new Coord(0,0), 1, "gfx/hud/meter/nrj", Color.BLUE, new Integer(40));
+                ui.newwidget(103, "im", new Coord(0,0), 1, "gfx/hud/meter/auth", Color.YELLOW, new Integer(50));
+                }
+                catch(Exception e)
+                {
+                    e.printStackTrace();
+                }
             }
         };
 

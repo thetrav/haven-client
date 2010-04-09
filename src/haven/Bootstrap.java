@@ -38,7 +38,7 @@ public class Bootstrap implements UI.Receiver {
     Queue<Message> msgs = new LinkedList<Message>();
     String inituser = null;
     byte[] initcookie = null;
-    public final static boolean STUBBED = false;
+    public final static boolean STUBBED = true;
 	
     public static class Message {
 	int id;
