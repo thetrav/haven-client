@@ -433,7 +433,6 @@ public class MCache {
 	    int id = msg.uint8();
 	    String resnm = msg.string();
 	    int resver = msg.uint16();
-	    System.out.println("tileid,"+id+",resnm,"+resnm);
 	    sets[id] = loadset(resnm, resver);
 	}
     }

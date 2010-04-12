@@ -63,7 +63,6 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	    if(dir != null)
         {
             final File fileSource = new File(dir);
-            System.out.println("file source:"+fileSource.getAbsolutePath());
             chainloader(new Loader(new FileSource(fileSource)));
         }
 	} catch(Exception e) {
@@ -402,7 +401,7 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 			res.notifyAll();
 			return;
 		    } catch(IOException e) {
-		        e.printStackTrace();
+		        
 			throw(new LoadException(e, res));
 		    }
 		} catch(LoadException e) {
@@ -1142,7 +1141,6 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	    System.out.print("\033[1GLoading... " + d + "\033[K");
 	    Thread.sleep(500);
 	}
-	System.out.println();
 	Collection<Resource> cur = new LinkedList<Resource>();
 	for(Map.Entry<String, Integer> e : orig.entrySet()) {
 	    String nm = e.getKey();
@@ -1151,7 +1149,6 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 	    res.loadwait();
 	    res.checkerr();
 	    if(res.ver != ver)
-		System.out.println(nm + ": " + ver + " -> " + res.ver);
 	    cur.add(res);
 	}
 	Writer w = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");

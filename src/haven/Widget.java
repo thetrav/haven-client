@@ -289,7 +289,6 @@ public class Widget {
     }
 
     public boolean mousedown(Coord c, int button) {
-        System.out.println("mouse down on widget"+this+"button:"+button);
 	for(Widget wdg = lchild; wdg != null; wdg = wdg.prev) {
 	    if(!wdg.visible)
 		continue;

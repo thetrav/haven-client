@@ -163,7 +163,6 @@ public class UI {
 	}
 	synchronized(this) {
 	    Widget pwdg = widgets.get(parent);
-	    System.out.println("widgets="+widgets);
 	    if(pwdg == null)
 		throw(new UIException("Null parent widget " + parent + " for " + id, type, args));
 	    Widget wdg = f.create(c, pwdg, args);
@@ -174,7 +173,6 @@ public class UI {
     }
 
     public void grabmouse(Widget wdg) {
-        System.out.println("grabbing"+wdg);
 	mousegrab = wdg;
     }
 

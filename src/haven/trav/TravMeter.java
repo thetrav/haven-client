@@ -62,7 +62,6 @@ public class TravMeter extends Widget
 
             private Widget createMeter(Coord c, Widget parent, Object[] args, final String resource)
             {
-                System.out.println("creating meter"+resource+" at"+c);
                 final Resource bg = Resource.load(resource);
                 List<Meter> meters = new LinkedList<Meter>();
                 for (int i = 1; i < args.length; i += 2)
