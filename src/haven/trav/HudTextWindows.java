@@ -2,13 +2,9 @@ package haven.trav;
 
 import haven.Button;
 import haven.Coord;
-import haven.GOut;
 import haven.HWindow;
-import haven.IButton;
 import haven.Resource;
 import haven.SlenChat;
-import haven.Tex;
-import haven.Widget;
 
 import java.awt.Color;
 import java.util.ArrayList;

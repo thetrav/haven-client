@@ -1,24 +1,30 @@
 package haven.trav;
 
-import static haven.Inventory.invsq;
 import haven.Coord;
 import haven.CustomConfig;
 import haven.GOut;
+import haven.Inventory;
 import haven.ResCache;
 import haven.Resource;
 
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 
-public class SlenBelt
+public class TravHudBelt
 {
     public static final int BELT_SLOTS = 10;
-    public static final Coord bc1 = new Coord(147, -8); // Belt 1 location start
-    public static final Coord bc2 = new Coord(485, -8); // Belt 2 location start
+    public static final Coord bc1 = new Coord(5, 5); // Belt 1 location start
 
     public static int activeBelt = 1;
     @SuppressWarnings("unchecked")
     Resource[][] belt = new Resource[BELT_SLOTS][BELT_SLOTS];
+
+    private final TravHud hud;
+    
+    public TravHudBelt(TravHud travHud)
+    {
+        hud = travHud;
+    }
 
     public void draw(final GOut g)
     {
@@ -26,10 +32,10 @@ public class SlenBelt
         for (int i = 0; i < BELT_SLOTS; i++)
         {
             Coord c = beltc(i);// xlate(beltc(i), true);
-            Coord x = c.add(invsq.sz().add(-10, 0));
-            g.image(invsq, c);
+            Coord x = c.add(Inventory.invsq.sz().add(-10, 0));
+            g.image(Inventory.invsq, c);
             g.chcolor(156, 180, 158, 255);
-            g.atext(Integer.toString((i + 1) % 10), c.add(invsq.sz()), 1, 1);
+            g.atext(Integer.toString((i + 1) % 10), c.add(Inventory.invsq.sz()), 1, 1);
             g.chcolor();
             Resource res = null;
             if (belt[activeBelt][i] != null)
@@ -97,14 +103,7 @@ public class SlenBelt
 
     private Coord beltc(int i)
     {
-        if (i < 5)
-        {
-            return (bc1.add(i * (invsq.sz().x + 2), 0));
-        }
-        else
-        {
-            return (bc2.add((i - 5) * (invsq.sz().x + 2), 0));
-        }
+        return (bc1.add(i * (Inventory.invsq.sz().x + 2), 0));
     }
 
     public boolean mouseDown(Coord c, int button, TravHud travSlenHud)
@@ -121,21 +120,13 @@ public class SlenBelt
     private int beltslot(Coord c)
     {
         // c = xlate(c, false);
-        int sw = invsq.sz().x + 2;
-        if ((c.x >= bc1.x) && (c.y >= bc1.y) && (c.y < bc1.y + invsq.sz().y))
+        int sw = Inventory.invsq.sz().x + 2;
+        if ((c.x >= bc1.x) && (c.y >= bc1.y) && (c.y < bc1.y + Inventory.invsq.sz().y))
         {
-            if ((c.x - bc1.x) / sw < 5)
+            if ((c.x - bc1.x) / sw < 10)
             {
-                if ((c.x - bc1.x) % sw < invsq.sz().x)
+                if ((c.x - bc1.x) % sw < Inventory.invsq.sz().x)
                     return ((c.x - bc1.x) / sw);
-            }
-        }
-        if ((c.x >= bc2.x) && (c.y >= bc2.y) && (c.y < bc2.y + invsq.sz().y))
-        {
-            if ((c.x - bc2.x) / sw < 5)
-            {
-                if ((c.x - bc2.x) % sw < invsq.sz().x)
-                    return (((c.x - bc2.x) / sw) + 5);
             }
         }
         return (-1);
