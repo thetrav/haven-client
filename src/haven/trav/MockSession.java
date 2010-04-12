@@ -31,8 +31,15 @@ public class MockSession extends Session
             try
             {
                 HavenPanel.ui.newwidget(id, type, c , parent, null);
-                HavenPanel.ui.newwidget(2, "slenchat", c , 1, "Chat");
-                HavenPanel.ui.newwidget(3, "slenchat", c , 1, "another");
+                HavenPanel.ui.newwidget(2, "slenchat", c , 1, "1");
+                HavenPanel.ui.newwidget(22, "slenchat", c , 1, "2");
+                HavenPanel.ui.newwidget(23, "slenchat", c , 1, "3");
+                HavenPanel.ui.newwidget(23, "slenchat", c , 1, "4");
+                HavenPanel.ui.newwidget(25, "slenchat", c , 1, "5");
+                HavenPanel.ui.newwidget(26, "slenchat", c , 1, "6");
+                HavenPanel.ui.newwidget(27, "slenchat", c , 1, "7");
+                HavenPanel.ui.newwidget(28, "slenchat", c , 1, "8");
+                HavenPanel.ui.newwidget(29, "slenchat", c , 1, "9");
             }
             catch (InterruptedException e)
             {

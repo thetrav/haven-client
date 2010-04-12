@@ -26,13 +26,18 @@
 
 package haven;
 
+import haven.Resource.AButton;
+import haven.trav.TravHud;
+
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.font.TextAttribute;
-import haven.Resource.AButton;
-import haven.trav.TravSlenHud;
-
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class MenuGrid extends Widget {
     public final static Tex bg = Resource.loadtex("gfx/hud/invsq");
@@ -99,7 +104,7 @@ public class MenuGrid extends Widget {
     }
 
     public MenuGrid(Coord c, Widget parent) {
-	super(TravSlenHud.MENU_GRID_COORD, bgsz.mul(gsz).add(1, 1), parent);
+	super(TravHud.MENU_GRID_COORD, bgsz.mul(gsz).add(1, 1), parent);
 	cons(null);
 	hide();
     }
@@ -248,7 +253,7 @@ public class MenuGrid extends Widget {
 	} else {
 	    //action button pressed
 	    wdgmsg("act", (Object[])r.layer(Resource.action).ad);
-	    ui.root.findchild(TravSlenHud.class).hideGridMenu();
+	    ui.root.findchild(TravHud.class).hideGridMenu();
 	}
     }
 

@@ -62,7 +62,7 @@ public class SlenBelt
         }
     }
 
-    public boolean globType(char ch, KeyEvent ev, TravSlenHud travSlenHud)
+    public boolean globType(char ch, KeyEvent ev, TravHud travSlenHud)
     {
         if ((((ch >= '1') && (ch <= '9')) || (ch == '0')) && ev.isAltDown())
         {
@@ -107,7 +107,7 @@ public class SlenBelt
         }
     }
 
-    public boolean mouseDown(Coord c, int button, TravSlenHud travSlenHud)
+    public boolean mouseDown(Coord c, int button, TravHud travSlenHud)
     {
         int slot = beltslot(c);
         if (slot != -1)
@@ -141,7 +141,7 @@ public class SlenBelt
         return (-1);
     }
 
-    public boolean dropthing(Coord c, Object thing, TravSlenHud travSlenHud)
+    public boolean dropthing(Coord c, Object thing, TravHud travSlenHud)
     {
         int slot = beltslot(c);
         if (slot != -1)
@@ -168,7 +168,7 @@ public class SlenBelt
         return (false);
     }
 
-    public boolean drop(Coord cc, Coord ul, TravSlenHud travSlenHud)
+    public boolean drop(Coord cc, Coord ul, TravHud travSlenHud)
     {
         int slot = beltslot(cc);
         if (slot != -1)

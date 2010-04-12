@@ -26,8 +26,8 @@
 
 package haven;
 
+import haven.trav.TravHud;
 import haven.trav.TravMeter;
-import haven.trav.TravSlenHud;
 
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -50,7 +50,7 @@ public class Widget {
 			       Makewindow.class, Chatwindow.class, Textlog.class, Equipory.class, IButton.class,
 			       Cal.class, Avaview.class, NpcChat.class,
 			       Label.class, Progress.class, VMeter.class, Partyview.class,
-			       MenuGrid.class, TravSlenHud.class, HWindow.class, CheckBox.class, Logwindow.class,
+			       MenuGrid.class, TravHud.class, HWindow.class, CheckBox.class, Logwindow.class,
 			       MapMod.class, ISBox.class, ComMeter.class, Fightview.class, TravMeter.class,
 			       GiveButton.class, Charlist.class, ComWin.class, CharWnd.class, BuddyWnd.class,
 			       ChatHW.class, Speedget.class, Bufflist.class};

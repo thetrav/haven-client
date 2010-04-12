@@ -1,5 +1,5 @@
 package haven;
-import haven.trav.TravSlenHud;
+import haven.trav.TravHud;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
 {
 	public IRCConnection IRC;
 	public String user;
-	public TravSlenHud parent;
+	public TravHud parent;
 	private static SlenChat tSCWnd;
 	private boolean initialized = false;
 	public List<SlenChat> wndList = new ArrayList<SlenChat>();
@@ -23,14 +23,14 @@ public class SlenConsole extends ChatHW implements IRCConnectionListener
     	Widget.addtype("slenlog", new WidgetFactory() {
 	    	public Widget create(Coord c, Widget parent, Object[] args) {
 	    		String t = (String)args[0];
-	    		SlenConsole wnd = new SlenConsole((TravSlenHud)parent);
+	    		SlenConsole wnd = new SlenConsole((TravHud)parent);
 	    		wnd.out.append(t);
 			    return(wnd);
 	    	}
     	});
     }
 
-    public SlenConsole(TravSlenHud parent)
+    public SlenConsole(TravHud parent)
     {
     	super(parent, "Console", false);
     	this.parent = parent;
