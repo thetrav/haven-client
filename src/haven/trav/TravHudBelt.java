@@ -13,7 +13,7 @@ import java.awt.event.KeyEvent;
 public class TravHudBelt
 {
     public static final int BELT_SLOTS = 10;
-    public static final Coord bc1 = new Coord(5, 5); // Belt 1 location start
+    public static final Coord bc1 = new Coord(4, 4); // Belt 1 location start
 
     public static int activeBelt = 1;
     @SuppressWarnings("unchecked")

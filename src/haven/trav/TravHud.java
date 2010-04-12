@@ -89,7 +89,7 @@ public class TravHud extends ConsoleHost implements DTarget, DropTarget, Console
         super.wdgmsg(sender, msg, args);
     }
 
-    private static Coord coord()
+    public static Coord coord()
     {
         return new Coord(CustomConfig.windowSize.x - ((CustomConfig.windowSize.x - HUD_WIDGET_SIZE.x) / 2), CustomConfig.windowSize.y).add(HUD_WIDGET_SIZE.inv());
     }

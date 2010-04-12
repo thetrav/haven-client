@@ -28,13 +28,16 @@ public class TravMeter extends Widget
         CUSTOM_METERS.put("gfx/hud/meter/hp", new CustomMeterProps(meterCoord(1,0), "jlay/heartMeter"));
         CUSTOM_METERS.put("gfx/hud/meter/nrj", new CustomMeterProps(meterCoord(1,1), "jlay/bagMeter"));
         CUSTOM_METERS.put("gfx/hud/meter/hngr", new CustomMeterProps(meterCoord(1,2), "jlay/fishMeter"));
+        
+        //dirty hack way to hide the happy meter
+        CUSTOM_METERS.put("gfx/hud/meter/happy", new CustomMeterProps(new Coord(-1000,-1000), "jlay/fishMeter"));
     }
     
     static Coord meterCoord(int row, int column)
     {
-        final int meterY = 3;
+        final int meterY = TravHud.coord().y + 3;
         final int meterRowSize = 18;
-        final int meterX = 340;
+        final int meterX = TravHud.coord().x + 340;
         final int meterColumnSize = 65;
         return new Coord(meterX + column*meterColumnSize, meterY + row*meterRowSize);
     }
@@ -59,6 +62,7 @@ public class TravMeter extends Widget
 
             private Widget createMeter(Coord c, Widget parent, Object[] args, final String resource)
             {
+                System.out.println("creating meter"+resource+" at"+c);
                 final Resource bg = Resource.load(resource);
                 List<Meter> meters = new LinkedList<Meter>();
                 for (int i = 1; i < args.length; i += 2)
