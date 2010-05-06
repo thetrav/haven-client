@@ -32,7 +32,7 @@ import java.io.*;
 import org.relayirc.core.IRCConnection;
 
 public class Session {
-    public static final int PVER = 32;
+    public static final int PVER = 33;
     public static final int MSG_SESS = 0;
     public static final int MSG_REL = 1;
     public static final int MSG_ACK = 2;
@@ -305,9 +305,10 @@ public class Session {
 			    String name = msg.string();
 			    if(name.length() > 0) {
 				int group = msg.uint8();
-				oc.buddy(id, frame, name, group);
+				int btype = msg.uint8();
+				oc.buddy(id, frame, name, group, btype);
 			    } else {
-				oc.buddy(id, frame, null, 0);
+				oc.buddy(id, frame, null, 0, 0);
 			    }
 			} else if(type == OD_END) {
 			    break;

@@ -26,30 +26,59 @@
 
 package haven;
 
-public class KinInfo extends GAttrib {
-    public static final Text.Foundry nfnd = new Text.Foundry("SansSerif", 10);
-    public String name;
-    public int group, type;
-    public long seen = 0;
-    private Tex rnm = null;
-    
-    public KinInfo(Gob g, String name, int group, int type) {
-	super(g);
-	this.name = name;
-	this.group = group;
-	this.type = type;
+import java.util.*;
+
+public class Tabs {
+    private Coord c, sz;
+    private Widget parent;
+    public Tab curtab = null;
+    public Collection<Tab> tabs = new LinkedList<Tab>();
+
+    public Tabs(Coord c, Coord sz, Widget parent) {
+	this.c = c;
+	this.sz = sz;
+	this.parent = parent;
+    }
+
+    public class Tab extends Widget {
+	public TabButton btn;
+	
+	public Tab() {
+	    super(Tabs.this.c, Tabs.this.sz, Tabs.this.parent);
+	    if(curtab == null)
+		curtab = this;
+	    else
+		hide();
+	    tabs.add(this);
+	}
+	
+	public Tab(Coord bc, int bw, String text) {
+	    this();
+	    this.btn = new TabButton(bc, bw, text, this);
+	}
+    }
+
+    public class TabButton extends Button {
+	public final Tab tab;
+
+	private TabButton(Coord c, Integer w, String text, Tab tab) {
+	    super(c, w, Tabs.this.parent, text);
+	    this.tab = tab;
+	}
+
+	public void click() {
+	    showtab(tab);
+	}
+    }
+
+    public void showtab(Tab tab) {
+	Tab old = curtab;
+	if(old != null)
+	    old.hide();
+	if((curtab = tab) != null)
+	    curtab.show();
+	changed(old, tab);
     }
     
-    public void update(String name, int group, int type) {
-	this.name = name;
-	this.group = group;
-	this.type = type;
-	rnm = null;
-    }
-    
-    public Tex rendered() {
-	if(rnm == null)
-	    rnm = new TexI(Utils.outline2(((Text)nfnd.render(name, BuddyWnd.gc[group])).img, Utils.contrast(BuddyWnd.gc[group])));
-	return(rnm);
-    }
+    public void changed(Tab from, Tab to) {}
 }

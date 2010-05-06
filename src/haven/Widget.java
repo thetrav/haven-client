@@ -464,21 +464,12 @@ public class Widget {
 	}
 	return(cursor);
     }
-    public void show()
-    {
-    	visible = true;
+
+    public void hide() {
+	visible = false;
     }
-    public void hide()
-    {
-    	visible = false;
-    	setfocus(null);
-    }
-    public boolean toggle()
-    {
-    	if(visible)
-    		hide();
-    	else
-    		show();
-    	return visible;
+
+    public void show() {
+	visible = true;
     }
 }
