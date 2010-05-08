@@ -61,7 +61,7 @@ public class SlenHud extends ConsoleHost implements DTarget, DropTarget, Console
     List<HWindow> wnds = new ArrayList<HWindow>();
     HWindow awnd;
     Map<HWindow, Button> btns = new HashMap<HWindow, Button>();
-    IButton hb, invb, equb, chrb, budb;
+    IButton hb, invb, equb, chrb, budb, optb;
     FoldButton fb;
     Button sub, sdb;
     VC vc;
@@ -183,6 +183,7 @@ public class SlenHud extends ConsoleHost implements DTarget, DropTarget, Console
 
 	//	Kin list button
 	budb = new IButton(mc, this, Resource.loadimg("gfx/hud/slen/budu"), Resource.loadimg("gfx/hud/slen/budd"));
+	optb = new IButton(mc, this, Resource.loadimg("gfx/hud/slen/optu"), Resource.loadimg("gfx/hud/slen/optd"));
 	{
 		//	Village claims button
 	    new IButton(dispc, this, Resource.loadimg("gfx/hud/slen/dispauth"), Resource.loadimg("gfx/hud/slen/dispauthd")) {
@@ -337,6 +338,9 @@ public class SlenHud extends ConsoleHost implements DTarget, DropTarget, Console
 	    return;
 	} else if(sender == budb) {
 	    wdgmsg("bud");
+	    return;
+	} else if(sender == optb) {
+	    toggleopts();
 	    return;
 	}
 	super.wdgmsg(sender, msg, args);
@@ -542,7 +546,24 @@ public class SlenHud extends ConsoleHost implements DTarget, DropTarget, Console
 		}
 		return awnd.mousewheel(c, amount);
     }
-
+    
+    private void toggleopts() {
+	if(optwnd != null) {
+	    optwnd.wdgmsg("close");
+	} else {
+	    optwnd = new OptWnd(new Coord(100, 100), parent) {
+		    public void wdgmsg(Widget sender, String msg, Object... args) {
+			if(msg.equals("close")) {
+			    ui.destroy(this);
+			    optwnd = null;
+			} else {
+			    super.wdgmsg(sender, msg, args);
+			}
+		    }
+		};
+	}
+    }
+    
     public boolean globtype(char ch, KeyEvent ev) {
 
 	if(ch == ' ') {
@@ -574,20 +595,7 @@ public class SlenHud extends ConsoleHost implements DTarget, DropTarget, Console
 	    	wdgmsg("belt", ch - '1', 1, 0);
 	    return(true);
 	} else if(ch == 15) {
-	    if(optwnd != null) {
-		optwnd.wdgmsg("close");
-	    } else {
-		optwnd = new OptWnd(new Coord(100, 100), parent) {
-			public void wdgmsg(Widget sender, String msg, Object... args) {
-			    if(msg.equals("close")) {
-				ui.destroy(this);
-				optwnd = null;
-			    } else {
-				super.wdgmsg(sender, msg, args);
-			    }
-			}
-		    };
-	    }
+	    toggleopts();
 	}
 	return(super.globtype(ch, ev));
     }
