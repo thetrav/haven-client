@@ -188,7 +188,7 @@ public class GameOptions extends Window{
 	    	channelList.settext(channels.trim());
 		}
 		if(CustomConfig.isSaveable)	CustomConfig.saveSettings();
-		return super.toggle();
+		return false;//super.toggle();
 	}
 }
 class FillBox extends Widget

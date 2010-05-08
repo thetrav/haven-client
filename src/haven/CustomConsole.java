@@ -40,7 +40,10 @@ class CustomConsole extends Window {
 			{
 				if(c == '`' && !(ev.isAltDown() || ev.isControlDown() || ev.isShiftDown())){
 					ev.consume();
-					parent.toggle();
+					if(parent.visible)
+					    parent.hide();
+					else
+					    parent.show();
 					return true;
 				}
 				return super.type(c, ev);
@@ -224,8 +227,8 @@ class CustomConsole extends Window {
 	}
 	public boolean toggle()
 	{
-		if(super.toggle())
-			setfocus(in);
+//		if(super.toggle())
+//			setfocus(in);
 		return visible;
 	}
 }
