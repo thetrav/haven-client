@@ -405,7 +405,6 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 			throw(new LoadException(e, res));
 		    }
 		} catch(LoadException e) {
-		    e.printStackTrace();
 		    if(next == null) {
 			res.error = e;
 			res.loading = false;
@@ -414,14 +413,13 @@ public class Resource implements Comparable<Resource>, Prioritized, Serializable
 			next.load(res);
 		    }
 		} catch(RuntimeException e) {
-		    e.printStackTrace();
 		    throw(new LoadException(e, res));
 		}
 	    } finally {
 		try {
 		    if(in != null)
 			in.close();
-		} catch(IOException e) {e.printStackTrace();}
+		} catch(IOException e) {}
 	    }
 	}
     }
