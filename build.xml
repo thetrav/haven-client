@@ -82,7 +82,7 @@
   <target name="deftgt" depends="jars, appletview" />
 
   <target name="run" depends="jars">
-    <java jar="build/haven.jar" fork="true" />
+    <java jar="build/haven.jar" fork="true" jvmargs="-Djava.library.path=etc/natives -Dhaven.authserv=sh.seatribe.se -Dhaven.defserv=sh.seatribe.se"/>
   </target>
   
   <target name="clean">
