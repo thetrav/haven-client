@@ -25,11 +25,11 @@ public class GroundRenderBindings {
     private Logger LOG = Logger.getLogger(GroundRenderBindings.class.getName());
     private final static Map<Integer, String> TILE_TEXTURES = new HashMap<Integer, String>();
     static {
-        TILE_TEXTURES.put(1, "Textures/water.png");
-        TILE_TEXTURES.put(14, "Textures/sand.png");
-        TILE_TEXTURES.put(16, "Textures/stone.png");
+        TILE_TEXTURES.put(1, "Textures/tiles/water.png");
+        TILE_TEXTURES.put(14, "Textures/tiles/sand.png");
+        TILE_TEXTURES.put(16, "Textures/tiles/stone.png");
     }
-    static final String UNKNOWON_TEXTURE = "Textures/unknown.png";
+    static final String UNKNOWON_TEXTURE = "Textures/tiles/unknown.png";
 
     private Node node;
     private AssetManager assetManager;
@@ -40,25 +40,10 @@ public class GroundRenderBindings {
         root.attachChild(node);
     }
 
-    private void testCube() {
-        Box b = new Box(Vector3f.ZERO, 1, 1, 1); // create cube shape
-//       Quad quadMesh = new Quad(1, 1);
-        Geometry geom = new Geometry("Box", b);  // create cube geometry from the shape
-//        Quaternion roll90 = new Quaternion();
-//        roll90.fromAngleAxis( FastMath.PI/2 , new Vector3f(1,0,0) );
-//        geom.setLocalRotation( roll90 );
-        Material material = new Material(assetManager, "Common/MatDefs/Misc/SimpleTextured.j3md");
-        material.setTexture("m_ColorMap", assetManager.loadTexture(textureName(1)));
-        geom.setMaterial(material);                   // set the cube's material
-        node.attachChild(geom);              // attach the cube to the scene
-    }
-
     public void update() {
         node.detachAllChildren();
-        testCube();
         MCache map = Glob.instance.map;
         Coord playerCoord = Glob.instance.oc.getgob(MapView.playergob).rc;
-//        LOG.info("player at"+playerCoord); //map coord * 1100 = player.rc coord space
         for(Coord c : map.grids.keySet()) {
             Node gridNode = new Node("grid:"+c);
             int[][] tiles = map.grids.get(c).tiles;
@@ -71,7 +56,6 @@ public class GroundRenderBindings {
                 }
             }
             node.attachChild(gridNode);
-//            LOG.info("grid for coord:"+c + " width:"+tiles.length + " height="+tiles[0].length);
         }
     }
 
@@ -81,13 +65,8 @@ public class GroundRenderBindings {
     }
 
     public Spatial buildTile(Vector3f pos, int type) {
-
-//        Quad quadMesh = new Quad(11, 11);
         Box b = new Box(Vector3f.ZERO, 5.5f, 1.0f, 5.5f); // create cube shape
         Geometry quad = new Geometry("Textured Quad", b);
-//        Quaternion roll90 = new Quaternion();
-//        roll90.fromAngleAxis( FastMath.PI/2 , new Vector3f(1,0,0) );
-//        quad.setLocalRotation( roll90 );
         Material material = new Material(assetManager, "Common/MatDefs/Misc/SimpleTextured.j3md");
         material.setTexture("m_ColorMap", assetManager.loadTexture(textureName(type)));
         quad.setMaterial(material);
@@ -100,7 +79,6 @@ public class GroundRenderBindings {
         Coord c = grid.mul(1100).sub(player);
         c.x += xOff * 11;
         c.y += yOff * 11;
-//        LOG.info("built coord:"+c+" from player at"+player +" grid at:"+grid+" offset:" + xOff+","+yOff);
         return new Vector3f(c.x, 0, c.y);
     }
 

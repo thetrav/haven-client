@@ -27,7 +27,7 @@
 package haven;
 
 public class ResDrawable extends Drawable {
-    final Indir<Resource> res;
+    public final Indir<Resource> res;
     final Message sdt;
     Sprite spr = null;
     int delay = 0;

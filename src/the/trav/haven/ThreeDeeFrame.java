@@ -33,12 +33,12 @@ public class ThreeDeeFrame extends SimpleApplication {
     }
 
     private GroundRenderBindings ground = null;
+    private ObjectRenderBindings objects = null;
 
 
     public void havenUpdate() {
         ground.update();
-
-
+        objects.update();
         cam.setLocation(new Vector3f(0,100,-100));
         cam.lookAt(new Vector3f(0,0,0), new Vector3f(0,1,0));
     }
@@ -46,15 +46,6 @@ public class ThreeDeeFrame extends SimpleApplication {
     public void simpleInitApp() {
         assetManager.registerLocator("haven3d.zip", ZipLocator.class.getName());
         ground = new GroundRenderBindings(rootNode, assetManager);
-//        Box b = new Box(Vector3f.ZERO, 1, 1, 1); // create cube shape
-//        Geometry geom = new Geometry("Box", b);  // create cube geometry from the shape
-//        Material mat = new Material(assetManager,
-//         "Common/MatDefs/Misc/SolidColor.j3md"); // create a simple material
-//        mat.setColor("m_Color", ColorRGBA.Blue); // set color of material
-//        geom.setMaterial(mat);                   // set the cube's material
-//        rootNode.attachChild(geom);              // attach the cube to the scene
-//        inputEnabled = false;
-
-//        cam.setFrustumPerspective(45.0f,800.0f / 600.0f, 1, 1000);
+        objects = new ObjectRenderBindings(rootNode, assetManager);
     }
 }
