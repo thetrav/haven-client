@@ -1,0 +1,32 @@
+<component name="libraryTable">
+  <library name="jme">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../Downloads/jME3_10-22-2010/lib/xmlpull-xpp3-1.1.4c.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Downloads/jME3_10-22-2010/lib/stack-alloc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Downloads/jME3_10-22-2010/lib/jME3-lwjgl-natives.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Downloads/jME3_10-22-2010/lib/vecmath.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Downloads/jME3_10-22-2010/lib/jME3-natives-joal.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Downloads/jME3_10-22-2010/lib/jME3-jogl-natives.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Downloads/jME3_10-22-2010/lib/nifty-style-black-1.2-SNAPSHOT.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Downloads/jME3_10-22-2010/lib/jme3test.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Downloads/jME3_10-22-2010/jMonkeyEngine3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Downloads/jME3_10-22-2010/lib/joal.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Downloads/jME3_10-22-2010/lib/jogl.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Downloads/jME3_10-22-2010/lib/lwjgl.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Downloads/jME3_10-22-2010/lib/jheora-debug-0.6.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Downloads/jME3_10-22-2010/lib/j-ogg-vorbisd.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Downloads/jME3_10-22-2010/lib/jme3testdata.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Downloads/jME3_10-22-2010/lib/swing-layout-1.0.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Downloads/jME3_10-22-2010/lib/nifty-1.2-SNAPSHOT.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Downloads/jME3_10-22-2010/lib/nifty-style-grey-1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Downloads/jME3_10-22-2010/lib/nifty-examples-1.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Downloads/jME3_10-22-2010/lib/nifty-default-controls-1.2-SNAPSHOT.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Downloads/jME3_10-22-2010/lib/jbullet.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Downloads/jME3_10-22-2010/lib/jinput.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Downloads/jME3_10-22-2010/lib/j-ogg-oggd.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Downloads/jME3_10-22-2010/lib/gluegen-rt.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

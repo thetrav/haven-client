@@ -27,6 +27,8 @@
 	<pathelement path="lib/jnlp.jar" />
 	<pathelement path="lib/jorbis.jar" />
 	<pathelement path="lib/jogg.jar" />
+          <fileset  dir="C:/Users/travis/Downloads/jME3_10-22-2010" includes="*.jar"/>
+        <fileset  dir="C:/Users/travis/Downloads/jME3_10-22-2010/lib" includes="*.jar"/>
       </classpath>
       <compilerarg value="-Xlint:unchecked" />
       <!-- <compilerarg value="-Xbarda" /> -->
@@ -58,7 +60,7 @@
       <fileset dir="build/classes-lib" />
       <manifest>
 	<attribute name="Main-Class" value="haven.MainFrame" />
-	<attribute name="Class-Path" value="jogl.jar gluegen-rt.jar haven-res.jar" />
+	<attribute name="Class-Path" value="gluegen-rt.jar haven-res.jar haven.jar j-ogg-oggd.jar j-ogg-vorbisd.jar jME3-jogl-natives.jar jME3-lwjgl-natives.jar jME3-natives-joal.jar jMonkeyEngine3.jar jbullet.jar jheora-debug-0.6.0.jar jinput.jar jme3test.jar jme3testdata.jar joal.jar jogl.jar lwjgl.jar nifty-1.2-SNAPSHOT.jar nifty-default-controls-1.2-SNAPSHOT.jar nifty-examples-1.2.jar nifty-style-black-1.2-SNAPSHOT.jar nifty-style-grey-1.0.jar stack-alloc.jar swing-layout-1.0.4.jar vecmath.jar xmlpull-xpp3-1.1.4c.jar " />
       </manifest>
     </jar>
     <chmod file="build/haven.jar" perm="a+x" />
@@ -76,13 +78,19 @@
 	<include name="gluegen-rt.jar" />
 	<include name="haven-res.jar" />
       </fileset>
+        <fileset  dir="C:/Users/travis/Downloads/jME3_10-22-2010" includes="*.jar"/>
+        <fileset  dir="C:/Users/travis/Downloads/jME3_10-22-2010/lib" includes="*.jar"/>
     </copy>
+  </target>
+
+  <target  name="ThreeDeeResources" depends="jars">
+      <zip destfile="build/haven3d.zip" basedir="assets" />  
   </target>
   
   <target name="deftgt" depends="jars, appletview" />
 
-  <target name="run" depends="jars">
-    <java jar="build/haven.jar" fork="true" jvmargs="-Djava.library.path=etc/natives -Dhaven.authserv=sh.seatribe.se -Dhaven.defserv=sh.seatribe.se"/>
+  <target name="run" depends="ThreeDeeResources">
+    <java dir="build" jar="build/haven.jar" fork="true" jvmargs="-Djava.library.path=../etc/natives -Dhaven.authserv=sh.seatribe.se -Dhaven.defserv=sh.seatribe.se" />
   </target>
   
   <target name="clean">

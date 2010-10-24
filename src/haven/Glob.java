@@ -43,8 +43,11 @@ public class Glob {
     public Map<String, CAttr> cattr = new HashMap<String, CAttr>();
     public Map<Integer, Buff> buffs = new TreeMap<Integer, Buff>();
     public java.awt.Color amblight = null;
+
+    public static Glob instance = null;
     
     public Glob(Session sess) {
+        instance = this;
 	this.sess = sess;
 	map = new MCache(sess);
 	party = new Party(this);

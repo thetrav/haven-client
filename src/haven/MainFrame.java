@@ -26,6 +26,8 @@
 
 package haven;
 
+import the.trav.haven.ThreeDeeFrame;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -242,6 +244,7 @@ public class MainFrame extends Frame implements Runnable, FSMan {
     
     public static void main(final String[] args) {
 	/* Set up the error handler as early as humanly possible. */
+        ThreeDeeFrame.init();
 	ThreadGroup g;
 	if(Utils.getprop("haven.errorhandler", "off").equals("on")) {
 	    final haven.error.ErrorHandler hg = new haven.error.ErrorHandler();

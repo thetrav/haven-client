@@ -50,7 +50,7 @@ public class MapView extends Widget implements DTarget, Console.Directory {
     Collection<Gob> plob = null;
     boolean plontile;
     int plrad = 0;
-    int playergob = -1;
+    public static int playergob = -1;
     public Profile prof = new Profile(300);
     private Profile.Frame curf;
     Coord plfpos = null;
