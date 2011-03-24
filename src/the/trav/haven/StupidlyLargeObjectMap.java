@@ -4,10 +4,11 @@ import com.jme3.math.Vector3f;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 
 public class StupidlyLargeObjectMap {
-
+    private static final Logger LOG = Logger.getLogger(StupidlyLargeObjectMap.class.getName());
     public static final Map<String, Haven3dResource> RESOURCES = new HashMap<String, Haven3dResource>();
     public static final Haven3dResource UNKNOWN_RES = new Haven3dResource("UNKNOWN", new Vector3f(5f, 5f, 5f), "Textures/objects/unknown.png");
     static {
@@ -18,6 +19,10 @@ public class StupidlyLargeObjectMap {
         add("gfx/terobjs/npcs/surg", 5, 10, 5, "Textures/objects/surg.png");
         add("gfx/arch/door-cellar", 5, 2.5f, 5, "Textures/objects/door-cellar.png");
         add("gfx/terobjs/mining/ladder", 10, 20, 1, "Textures/objects/ladder.png");
+        add("gfx/terobjs/furniture/bed-sprucebough", 10, 1.5f, 5, "Textures/objects/sprucebed.png");
+        add("gfx/terobjs/crate", 5, 5f, 2.5f, "Textures/objects/crate.png");
+        add("gfx/arch/cabin-door2", 10, 10f, 1, "Textures/objects/crapdoor.png");
+
     }
 
     public static void add(String name, float w, float h, float d, String tex) {
@@ -26,6 +31,7 @@ public class StupidlyLargeObjectMap {
 
     public static Haven3dResource get(String resName) {
         Haven3dResource res = RESOURCES.get(resName);
+        LOG.info("unknown object "+resName);
         return res == null ? UNKNOWN_RES : res;
     }
 

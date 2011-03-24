@@ -34,11 +34,13 @@ public class ThreeDeeFrame extends SimpleApplication {
 
     private GroundRenderBindings ground = null;
     private ObjectRenderBindings objects = null;
+    private PlayerRenderBindings player = null;
 
 
     public void havenUpdate() {
         ground.update();
         objects.update();
+        player.update();
         cam.setLocation(new Vector3f(0,100,-100));
         cam.lookAt(new Vector3f(0,0,0), new Vector3f(0,1,0));
     }
@@ -47,5 +49,6 @@ public class ThreeDeeFrame extends SimpleApplication {
         assetManager.registerLocator("haven3d.zip", ZipLocator.class.getName());
         ground = new GroundRenderBindings(rootNode, assetManager);
         objects = new ObjectRenderBindings(rootNode, assetManager);
+        player = new PlayerRenderBindings(rootNode, assetManager);
     }
 }

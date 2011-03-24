@@ -22,12 +22,24 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 public class GroundRenderBindings {
+    private static final int MIN_X = -25*11;
+    private static final int MAX_X = 25*11;
+    private static final int MIN_Y = -25*11;
+    private static final int MAX_Y = 25*11;
+
     private Logger LOG = Logger.getLogger(GroundRenderBindings.class.getName());
     private final static Map<Integer, String> TILE_TEXTURES = new HashMap<Integer, String>();
     static {
         TILE_TEXTURES.put(1, "Textures/tiles/water.png");
+        TILE_TEXTURES.put(2, "Textures/tiles/cobble.png");
+        TILE_TEXTURES.put(7, "Textures/tiles/grass.png");
+        TILE_TEXTURES.put(3, "Textures/tiles/plowed.png");
+        TILE_TEXTURES.put(4, "Textures/tiles/pineForest.png");
         TILE_TEXTURES.put(14, "Textures/tiles/sand.png");
+        TILE_TEXTURES.put(15, "Textures/tiles/logfloor.png");
         TILE_TEXTURES.put(16, "Textures/tiles/stone.png");
+        TILE_TEXTURES.put(18, "Textures/tiles/mountain.png");
+
     }
     static final String UNKNOWON_TEXTURE = "Textures/tiles/unknown.png";
 
@@ -51,7 +63,8 @@ public class GroundRenderBindings {
                 for(int j=0; j< tiles[i].length; j++) {
                     int type = tiles[i][j];
                     if (type != 255) {
-                        gridNode.attachChild(buildTile(buildCoord(playerCoord, c, i, j), type));
+                        Vector3f v = buildCoord(playerCoord, c, i, j);
+                        if(v != null) gridNode.attachChild(buildTile(v, type));
                     }
                 }
             }
@@ -61,6 +74,7 @@ public class GroundRenderBindings {
 
     private String textureName(int type) {
         String name = TILE_TEXTURES.get(type);
+        if(name == null) LOG.info("unknown tile type:"+type);
         return name == null ? UNKNOWON_TEXTURE : name;
     }
 
@@ -79,6 +93,7 @@ public class GroundRenderBindings {
         Coord c = grid.mul(1100).sub(player);
         c.x += xOff * 11;
         c.y += yOff * 11;
+        if(c.x < MIN_X || c.x > MAX_X || c.y < MIN_Y || c.y > MAX_Y) return null;
         return new Vector3f(c.x, 0, c.y);
     }
 
